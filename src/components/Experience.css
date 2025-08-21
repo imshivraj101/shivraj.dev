@@ -1,0 +1,99 @@
+.experience-section {
+  padding: 2rem 2rem;
+  background: linear-gradient(135deg, #ffffff, #f0f4ff);
+  font-family: 'Oswald', sans-serif;
+  position: relative; /* needed for pseudo-element */
+  overflow: hidden;
+}
+
+/* Subtle grid overlay */
+.experience-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+.experience-title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.exp-subtitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.exp-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.exp-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: white;
+  padding: 1rem;
+  border: 2px solid #2111fff8;
+  box-shadow: 6px 6px 0 #000;
+  width: 300px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  /* Add floating animation */
+  animation: floatSide 4s ease-in-out infinite;
+}
+
+
+.exp-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0 #000;
+}
+
+.exp-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.exp-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.exp-role {
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.exp-org {
+  font-size: 0.9rem;
+  color: #2111fff8;
+  margin-top: 0.2rem;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .exp-card {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .exp-logo {
+    margin-right: 0.8rem;
+  }
+}
