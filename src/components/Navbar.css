@@ -17,14 +17,22 @@
 }
 
 /* Logo */
+/* Navbar logo */
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
   letter-spacing: -0.5px;
-  color: #00ffaa;
+  color: white;
   text-shadow: 1px 1px 3px rgba(0,255,170,0.3);
   cursor: pointer;
   transition: transform 0.3s;
+  text-decoration: none; /* remove underline */
+}
+
+/* specifically for Link inside logo */
+.logo a {
+  text-decoration: none;
+  color: inherit; /* keeps the #00ffaa color */
 }
 
 .logo:hover {

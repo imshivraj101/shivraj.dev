@@ -4,6 +4,7 @@ import "./Blogs.css";
 import blog1 from "../assets/blog1.webp";
 import blog2 from "../assets/blog2.webp";
 import blog3 from "../assets/blog3.webp";
+
 const blogs = [
   {
     title: "X to Y: Mapping My Life with Machine Learning",
@@ -31,41 +32,45 @@ const blogs = [
   },
 ];
 
-const Blogs = () => (
-  <section className="blogs-section">
-    <h1 className="blogs-title">Latest Blogs</h1>
-    <div className="blogs-list">
-      {blogs.map((blog, index) => (
-        <div key={index} className="blog-card">
-          <img src={blog.image} alt={blog.title} className="blog-image" />
-          <div className="blog-content">
-            <h2 className="blog-title">{blog.title}</h2>
-            <p className="blog-date">{blog.date}</p>
-            <p className="blog-description">{blog.description}</p>
-            <a
-              href={blog.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="read-more"
-            >
-              Read more →
-            </a>
+export default function Blogs({ limit }) {
+  const displayBlogs = limit ? blogs.slice(0, limit) : blogs;
+
+  return (
+    <section className="blogs-section">
+      <h1 className="blogs-title">Latest Blogs</h1>
+      <div className="blogs-list">
+        {displayBlogs.map((blog, index) => (
+          <div key={index} className="blog-card">
+            <img src={blog.image} alt={blog.title} className="blog-image" />
+            <div className="blog-content">
+              <h2 className="blog-title">{blog.title}</h2>
+              <p className="blog-date">{blog.date}</p>
+              <p className="blog-description">{blog.description}</p>
+              <a
+                href={blog.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="read-more"
+              >
+                Read more →
+              </a>
+            </div>
           </div>
+        ))}
+      </div>
+
+      {limit && (
+        <div className="view-more-wrapper">
+          <a
+            href="https://medium.com/@shivrajtalekar101"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="view-more-btn"
+          >
+            View All Blogs
+          </a>
         </div>
-      ))}
-    </div>
-
-    <div className="view-more-wrapper">
-      <a
-        href="https://medium.com/@shivrajtalekar101"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="view-more-btn"
-      >
-        View All Blogs
-      </a>
-    </div>
-  </section>
-);
-
-export default Blogs;
+      )}
+    </section>
+  );
+}
