@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/App.css"],"sourcesContent":["* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n   font-family: 'Oswald', sans-serif;\n}\n\nhtml, body {\n  height: 100%;\n  font-family: 'Oswald', sans-serif;\n\n}\n"],"names":[],"mappings":"AAAA;;;;;;;AAOA"}}]
-}
