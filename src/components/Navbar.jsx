@@ -1,16 +1,15 @@
-// import { Link } from "react-router-dom";
-import "./Navbar.css";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="logo">
-  <a href="/home">Shivraj.dev</a>
+        <Link href="/">Shivraj.dev</Link>
       </div>
       <ul className="nav-links">
-  <li><a href="/home">Home</a></li>
-  <li><a href="/projects">Projects</a></li>
-  <li><a href="/blogs">Blogs</a></li>
+        <li><Link href="/">+ HOME</Link></li>
+        <li><Link href="/projects">+ PROJECTS</Link></li>
+        <li><Link href="/blogs">+ BLOGS</Link></li>
       </ul>
     </nav>
   );

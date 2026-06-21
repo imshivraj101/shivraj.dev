@@ -1,4 +1,4 @@
-import "./Projects.css";
+import Link from "next/link";
 
 // Import images
 import travelloreImg from "../assets/travellore.png";
@@ -50,11 +50,15 @@ export default function Projects({ limit }) {
 
   return (
     <section className="projects-section">
-      <h2 className="projects-title">Notable Projects</h2>
+      <h2 className="projects-title text-outline-yellow">NOTABLE PROJECTS</h2>
       <div className="projects-grid">
         {displayProjects.map((project, index) => (
           <div key={index} className="project-card">
-            <img src={project.image} alt={project.title} className="project-image" />
+            <img
+              src={project.image.src}
+              alt={project.title}
+              className="project-image"
+            />
             <div className="project-content">
               <div>
                 <h3 className="project-name">{project.title}</h3>
@@ -77,7 +81,9 @@ export default function Projects({ limit }) {
 
       {limit && (
         <div className="view-more">
-          <a href="/projects" className="view-more-bton">View More Projects</a>
+          <Link href="/projects" className="view-more-bton">
+            View More Projects
+          </Link>
         </div>
       )}
     </section>

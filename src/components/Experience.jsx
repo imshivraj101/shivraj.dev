@@ -1,14 +1,11 @@
 import React from "react";
-import "./Experience.css";
 
 // Import logos
-// Experience logos
 import isteLogo from "../assets/iste-logo.jpeg";
 import desocLogo from "../assets/desoc-logo.jpg";
 import tedxLogo from "../assets/tedx-logo.jpeg";
 import whitespotLogo from "../assets/whitespot-logo.png";
 import hackathonLogo from "../assets/innov.jpeg";
-
 
 const experiences = [
   {
@@ -66,9 +63,15 @@ const Experience = () => {
   const extracurricular = experiences.filter(exp => exp.type === "extracurricular");
   const cocurricular = experiences.filter(exp => exp.type === "co-curricular");
 
-  const renderCard = exp => (
-    <div className="exp-card">
-      {exp.logo && <img src={exp.logo} alt={exp.org} className="exp-logo" />}
+  const renderCard = (exp, index) => (
+    <div key={index} className="exp-card">
+      {exp.logo && (
+        <img
+          src={exp.logo.src}
+          alt={exp.org}
+          className="exp-logo"
+        />
+      )}
       <div className="exp-text">
         <div className="exp-role">{exp.role}</div>
         <div className="exp-org">{exp.org} ({exp.duration})</div>
@@ -78,15 +81,17 @@ const Experience = () => {
 
   return (
     <section className="experience-section">
-      <h1 className="experience-title">Experience & Leadership</h1>
+      <h2 className="experience-title text-outline-cyan">EXPERIENCE</h2>
 
-      
+      <h3 className="exp-subtitle">CO-CURRICULAR</h3>
+      <div className="exp-grid">
+        {cocurricular.map(renderCard)}
+      </div>
 
-      <h2 className="exp-subtitle">Co-Curricular</h2>
-      <div className="exp-grid">{cocurricular.map(renderCard)}</div>
-
-      <h2 className="exp-subtitle">Extracurricular</h2>
-      <div className="exp-grid">{extracurricular.map(renderCard)}</div>
+      <h3 className="exp-subtitle">EXTRACURRICULAR</h3>
+      <div className="exp-grid">
+        {extracurricular.map(renderCard)}
+      </div>
     </section>
   );
 };

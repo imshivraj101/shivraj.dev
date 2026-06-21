@@ -1,0 +1,215 @@
+/* [project]/src/components/Projects.css [app-client] (css) */
+.projects-section {
+  background: none;
+  padding: 6rem 2rem;
+  font-family: Oswald, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-section:before {
+  content: "";
+  pointer-events: none;
+  z-index: 0;
+  background-image: linear-gradient(#0000000a 1px, #0000 1px), linear-gradient(90deg, #0000000a 1px, #0000 1px);
+  background-size: 30px 30px;
+  position: absolute;
+  inset: 0;
+}
+
+.projects-title {
+  text-align: center;
+  letter-spacing: -.5px;
+  z-index: 1;
+  margin-bottom: 3.5rem;
+  font-size: 4rem;
+  font-weight: 900;
+  position: relative;
+}
+
+.projects-grid {
+  z-index: 1;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 3rem;
+  display: grid;
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: 1fr 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+}
+
+.project-card {
+  border: 3px solid var(--ink);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-offset);
+  background: #fff;
+  flex-direction: row;
+  padding: 1.2rem;
+  transition: all .2s cubic-bezier(.175, .885, .32, 1.275);
+  display: flex;
+  overflow: hidden;
+  transform: rotate(-.5deg);
+}
+
+.project-card:nth-child(2n) {
+  transform: rotate(.5deg);
+}
+
+.project-card:hover {
+  box-shadow: 12px 12px 0 var(--ink);
+  background-color: var(--bg-warm);
+  transform: scale(1.03)rotate(0);
+}
+
+.project-image {
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 3px solid var(--ink);
+  width: 40%;
+  box-shadow: 3px 3px 0 var(--ink);
+  margin-right: 1.2rem;
+}
+
+.project-content {
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  display: flex;
+}
+
+.project-name {
+  color: var(--ink);
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.project-role {
+  text-transform: uppercase;
+  color: var(--accent-orange);
+  margin-top: .2rem;
+  font-family: Plus Jakarta Sans, sans-serif;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.project-desc {
+  color: #333;
+  margin: .6rem 0 1rem;
+  font-family: Plus Jakarta Sans, sans-serif;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.project-tags {
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+}
+
+.tag-tools {
+  background: var(--bg-yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  text-transform: uppercase;
+  box-shadow: 1px 1px 0 var(--ink);
+  padding: .2rem .6rem;
+  font-family: Oswald, sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.project-links {
+  gap: .8rem;
+  display: flex;
+}
+
+.project-link {
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  background: #fff;
+  padding: .35rem 1rem;
+  font-family: Oswald, sans-serif;
+  font-size: .9rem;
+  font-weight: 900;
+  text-decoration: none;
+  transition: all .15s cubic-bezier(.175, .885, .32, 1.275);
+}
+
+.project-link:hover {
+  box-shadow: 5px 5px 0 var(--ink);
+  background-color: var(--accent-green);
+  transform: translate(-2px, -2px);
+}
+
+.project-link:active {
+  box-shadow: 1px 1px 0 var(--ink);
+  transform: translate(2px, 2px);
+}
+
+.view-more {
+  text-align: center;
+  justify-content: center;
+  margin-top: 2rem;
+  display: flex;
+  overflow: hidden;
+}
+
+.view-more-bton {
+  background: var(--accent-green);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  justify-content: center;
+  align-items: center;
+  padding: .7rem 2.2rem;
+  font-family: Oswald, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-decoration: none;
+  transition: all .15s;
+  display: inline-flex;
+}
+
+.view-more-bton:hover {
+  box-shadow: 8px 8px 0 var(--ink);
+  background-color: var(--bg-yellow);
+  transform: translate(-3px, -3px);
+}
+
+.view-more-bton:active {
+  box-shadow: 1px 1px 0 var(--ink);
+  transform: translate(3px, 3px);
+}
+
+@media (max-width: 768px) {
+  .projects-title {
+    font-size: 2.8rem;
+  }
+
+  .project-card {
+    flex-direction: column;
+    width: 100%;
+    max-width: 380px;
+    transform: none !important;
+  }
+
+  .project-image {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    margin-bottom: 1.2rem;
+    margin-right: 0;
+  }
+}
+
+/*# sourceMappingURL=src_components_Projects_css_1igg3k2._.single.css.map*/

@@ -1,5 +1,4 @@
 import React from "react";
-import "./Blogs.css";
 
 import blog1 from "../assets/blog1.webp";
 import blog2 from "../assets/blog2.webp";
@@ -37,11 +36,15 @@ export default function Blogs({ limit }) {
 
   return (
     <section className="blogs-section">
-      <h1 className="blogs-title">Latest Blogs</h1>
+      <h1 className="blogs-title text-outline-cyan">LATEST BLOGS</h1>
       <div className="blogs-list">
         {displayBlogs.map((blog, index) => (
           <div key={index} className="blog-card">
-            <img src={blog.image} alt={blog.title} className="blog-image" />
+            <img
+              src={blog.image.src}
+              alt={blog.title}
+              className="blog-image"
+            />
             <div className="blog-content">
               <h2 className="blog-title">{blog.title}</h2>
               <p className="blog-date">{blog.date}</p>
