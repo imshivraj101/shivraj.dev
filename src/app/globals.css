@@ -20,6 +20,14 @@
   --rule: rgba(18, 18, 22, 0.12);
   --grid-line: rgba(18, 18, 22, 0.055);
 
+  /* One definition of the graph texture. Every surface that carries
+     it pulls these two, so tile size and line colour cannot drift
+     apart between the page, the sticky header and the footer. */
+  --grid-size: 32px;
+  --grid-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+
   /* ---- Colour roles ------------------------------------
      Each colour has exactly one job. Do not cross-assign.
      There is deliberately no sky blue anywhere in this system. */
@@ -196,15 +204,17 @@ textarea {
   color: inherit;
 }
 
-/* Technical grid backdrop */
+/* The graph backdrop for the whole document. Sections paint nothing
+   of their own, so this single layer shows through from the header to
+   the footer instead of each component supplying its own surface.
+   Fixed to the viewport, which is also what lets the sticky header
+   line up with it exactly - both are anchored at viewport top. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: var(--grid-image);
+  background-size: var(--grid-size) var(--grid-size);
   pointer-events: none;
   z-index: -2;
 }

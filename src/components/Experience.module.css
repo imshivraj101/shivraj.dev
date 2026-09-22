@@ -298,7 +298,8 @@
    ============================================================ */
 
 .collegeSection {
-  background: color-mix(in srgb, var(--highlight) 14%, var(--paper));
+  /* Marked by rules, not by a tinted fill. The tint broke the page
+     grid into bands; the rules still say "new chapter". */
   border-top: var(--bd-1);
   border-bottom: var(--bd-1);
 }

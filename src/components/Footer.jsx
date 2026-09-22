@@ -13,7 +13,7 @@ export default function Footer() {
             Hit me up.
           </h2>
           <p className={styles.sub}>
-            Open to frontend and product design work, internships, and the
+            Open to AI/ML and full-stack engineering work, internships, and the
             occasional hackathon.
           </p>
           <a

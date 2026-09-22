@@ -2,7 +2,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--paper);
+  /* Opaque so scrolling content cannot bleed through, but carrying
+     the same graph texture. Header and body::before are both anchored
+     at viewport top, so the tiles line up seamlessly. */
+  background-color: var(--paper);
+  background-image: var(--grid-image);
+  background-size: var(--grid-size) var(--grid-size);
   border-bottom: var(--bd-1);
   transition:
     background-color var(--dur) ease,

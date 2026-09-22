@@ -1,37 +1,12 @@
-/* Dark surface: re-point the text tokens rather than hard-coding
-   white everywhere, so contrast stays managed in one place. */
+/* The footer used to be a dark slab carrying its own grid at a
+   different tile size, which made it read as a separate document
+   glued to the bottom. It now sits on the page surface: no background
+   of its own, so body::before runs straight through it, and no
+   --on-dark token block because the root tokens are already correct
+   against this surface. */
 .footer {
-  --on-dark: #f4f4f6;
-  --on-dark-soft: #a9a9b8;
-
-  /* Redeclare the weight-tier composites for this dark surface. An
-     ink offset shadow is invisible against ink, which flattened the
-     primary button into a plain green rectangle. These have to be
-     restated in full - overriding an inner colour token would not
-     reach the composites, which were already substituted on :root. */
-  --bd-1: 4px solid var(--on-dark);
-  --bd-2: 2px solid var(--on-dark);
-  --sh-1: 8px 8px 0 var(--on-dark);
-  --sh-1-lift: 11px 11px 0 var(--on-dark);
-  --sh-2: 4px 4px 0 var(--on-dark);
-  --sh-2-lift: 6px 6px 0 var(--on-dark);
-  --sh-press: 1px 1px 0 var(--on-dark);
-
-  /* NOT var(--ink): that token inverts in dark mode and would turn
-     this permanently-dark surface light. --footer-bg stays dark in
-     both themes. */
-  background-color: var(--footer-bg);
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 24px 24px;
-  color: var(--on-dark);
   padding-block: clamp(3rem, 8vw, 5.5rem) var(--s-6);
   border-top: var(--bd-1);
-}
-
-.footer :focus-visible {
-  outline-color: var(--highlight);
 }
 
 .inner {
@@ -54,19 +29,21 @@
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--highlight);
+  /* Yellow was legible on the old dark slab and is not on paper.
+     --accent-ink is the eyebrow colour the rest of the page uses. */
+  color: var(--accent-ink);
 }
 
 .heading {
   font-size: var(--t-2xl);
   font-weight: 700;
   line-height: 0.95;
-  color: var(--on-dark);
+  color: var(--ink);
 }
 
 .sub {
   font-size: var(--t-sm);
-  color: var(--on-dark-soft);
+  color: var(--ink-faint);
   max-width: 42ch;
 }
 
@@ -74,7 +51,7 @@
   font-family: var(--font-display), sans-serif;
   font-size: var(--t-sm);
   letter-spacing: 0.06em;
-  color: var(--on-dark-soft);
+  color: var(--ink-faint);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   transition:
@@ -83,8 +60,8 @@
 }
 
 .email:hover {
-  color: var(--on-dark);
-  border-bottom-color: var(--highlight);
+  color: var(--ink);
+  border-bottom-color: var(--accent);
 }
 
 /* ---- Socials: Tier 3 list, not four shadowed pills ---- */
@@ -98,7 +75,7 @@
   font-size: var(--t-sm);
   font-weight: 700;
   letter-spacing: 0.18em;
-  color: var(--on-dark);
+  color: var(--ink);
   margin-bottom: var(--s-3);
 }
 
@@ -113,14 +90,14 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
-  color: var(--on-dark-soft);
+  color: var(--ink-faint);
   padding-block: var(--s-3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 2px solid var(--rule);
   transition: color var(--dur-fast) ease;
 }
 
 .socialLink:hover {
-  color: var(--highlight);
+  color: var(--accent-ink);
 }
 
 .arrow {
@@ -139,16 +116,16 @@
   gap: var(--s-3);
   margin-top: clamp(2.5rem, 6vw, 4rem);
   padding-top: var(--s-5);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 2px solid var(--rule);
   font-family: var(--font-display), sans-serif;
   font-size: var(--t-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-dark-soft);
+  color: var(--ink-faint);
 }
 
 .built {
-  color: var(--on-dark-soft);
+  color: var(--ink-faint);
 }
 
 @media (max-width: 767px) {
