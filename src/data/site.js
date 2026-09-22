@@ -20,6 +20,11 @@ export const site = {
      than aggregated from project tags, because those carry non-stack
      entries like "Swiss Ephemeris" and "Balsamiq". */
   discipline: "Full-stack / AI-ML",
+
+  /* What the work is actually about, in the words a recruiter scans
+     for. Drawn from the shipped projects, not aspiration. */
+  focus: ["Agentic RAG", "Knowledge graphs", "Full-stack product"],
+  education: "CS & Design, KKWIEER — class of 2026",
   stack: [
     "Python",
     "FastAPI",

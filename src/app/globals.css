@@ -97,7 +97,12 @@
   --wrap: min(1680px, 94vw);
   --wrap-narrow: 820px;
   --gutter: clamp(1rem, 4vw, 3rem);
+  /* --nav-h is the bar's CONTENT height. --nav-total adds the 4px
+     bottom rule, which is what actually occupies the screen: the hero
+     subtracts the total to fill exactly one viewport, and forgetting
+     the rule pushed the projects section 4px below the fold. */
   --nav-h: 68px;
+  --nav-total: calc(var(--nav-h) + 4px);
 
   /* ---- Motion ------------------------------------------ */
   --ease-pop: cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -171,7 +176,7 @@
 html {
   scroll-behavior: smooth;
   /* keep anchored sections clear of the sticky navbar */
-  scroll-padding-top: calc(var(--nav-h) + var(--s-5));
+  scroll-padding-top: calc(var(--nav-total) + var(--s-5));
   -webkit-text-size-adjust: 100%;
 }
 

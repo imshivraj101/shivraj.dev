@@ -6,13 +6,23 @@
 .hero {
   position: relative;
   overflow: clip;
-  padding-block: clamp(2rem, 6vw, 4rem) clamp(2rem, 5vw, 3rem);
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
   /* No surface of its own: the page grid shows through here exactly
      as it does in every section below. A paper fill plus a 4px rule
      is what made the hero read as a separate slab. */
+
+  /* Exactly one screen minus the sticky header, so the projects
+     section begins precisely where the fold does instead of peeking
+     over it. Content centres; the scroll cue is pushed to the floor
+     by margin-top:auto below. */
+  min-height: calc(100svh - var(--nav-total));
   display: flex;
   flex-direction: column;
-  gap: clamp(1.75rem, 4vw, 2.75rem);
+  /* space-evenly, not center: with two blocks in a full-height hero
+     centering piles all the slack above and below, which reads as a
+     gap under the nav. Evenly spread, the same slack reads as rhythm. */
+  justify-content: space-evenly;
+  gap: clamp(1.25rem, 3vw, 2rem);
   transition: background-color var(--dur) ease;
 }
 
@@ -142,6 +152,21 @@
   padding-left: var(--s-4);
 }
 
+/* Third action, deliberately quieter than the other two: present
+   for anyone who wants it, not competing with the work or contact. */
+.ghost {
+  background: transparent;
+  box-shadow: none;
+  border-color: var(--rule);
+  color: var(--ink-soft);
+}
+
+.ghost:hover {
+  box-shadow: var(--sh-2);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -182,13 +207,66 @@
 }
 
 /* ------------------------------------------------------------
+   Proof band - countable evidence across the full width
+   ------------------------------------------------------------ */
+
+.proof {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4) var(--s-5);
+}
+
+@media (min-width: 768px) {
+  .proof {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.proofItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-top: var(--s-3);
+  border-top: var(--bd-2);
+}
+
+.proofN {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xl);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.proofLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ------------------------------------------------------------
    Scroll cue
    ------------------------------------------------------------ */
 
 .scrollCue {
-  position: relative;
+  /* Pinned to the floor rather than pushed there by margin-top:auto,
+     which ate all the free space and left the content stuck at the
+     top of a full-height hero. */
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-5);
+  transform: translateX(-50%);
   z-index: 1;
-  align-self: center;
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
@@ -226,6 +304,18 @@
   .specRow {
     grid-template-columns: 1fr;
     gap: 2px;
+  }
+
+  /* Three actions flowed as a row left LinkedIn stranded alone on a
+     second line. A 2-up grid with the primary across the top reads as
+     a deliberate stack instead. */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions > *:first-child {
+    grid-column: 1 / -1;
   }
 
   /* Do not stretch these to equal widths - the primary button has

@@ -4,19 +4,29 @@ import profile from "../assets/profile.jpeg";
 import { site } from "../data/site";
 import { projects } from "../data/projects";
 import { blogs } from "../data/blogs";
+import { college, spanOf, work } from "../data/experience";
 import styles from "./Hero.module.css";
 
-/* Spec readout. Counts derive from the data so they cannot drift.
-   This replaces the old proof bar, which led on "Agentic RAG" - one
-   technique, and silent on the full-stack half of the work. */
+/* The readout answers the four things a hiring manager checks in the
+   first ten seconds: where he works now, what the work is about, what
+   he builds with, and where he is in his degree. "Type / Shipped" was
+   answering none of them. Every value comes from data that renders
+   elsewhere on the site, so nothing here can quietly become untrue. */
 const spec = [
-  { label: "Type", value: site.discipline },
-  { label: "Role", value: `${site.employer.role} @ ${site.employer.name}` },
+  { label: "Now", value: `${site.employer.role} @ ${site.employer.name}` },
+  { label: "Focus", value: site.focus.join(" · ") },
   { label: "Stack", value: site.stack.join(" · ") },
-  {
-    label: "Shipped",
-    value: `${projects.length} projects · ${blogs.length} articles`,
-  },
+  { label: "Study", value: site.education },
+];
+
+/* Countable proof, every figure derived at build time from the data
+   that renders further down the page. Nothing here is a claim I made
+   up: if a project is removed the number moves with it. */
+const proof = [
+  { n: projects.length, label: "Projects shipped" },
+  { n: blogs.length, label: "Articles published" },
+  { n: college.length, label: "Campus roles held" },
+  { n: spanOf(work[0].start), label: "At " + site.employer.name },
 ];
 
 export default function Hero() {
@@ -65,13 +75,22 @@ export default function Hero() {
               <Link href="/projects" className="btn btn-primary">
                 See the work
               </Link>
+              {/* Contact should not cost a detour through LinkedIn. */}
               <a
                 className="btn"
+                href={site.mailto}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Email me
+              </a>
+              <a
+                className={`btn ${styles.ghost}`}
                 href={site.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Let&rsquo;s connect
+                LinkedIn
               </a>
             </div>
           </div>
@@ -88,6 +107,15 @@ export default function Hero() {
           </dl>
         </div>
       </div>
+
+      <dl className={styles.proof}>
+        {proof.map((item) => (
+          <div key={item.label} className={styles.proofItem}>
+            <dt className={styles.proofN}>{item.n}</dt>
+            <dd className={styles.proofLabel}>{item.label}</dd>
+          </div>
+        ))}
+      </dl>
 
       <a
         href="#projects"
