@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { site } from "../data/site";
-import { graph, person, organization, website } from "../lib/schema";
 
 const display = Oswald({
   subsets: ["latin"],
@@ -80,16 +79,6 @@ export const metadata = {
     creator: "@lord_shivraj",
     images: ["/sne.png"],
   },
-  verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION,
-    yandex: process.env.YANDEX_VERIFICATION,
-    other: {
-      // Bing Webmaster Tools. Bing also feeds Yahoo, DuckDuckGo and Ecosia.
-      ...(process.env.BING_SITE_VERIFICATION && {
-        "msvalidate.01": process.env.BING_SITE_VERIFICATION,
-      }),
-    },
-  },
   robots: {
     index: true,
     follow: true,
@@ -105,9 +94,30 @@ export const viewport = {
   colorScheme: "light dark",
 };
 
-/* One linked graph shared by every page, rather than a standalone
-   Person literal repeated per route. */
-const jsonLd = graph(person(), organization(), website());
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  url: site.url,
+  sameAs: site.socials.map((s) => s.href),
+  jobTitle: "Artificial Intelligence Product Engineer",
+  worksFor: { "@type": "Organization", name: "ESDS Software Solution" },
+  knowsAbout: [
+    "Machine Learning",
+    "Retrieval Augmented Generation",
+    "Knowledge Graphs",
+    "Full Stack Engineering",
+    "UI/UX Design",
+  ],
+  alumniOf: { "@type": "CollegeOrUniversity", name: "KKWIEER" },
+  affiliation: [
+    { "@type": "Organization", name: "KKWIEER" },
+    { "@type": "Organization", name: "KK Wagh" },
+    { "@type": "Organization", name: "DeSoc" },
+    { "@type": "Organization", name: "TEDxKKWIEER" },
+    { "@type": "Organization", name: "CSD" },
+  ],
+};
 
 export default function RootLayout({ children }) {
   return (

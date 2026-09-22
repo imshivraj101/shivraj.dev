@@ -6,12 +6,12 @@
 .hero {
   position: relative;
   overflow: clip;
-  padding-block: clamp(1.25rem, 3.2vh, 2.25rem);
+  padding-block: clamp(2rem, 6vw, 4rem) clamp(2rem, 5vw, 3rem);
   background: var(--paper);
   border-bottom: var(--bd-1);
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2.4vh, 1.75rem);
+  gap: clamp(1.75rem, 4vw, 2.75rem);
   transition: background-color var(--dur) ease;
 }
 
@@ -24,7 +24,7 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2.2vh, 1.75rem);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 /* ------------------------------------------------------------
@@ -37,12 +37,12 @@
 .identity {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 3vw, 2rem);
+  gap: clamp(1rem, 4vw, 2.5rem);
 }
 
 .polaroid {
   flex-shrink: 0;
-  width: clamp(110px, min(20vw, 26vh), 230px);
+  width: clamp(120px, 30vw, 300px);
   background: var(--surface);
   border: var(--bd-1);
   box-shadow: var(--sh-1);
@@ -110,7 +110,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--s-4);
+  gap: var(--s-5);
 }
 
 .lede {
@@ -155,7 +155,7 @@
   grid-template-columns: 112px 1fr;
   gap: var(--s-4);
   align-items: baseline;
-  padding: var(--s-2) var(--s-4);
+  padding: var(--s-3) var(--s-4);
   border-bottom: 2px solid var(--rule);
 }
 
@@ -198,6 +198,10 @@
   50% { transform: translateY(4px); }
 }
 
+/* ---- Stars: background texture, not foreground stickers ---- */
+.starOne { top: 10%; right: 6%; }
+.starTwo { bottom: 18%; left: 4%; }
+
 @media (max-width: 767px) {
   .lede {
     font-size: var(--t-base);
@@ -217,6 +221,7 @@
     font-size: var(--t-sm);
   }
 
+  .starOne, .starTwo { display: none; }
 }
 
 @media (max-width: 380px) {

@@ -1,5 +1,4 @@
 import Blogs from "../../components/Blogs";
-import { graph, blogSchema, breadcrumbs } from "../../lib/schema";
 
 export const metadata = {
   title: "Blogs",
@@ -9,19 +8,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(graph(
-            blogSchema(),
-            breadcrumbs([
-              { name: "Home", path: "/" },
-              { name: "Blogs", path: "/blogs" },
-            ])
-          )) }}
-      />
-      <Blogs />
-    </>
-  );
+  return <Blogs />;
 }

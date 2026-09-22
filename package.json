@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "indexnow": "node scripts/indexnow.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",

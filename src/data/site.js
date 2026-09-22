@@ -1,15 +1,7 @@
-/* Every canonical, the sitemap, robots.txt, the feed, llms.txt and
-   the JSON-LD graph all derive from this one value. Moving to a
-   custom domain is therefore a single env var in Vercel, not a
-   find-and-replace across the codebase. */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://shivraj-dev-eta.vercel.app"
-).replace(/\/$/, "");
-
 export const site = {
   name: "Shivraj Talekar",
   handle: "@SHIVRAJ",
-  url: SITE_URL,
+  url: "https://shivraj-dev-eta.vercel.app",
   role: "CS + AI/ML Full-Stack Engineer",
   email: "shivrajtalekar101@gmail.com",
   mailto:

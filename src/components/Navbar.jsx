@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav, site } from "../data/site";
 import ThemeToggle from "./ThemeToggle";
-import { useScrollDirection } from "../lib/useScrollDirection";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -39,14 +38,11 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // Reclaims the 72px bar while reading; one scroll up brings it back.
-  const hidden = useScrollDirection() === "down" && !open;
-
   const isActive = (href) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className={styles.header} data-hidden={hidden || undefined}>
+    <header className={styles.header}>
       <nav className={styles.nav} aria-label="Primary">
         <Link href="/" className={styles.logo}>
           {site.name.split(" ")[0]}

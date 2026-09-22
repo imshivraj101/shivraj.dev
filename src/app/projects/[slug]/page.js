@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects, getProject, entryNoOf } from "../../../data/projects";
 import { TYPE_CLASS } from "../../../components/ProjectCard";
-import { graph, projectSchema, breadcrumbs } from "../../../lib/schema";
 import styles from "./case.module.css";
 
 export function generateStaticParams() {
@@ -37,21 +36,8 @@ export default async function Page({ params }) {
   const index = projects.findIndex((p) => p.slug === slug);
   const next = projects[(index + 1) % projects.length];
 
-  const jsonLd = graph(
-    projectSchema(project),
-    breadcrumbs([
-      { name: "Home", path: "/" },
-      { name: "Projects", path: "/projects" },
-      { name: project.title, path: `/projects/${project.slug}` },
-    ])
-  );
-
   return (
     <article className={styles.page}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <div className="wrap-narrow">
         <Link href="/projects" className={styles.back}>
           <span aria-hidden="true">&larr;</span> All projects

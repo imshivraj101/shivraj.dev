@@ -25,6 +25,9 @@ const spec = [
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
+      <div className={`decor-star star-accent ${styles.starOne}`} />
+      <div className={`decor-star star-highlight ${styles.starTwo}`} />
+
       <div className={styles.inner}>
         {/* Zone 1: portrait beside the name, at every width. */}
         <div className={styles.identity}>
