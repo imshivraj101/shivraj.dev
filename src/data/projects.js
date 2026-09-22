@@ -7,6 +7,7 @@ import stoicImg from "../assets/stoic.webp";
 export const projects = [
   {
     slug: "astrobot",
+    updated: "2026-09-21",
     title: "Astrobot",
     role: "AI/ML Engineering",
     year: "2026",
@@ -29,6 +30,7 @@ export const projects = [
   },
   {
     slug: "travellore",
+    updated: "2025-04-24",
     title: "Travellore",
     role: "UI/UX Research & Design",
     year: "2025",
@@ -51,6 +53,7 @@ export const projects = [
   },
   {
     slug: "trailer-park",
+    updated: "2025-07-20",
     title: "Trailer-Park",
     role: "UI/UX Development",
     year: "2024",
@@ -72,6 +75,7 @@ export const projects = [
   },
   {
     slug: "radius",
+    updated: "2025-07-20",
     title: "Radius",
     role: "UI/UX Research & Design",
     year: "2025",
@@ -93,6 +97,7 @@ export const projects = [
   },
   {
     slug: "stoiric",
+    updated: "2024-12-01",
     title: "Stoiric",
     role: "UI/UX Flow Design",
     year: "2024",
