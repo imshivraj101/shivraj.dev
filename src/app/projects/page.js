@@ -1,5 +1,6 @@
 import ProjectsIndex from "../../components/ProjectsIndex";
 import { projects } from "../../data/projects";
+import { graph, projectList, breadcrumbs } from "../../lib/schema";
 
 export const metadata = {
   title: "Projects",
@@ -11,6 +12,16 @@ export const metadata = {
 export default function Page() {
   return (
     <section className="section">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graph(
+            projectList(),
+            breadcrumbs([
+              { name: "Home", path: "/" },
+              { name: "Projects", path: "/projects" },
+            ])
+          )) }}
+      />
       <div className="wrap">
         <header className="section-head">
           <p className="eyebrow">{projects.length} case studies</p>
