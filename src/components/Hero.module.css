@@ -6,21 +6,13 @@
 .hero {
   position: relative;
   overflow: clip;
-  padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
-  background:
-    linear-gradient(
-      to bottom,
-      var(--paper) 0%,
-      var(--paper) 62%,
-      var(--highlight) 62%,
-      var(--highlight) 100%
-    );
+  padding-block: clamp(2rem, 6vw, 4rem) clamp(2rem, 5vw, 3rem);
+  background: var(--paper);
   border-bottom: var(--bd-1);
-  min-height: min(92svh, 860px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: clamp(2rem, 5vw, 3.5rem);
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  transition: background-color var(--dur) ease;
 }
 
 .inner {
@@ -28,77 +20,43 @@
   max-width: var(--wrap);
   margin-inline: auto;
   padding-inline: var(--gutter);
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  align-items: center;
-  gap: clamp(2rem, 5vw, 4rem);
   position: relative;
   z-index: 1;
-}
-
-.copy {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--s-4);
+  gap: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-.name {
-  font-size: var(--t-3xl);
-  font-weight: 700;
-  line-height: 0.88;
-  letter-spacing: -0.015em;
-  margin-block: var(--s-1) 0;
-}
+/* ------------------------------------------------------------
+   Zone 1 - identity.
+   The portrait sits BESIDE the name at every width. The previous
+   version collapsed to one column under 1023px and pushed the
+   photo above the headline, which is the bug this fixes.
+   ------------------------------------------------------------ */
 
-.role {
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-lg);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
-}
-
-/* Tier 3: plain text on the page ground. The old version boxed this
-   in a bordered, shadowed card, which fought the headline above it. */
-.lede {
-  font-size: var(--t-md);
-  line-height: 1.6;
-  color: var(--ink-soft);
-  max-width: 46ch;
-  border-left: 4px solid var(--accent);
-  padding-left: var(--s-4);
-}
-
-.actions {
+.identity {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--s-4);
-  margin-top: var(--s-2);
-}
-
-/* ---- Portrait ---- */
-.portraitCol {
-  display: flex;
-  justify-content: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
 }
 
 .polaroid {
+  flex-shrink: 0;
+  width: clamp(120px, 30vw, 300px);
   background: var(--surface);
   border: var(--bd-1);
   box-shadow: var(--sh-1);
-  padding: var(--s-4) var(--s-4) var(--s-5);
-  transform: rotate(calc(var(--tilt) * -2.5));
+  padding: clamp(0.5rem, 1.5vw, 1rem) clamp(0.5rem, 1.5vw, 1rem)
+    clamp(0.65rem, 2vw, 1.5rem);
+  transform: rotate(calc(var(--tilt) * -1.5));
   transition:
     transform var(--dur) var(--ease-pop),
-    box-shadow var(--dur) var(--ease-pop);
-  max-width: 340px;
+    box-shadow var(--dur) var(--ease-pop),
+    background-color var(--dur) ease;
 }
 
 .polaroid:hover {
-  transform: rotate(calc(var(--tilt) * 1.5)) scale(1.02);
+  transform: rotate(0deg) scale(1.02);
   box-shadow: var(--sh-1-lift);
 }
 
@@ -112,46 +70,103 @@
 
 .caption {
   font-family: var(--font-display), sans-serif;
-  font-size: var(--t-md);
+  font-size: clamp(0.7rem, 1.6vw, 1.1rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-align: center;
-  margin-top: var(--s-3);
+  margin-top: var(--s-2);
+  color: var(--ink);
 }
 
-/* ---- Proof bar ---- */
-.proof {
-  position: relative;
-  z-index: 1;
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--t-3xl);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.015em;
+}
+
+.role {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(0.9rem, 2.2vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+/* ------------------------------------------------------------
+   Zone 2 - copy, full width beneath the identity row.
+   ------------------------------------------------------------ */
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-5);
+}
+
+.lede {
+  font-size: var(--t-md);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 58ch;
+  border-left: 4px solid var(--accent);
+  padding-left: var(--s-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+/* ------------------------------------------------------------
+   Spec readout
+   ------------------------------------------------------------ */
+
+.specWrap {
   width: 100%;
   max-width: var(--wrap);
   margin-inline: auto;
   padding-inline: var(--gutter);
+  position: relative;
+  z-index: 1;
+}
+
+.spec {
+  background: var(--panel);
+  border: var(--bd-1);
+  box-shadow: var(--sh-2);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.specRow {
+  display: grid;
+  grid-template-columns: 112px 1fr;
   gap: var(--s-4);
+  align-items: baseline;
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 2px solid var(--rule);
 }
 
-.proofItem {
-  border-top: 3px solid var(--ink);
-  padding-top: var(--s-3);
+.specRow:last-child {
+  border-bottom: none;
 }
 
-.proofValue {
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-md);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 1.1;
-}
+/* ------------------------------------------------------------
+   Scroll cue
+   ------------------------------------------------------------ */
 
-.proofLabel {
-  font-size: var(--t-xs);
-  color: var(--ink-soft);
-  margin-top: var(--s-1);
-}
-
-/* ---- Scroll cue ---- */
 .scrollCue {
   position: relative;
   z-index: 1;
@@ -166,7 +181,7 @@
   text-transform: uppercase;
   text-decoration: none;
   color: var(--ink);
-  opacity: 0.75;
+  opacity: 0.7;
   transition: opacity var(--dur) ease;
 }
 
@@ -183,71 +198,35 @@
   50% { transform: translateY(4px); }
 }
 
-/* ---- Stars ---- */
-.starOne { top: 12%; left: 4%; }
-.starTwo { bottom: 26%; right: 5%; }
-.starThree { top: 16%; right: 38%; }
+/* ---- Stars: background texture, not foreground stickers ---- */
+.starOne { top: 10%; right: 6%; }
+.starTwo { bottom: 18%; left: 4%; }
 
-/* ---- Responsive ---- */
-@media (max-width: 1023px) {
-  .hero {
-    background: linear-gradient(
-      to bottom,
-      var(--paper) 0%,
-      var(--paper) 70%,
-      var(--highlight) 70%,
-      var(--highlight) 100%
-    );
-  }
-
-  .inner {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .copy {
-    align-items: center;
-    order: 2;
-  }
-
-  .portraitCol {
-    order: 1;
-  }
-
-  .polaroid {
-    max-width: 260px;
-  }
-
+@media (max-width: 767px) {
   .lede {
-    border-left: none;
-    border-top: 4px solid var(--accent);
-    padding-left: 0;
-    padding-top: var(--s-4);
+    font-size: var(--t-base);
+    border-left-width: 3px;
+    padding-left: var(--s-3);
   }
 
-  .actions {
-    justify-content: center;
+  .specRow {
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 
-  .proof {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .starThree { display: none; }
-}
-
-@media (max-width: 520px) {
-  .proof {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--s-3);
-  }
-
-  .actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
+  /* Do not stretch these to equal widths - the primary button has
+     much larger padding, so flex:1 wrapped its label onto two lines. */
+  .actions .btn {
+    padding-inline: var(--s-5);
+    font-size: var(--t-sm);
   }
 
   .starOne, .starTwo { display: none; }
+}
+
+@media (max-width: 380px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

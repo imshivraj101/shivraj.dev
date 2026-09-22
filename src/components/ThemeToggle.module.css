@@ -1,0 +1,34 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--surface);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+  transition:
+    transform var(--dur-fast) var(--ease-pop),
+    box-shadow var(--dur-fast) var(--ease-pop),
+    background-color var(--dur-fast) ease;
+}
+
+.toggle:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-2-lift);
+  background: var(--highlight);
+  color: #121216;
+}
+
+.toggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--sh-press);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+}

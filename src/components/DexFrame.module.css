@@ -1,0 +1,103 @@
+.frame {
+  border: var(--bd-1);
+  box-shadow: var(--sh-1);
+  background: var(--surface);
+  transition:
+    background-color var(--dur) ease,
+    box-shadow var(--dur) ease;
+}
+
+/* ---- Bezel: the strip of device furniture across the top ---- */
+.bezel {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-bottom: var(--bd-1);
+  background: var(--highlight);
+  color: #121216;
+}
+
+.lamp {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #121216;
+  background: rgba(18, 18, 22, 0.18);
+  flex-shrink: 0;
+}
+
+/* The one lit indicator. Kept to a single lamp so it reads as a
+   power light rather than a row of decoration. */
+.lampMain {
+  width: 20px;
+  height: 20px;
+  background: var(--action);
+  box-shadow: inset -3px -3px 0 rgba(18, 18, 22, 0.22);
+}
+
+.plate {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #121216;
+  /* Fixed, not var(--surface): the bezel stays yellow in both themes,
+     so a theme-reactive fill would turn this plate dark-on-dark. */
+  background: #ffffff;
+  border: 2px solid #121216;
+  padding: 0.1rem var(--s-3);
+  margin-left: var(--s-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Speaker grill - flexes away first when space is tight */
+.grill {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.grill i {
+  display: block;
+  width: 3px;
+  height: 18px;
+  background: rgba(18, 18, 22, 0.3);
+  flex-shrink: 0;
+}
+
+.entry {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: #121216;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- Screen: recessed panel the content sits in ---- */
+.screen {
+  background: var(--panel);
+  padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 3vw, 2rem);
+  transition: background-color var(--dur) ease;
+}
+
+@media (max-width: 600px) {
+  .grill {
+    display: none;
+  }
+
+  .plate {
+    margin-left: 0;
+    flex: 1;
+    text-align: center;
+  }
+}

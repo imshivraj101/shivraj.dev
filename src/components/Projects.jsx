@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { projects } from "../data/projects";
 import ProjectCard from "./ProjectCard";
+import DexFrame from "./DexFrame";
 import Reveal, { RevealGroup, RevealItem } from "./Reveal";
 import styles from "./Projects.module.css";
 
@@ -20,13 +21,18 @@ export default function Projects({ limit }) {
           </p>
         </Reveal>
 
-        <RevealGroup className={styles.grid}>
-          {shown.map((project, i) => (
-            <RevealItem key={project.slug}>
-              <ProjectCard project={project} priority={i < 2} />
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        <DexFrame
+          label="Project Index"
+          entry={`${shown.length} / ${projects.length}`}
+        >
+          <RevealGroup className={styles.grid}>
+            {shown.map((project, i) => (
+              <RevealItem key={project.slug}>
+                <ProjectCard project={project} priority={i < 2} />
+              </RevealItem>
+            ))}
+          </RevealGroup>
+        </DexFrame>
 
         {hasMore && (
           <div className={styles.more}>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav, site } from "../data/site";
+import ThemeToggle from "./ThemeToggle";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -63,17 +64,21 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <button
-          type="button"
-          className={styles.burger}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span data-open={open || undefined} />
-          <span data-open={open || undefined} />
-        </button>
+        <div className={styles.controls}>
+          <ThemeToggle />
+
+          <button
+            type="button"
+            className={styles.burger}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span data-open={open || undefined} />
+            <span data-open={open || undefined} />
+          </button>
+        </div>
       </nav>
 
       <div

@@ -47,27 +47,50 @@
   padding: var(--s-5);
 }
 
-.meta {
+/* ---- Dex entry header ---- */
+.entryBar {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: var(--s-3);
+  padding: var(--s-2) var(--s-4);
+  border-bottom: var(--bd-2);
+  background: var(--panel);
+  transition: background-color var(--dur) ease;
 }
 
-.role {
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-right: auto;
+}
+
+.statusText {
   font-family: var(--font-display), sans-serif;
   font-size: var(--t-xs);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent-ink);
+  color: var(--ink-faint);
 }
 
-.year {
+/* ---- Spec strip ---- */
+.spec {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-block: 2px solid var(--rule);
+  align-items: baseline;
+}
+
+.specRole {
   font-family: var(--font-display), sans-serif;
   font-size: var(--t-xs);
-  letter-spacing: 0.1em;
-  color: var(--ink-faint);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
 }
 
 .title {

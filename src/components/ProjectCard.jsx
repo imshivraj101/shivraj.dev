@@ -1,13 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
+import { entryNoOf } from "../data/projects";
 import styles from "./Projects.module.css";
 
+/* Type chips are separated by fill weight rather than three new
+   hues - the palette has one job per colour and no spare one. */
+export const TYPE_CLASS = {
+  "AI/ML": "type-ai",
+  Design: "type-design",
+  Development: "type-dev",
+};
+
 export default function ProjectCard({ project, priority = false }) {
-  const { slug, title, role, year, summary, tags, image, live, github } =
-    project;
+  const {
+    slug,
+    title,
+    role,
+    year,
+    discipline,
+    summary,
+    tags,
+    image,
+    live,
+    github,
+  } = project;
 
   return (
     <article className={`card ${styles.card}`}>
+      {/* Dex entry header */}
+      <div className={styles.entryBar}>
+        <span className="entry-no">
+          No.<b>{entryNoOf(slug)}</b>
+        </span>
+
+        <span className={styles.status}>
+          <span className={`led ${live ? "led-on" : ""}`} aria-hidden="true" />
+          <span className={styles.statusText}>{live ? "Live" : "Source"}</span>
+        </span>
+
+        <span className={`type-chip ${TYPE_CLASS[discipline] ?? ""}`}>
+          {discipline}
+        </span>
+      </div>
+
       <Link href={`/projects/${slug}`} className={styles.media}>
         <Image
           src={image}
@@ -20,11 +55,6 @@ export default function ProjectCard({ project, priority = false }) {
       </Link>
 
       <div className={styles.body}>
-        <div className={styles.meta}>
-          <span className={styles.role}>{role}</span>
-          <span className={styles.year}>{year}</span>
-        </div>
-
         <h3 className={styles.title}>
           {/* Whole-card affordance without nesting interactive elements */}
           <Link href={`/projects/${slug}`} className={styles.titleLink}>
@@ -33,6 +63,22 @@ export default function ProjectCard({ project, priority = false }) {
         </h3>
 
         <p className={styles.summary}>{summary}</p>
+
+        {/* Spec strip */}
+        <dl className={styles.spec}>
+          <div>
+            <dt className="readout-label">Year</dt>
+            <dd className="readout-value">{year}</dd>
+          </div>
+          <div>
+            <dt className="readout-label">Stack</dt>
+            <dd className="readout-value">{tags.length}</dd>
+          </div>
+          <div>
+            <dt className="readout-label">Role</dt>
+            <dd className={styles.specRole}>{role}</dd>
+          </div>
+        </dl>
 
         <ul className={styles.tags}>
           {tags.map((tag) => (

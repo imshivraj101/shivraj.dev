@@ -17,7 +17,10 @@
   --sh-2-lift: 6px 6px 0 var(--on-dark);
   --sh-press: 1px 1px 0 var(--on-dark);
 
-  background-color: var(--ink);
+  /* NOT var(--ink): that token inverts in dark mode and would turn
+     this permanently-dark surface light. --footer-bg stays dark in
+     both themes. */
+  background-color: var(--footer-bg);
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);

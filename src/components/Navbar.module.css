@@ -4,6 +4,7 @@
   z-index: 1000;
   background: var(--paper);
   border-bottom: var(--bd-1);
+  transition: background-color var(--dur) ease;
 }
 
 .nav {
@@ -92,6 +93,13 @@
   background: var(--ink);
 }
 
+/* ---- Right-hand controls ---- */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
 /* ---- Burger ---- */
 .burger {
   display: none;
@@ -131,6 +139,7 @@
 /* ---- Mobile sheet ---- */
 .sheet {
   display: none;
+  transition: background-color var(--dur) ease;
   flex-direction: column;
   gap: var(--s-4);
   padding: var(--s-5) var(--gutter) var(--s-7);

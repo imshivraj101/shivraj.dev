@@ -116,3 +116,7 @@ export const projects = [
 
 export const getProject = (slug) => projects.find((p) => p.slug === slug);
 export const allTags = [...new Set(projects.flatMap((p) => p.tags))].sort();
+
+/** Zero-padded dex number from canonical order, not filtered order. */
+export const entryNoOf = (slug) =>
+  String(projects.findIndex((p) => p.slug === slug) + 1).padStart(3, "0");

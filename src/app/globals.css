@@ -1,36 +1,54 @@
 /* ============================================================
    DESIGN TOKENS
-   Neo-brutalist system built on three weight tiers.
-   Tier 1 = hero / primary action   (4px border, 8px shadow, tilt)
-   Tier 2 = cards / containers      (2px border, 4px shadow, no tilt)
+   Neo-brutalist system on three weight tiers, framed in
+   Pokedex-style device chrome.
+   Tier 1 = hero / primary action   (4px border, 8px shadow)
+   Tier 2 = cards / containers      (2px border, 4px shadow)
    Tier 3 = tags / meta             (no border, tinted fill)
    ============================================================ */
 
 :root {
+  color-scheme: light;
+
   /* ---- Surfaces ---------------------------------------- */
   --ink: #121216;
   --ink-soft: #4a4a55;      /* secondary text   ~9:1 on surface */
   --ink-faint: #6e6e7a;     /* meta text        ~4.8:1 on paper */
   --paper: #faf8f5;
   --surface: #ffffff;
+  --panel: #ede8df;         /* recessed readout / screen inset */
   --rule: rgba(18, 18, 22, 0.12);
   --grid-line: rgba(18, 18, 22, 0.055);
 
   /* ---- Colour roles ------------------------------------
-     Each colour has exactly one job. Do not cross-assign.  */
+     Each colour has exactly one job. Do not cross-assign.
+     There is deliberately no sky blue anywhere in this system. */
   --action: #0dfc71;        /* primary interactive fill ONLY  */
   --action-hover: #00e063;
   --accent: #ff6b00;        /* brand accent, decorative fills */
   --accent-ink: #b84800;    /* text-safe accent, 5.0:1 on paper */
-  --highlight: #ffd043;     /* marker / highlight fills ONLY  */
-  --cool: #00f0ff;          /* decoration ONLY, never text    */
+  --highlight: #ffd043;     /* headings + highlight fills     */
+
+  /* Display type is always yellow; only the edge colour moves. */
+  --outline-fill: var(--highlight);
+  --outline-edge: var(--ink);
+
+  /* Permanently dark surfaces keep their own scale so they do
+     not flip when the theme does. */
+  --footer-bg: #121216;
+  --on-dark: #f4f4f6;
+  --on-dark-soft: #a9a9b8;
 
   /* ---- Weight tiers ------------------------------------
-     A dark surface has to redeclare this whole block, not just a
-     colour token: the var() inside a custom property is substituted
-     where the property is DECLARED, so overriding an inner token
-     further down the tree leaves these composites untouched.
-     See .footer in Footer.module.css. */
+     A DESCENDANT on another surface must redeclare this whole
+     block, not just a colour token: the var() inside a custom
+     property is substituted where the property is DECLARED, so
+     overriding an inner token further down the tree leaves these
+     composites untouched. See .footer in Footer.module.css.
+
+     Redefining --ink on :root ITSELF does flow through, because
+     the substitution happens on the same element after the
+     cascade. That is exactly how dark mode below works. */
   --bd-1: 4px solid var(--ink);
   --bd-2: 2px solid var(--ink);
   --sh-1: 8px 8px 0 var(--ink);
@@ -39,9 +57,9 @@
   --sh-2-lift: 6px 6px 0 var(--ink);
   --sh-press: 1px 1px 0 var(--ink);
 
-  /* ---- Tilt: one switch turns the whole scrapbook off --- */
-  --tilt: 1deg;
-  --tilt-alt: -1deg;
+  /* ---- Tilt: one switch turns the scrapbook motif off --- */
+  --tilt: 0.6deg;
+  --tilt-alt: -0.6deg;
 
   /* ---- Fluid type scale -------------------------------- */
   --t-xs: clamp(0.75rem, 0.73rem + 0.10vw, 0.8125rem);
@@ -74,6 +92,53 @@
 }
 
 /* ============================================================
+   DARK THEME
+   Only the surface tokens are restated. The weight-tier
+   composites above resolve against the winning --ink on :root,
+   so every border and offset shadow inverts automatically.
+   ============================================================ */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #f2f2f5;
+  --ink-soft: #bcbcc8;
+  --ink-faint: #9494a2;
+  --paper: #14141a;
+  --surface: #1d1d25;
+  --panel: #0e0e13;
+  --rule: rgba(242, 242, 245, 0.16);
+  --grid-line: rgba(242, 242, 245, 0.05);
+
+  --accent-ink: #ff9142;
+
+  /* On a dark ground the sticker edge reads as true black. An
+     ink-coloured stroke would go light and dissolve the letterform. */
+  --outline-edge: #000000;
+
+  --footer-bg: #0b0b0f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ink: #f2f2f5;
+    --ink-soft: #bcbcc8;
+    --ink-faint: #9494a2;
+    --paper: #14141a;
+    --surface: #1d1d25;
+    --panel: #0e0e13;
+    --rule: rgba(242, 242, 245, 0.16);
+    --grid-line: rgba(242, 242, 245, 0.05);
+
+    --accent-ink: #ff9142;
+    --outline-edge: #000000;
+    --footer-bg: #0b0b0f;
+  }
+}
+
+/* ============================================================
    RESET
    ============================================================ */
 
@@ -90,7 +155,7 @@
 
 html {
   scroll-behavior: smooth;
-  /* keep anchored sections clear of the fixed navbar */
+  /* keep anchored sections clear of the sticky navbar */
   scroll-padding-top: calc(var(--nav-h) + var(--s-5));
   -webkit-text-size-adjust: 100%;
 }
@@ -103,6 +168,7 @@ body {
   line-height: 1.6;
   min-height: 100svh;
   position: relative;
+  transition: background-color var(--dur) ease, color var(--dur) ease;
   /* NOTE: no overflow-x:hidden here. The 100vw overflow bug it
      used to mask is fixed at the source. Keep it that way. */
 }
@@ -158,7 +224,7 @@ a {
 }
 
 /* ============================================================
-   FOCUS - every interactive element gets a visible ring.
+   FOCUS
    ============================================================ */
 
 :focus-visible {
@@ -205,6 +271,7 @@ a {
   z-index: 2000;
   padding: var(--s-2) var(--s-4);
   background: var(--highlight);
+  color: #121216;
   border: var(--bd-2);
   box-shadow: var(--sh-2);
   font-family: var(--font-display), sans-serif;
@@ -219,9 +286,9 @@ a {
 }
 
 /* ------------------------------------------------------------
-   Outline display type.
-   The base rule is SOLID ink so the text is always legible.
-   The stroked treatment layers on only where the browser really
+   Outline display type. Always yellow.
+   The base rule is a solid fill so the text is always legible;
+   the stroked treatment layers on only where the browser really
    supports -webkit-text-stroke, and paint-order keeps the stroke
    behind the fill so letterforms keep their true weight.
    ------------------------------------------------------------ */
@@ -231,18 +298,13 @@ a {
   text-shadow: 4px 4px 0 var(--highlight);
 }
 
-.outline-cool { text-shadow: 4px 4px 0 var(--cool); }
-.outline-accent { text-shadow: 4px 4px 0 var(--accent); }
-
 @supports (-webkit-text-stroke: 2px #000) and (paint-order: stroke) {
   .outline {
-    color: var(--highlight);
-    -webkit-text-stroke: 2.5px var(--ink);
+    color: var(--outline-fill);
+    -webkit-text-stroke: 2.5px var(--outline-edge);
     paint-order: stroke fill;
-    text-shadow: 6px 6px 0 var(--ink);
+    text-shadow: 6px 6px 0 var(--outline-edge);
   }
-  .outline-cool { color: var(--cool); text-shadow: 6px 6px 0 var(--ink); }
-  .outline-accent { color: var(--surface); text-shadow: 6px 6px 0 var(--ink); }
 }
 
 /* ------------------------------------------------------------
@@ -259,7 +321,7 @@ a {
   flex-direction: column;
   align-items: center;
   gap: var(--s-3);
-  margin-bottom: var(--s-8);
+  margin-bottom: var(--s-7);
   text-align: center;
 }
 
@@ -275,7 +337,6 @@ a {
   max-width: 52ch;
 }
 
-/* Eyebrow - Tier 3 */
 .eyebrow {
   display: inline-block;
   font-family: var(--font-display), sans-serif;
@@ -289,7 +350,7 @@ a {
 }
 
 /* ------------------------------------------------------------
-   Buttons - Tier 1 (primary) and Tier 2 (secondary)
+   Buttons
    ------------------------------------------------------------ */
 
 .btn {
@@ -312,13 +373,15 @@ a {
   transition:
     transform var(--dur-fast) var(--ease-pop),
     box-shadow var(--dur-fast) var(--ease-pop),
-    background-color var(--dur-fast) ease;
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
 }
 
 .btn:hover {
   transform: translate(-2px, -2px);
   box-shadow: var(--sh-2-lift);
   background: var(--highlight);
+  color: #121216;
 }
 
 .btn:active {
@@ -330,6 +393,7 @@ a {
 .btn-primary {
   border: var(--bd-1);
   background: var(--action);
+  color: #121216;
   padding: var(--s-4) var(--s-7);
   font-size: var(--t-md);
   font-weight: 900;
@@ -338,6 +402,7 @@ a {
 
 .btn-primary:hover {
   background: var(--action-hover);
+  color: #121216;
   box-shadow: var(--sh-1-lift);
   transform: translate(-3px, -3px);
 }
@@ -359,7 +424,7 @@ a {
 }
 
 /* ------------------------------------------------------------
-   Cards - Tier 2
+   Cards
    ------------------------------------------------------------ */
 
 .card {
@@ -368,7 +433,8 @@ a {
   box-shadow: var(--sh-2);
   transition:
     transform var(--dur) var(--ease-pop),
-    box-shadow var(--dur) var(--ease-pop);
+    box-shadow var(--dur) var(--ease-pop),
+    background-color var(--dur) ease;
 }
 
 .card:hover {
@@ -385,24 +451,116 @@ a {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
   padding: 0.2rem var(--s-2);
 }
 
+/* ============================================================
+   DEX KIT
+   Index numbers, type chips, status LEDs and recessed readouts.
+   ============================================================ */
+
+/* Entry number, e.g. No. 001 */
+.entry-no {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.entry-no b {
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Type chip. No colour sprawl: the three project types are
+   separated by fill weight, not by three new hues. */
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.1rem var(--s-3);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+.type-ai {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.type-design {
+  background: var(--accent);
+  color: #121216;
+}
+
+.type-dev {
+  background: var(--highlight);
+  color: #121216;
+}
+
+/* Status LED */
+.led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.led-on {
+  background: var(--action);
+}
+
+/* Recessed readout row */
+.readout-label {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.readout-value {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-base);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ------------------------------------------------------------
-   Decorative stars
+   Decorative stars - subordinated to background texture now
+   that the dex chrome carries the structure.
    ------------------------------------------------------------ */
 
 .decor-star {
   position: absolute;
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   pointer-events: none;
+  opacity: 0.4;
   z-index: 0;
 }
 
-.star-cool { background: var(--cool); }
 .star-accent { background: var(--accent); }
 .star-highlight { background: var(--highlight); }
 
@@ -417,12 +575,11 @@ a {
 
 ::selection {
   background: var(--highlight);
-  color: var(--ink);
+  color: #121216;
 }
 
 /* ============================================================
    REDUCED MOTION
-   Kill transitions, animations and the decorative tilt.
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {

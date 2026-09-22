@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { work, college, rangeOf, spanOf } from "../data/experience";
 import Reveal, { RevealGroup, RevealItem } from "./Reveal";
+import DexFrame from "./DexFrame";
 import styles from "./Experience.module.css";
 
 function initialsOf(org) {
@@ -101,13 +102,15 @@ export default function Experience() {
             </p>
           </Reveal>
 
-          <RevealGroup className={styles.workGrid}>
-            {work.map((job) => (
-              <RevealItem key={`${job.role}-${job.org}`}>
-                <WorkCard job={job} />
-              </RevealItem>
-            ))}
-          </RevealGroup>
+          <DexFrame label="Current Posting" entry="ACTIVE">
+            <RevealGroup className={styles.workGrid}>
+              {work.map((job) => (
+                <RevealItem key={job.org}>
+                  <WorkCard job={job} />
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </DexFrame>
         </div>
       </section>
 
@@ -115,7 +118,7 @@ export default function Experience() {
         <div className="wrap">
           <Reveal className="section-head">
             <p className="eyebrow">Before this</p>
-            <h2 className="section-title outline-cool">
+            <h2 className="section-title outline">
               College days at KKWIEER
             </h2>
             <p className="section-lede">
@@ -124,6 +127,7 @@ export default function Experience() {
             </p>
           </Reveal>
 
+          <DexFrame label="Archive · KKWIEER" entry={`${college.length} entries`}>
           {groups.map(({ key, label }) => {
             const items = college.filter((e) => e.type === key);
             if (items.length === 0) return null;
@@ -146,6 +150,7 @@ export default function Experience() {
               </div>
             );
           })}
+          </DexFrame>
         </div>
       </section>
     </>

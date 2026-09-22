@@ -87,8 +87,11 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#faf8f5",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf8f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#14141a" },
+  ],
+  colorScheme: "light dark",
 };
 
 const jsonLd = {
@@ -118,7 +121,26 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable}`}
+      /* The pre-paint script below sets data-theme before React
+         hydrates, so this element's attributes legitimately differ
+         from the server output. Scoped to <html> only - it does not
+         suppress warnings anywhere in the subtree. */
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          // Runs before first paint so a stored dark preference never
+          // flashes white. Falls through to the CSS media query when
+          // nothing is stored, and is a no-op if storage throws.
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}",
+          }}
+        />
+      </head>
       <body>
         <script
           type="application/ld+json"

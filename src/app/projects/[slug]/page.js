@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projects, getProject } from "../../../data/projects";
+import { projects, getProject, entryNoOf } from "../../../data/projects";
+import { TYPE_CLASS } from "../../../components/ProjectCard";
 import styles from "./case.module.css";
 
 export function generateStaticParams() {
@@ -43,6 +44,24 @@ export default async function Page({ params }) {
         </Link>
 
         <header className={styles.head}>
+          <div className={styles.entryBar}>
+            <span className="entry-no">
+              No.<b>{entryNoOf(project.slug)}</b>
+            </span>
+            <span
+              className={`type-chip ${TYPE_CLASS[project.discipline] ?? ""}`}
+            >
+              {project.discipline}
+            </span>
+            <span className={styles.status}>
+              <span
+                className={`led ${project.live ? "led-on" : ""}`}
+                aria-hidden="true"
+              />
+              {project.live ? "Live" : "Source"}
+            </span>
+          </div>
+
           <p className="eyebrow">
             {project.role} &middot; {project.year}
           </p>

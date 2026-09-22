@@ -2,6 +2,7 @@ import Image from "next/image";
 import { blogs } from "../data/blogs";
 import { site } from "../data/site";
 import Reveal, { RevealGroup, RevealItem } from "./Reveal";
+import DexFrame from "./DexFrame";
 import styles from "./Blogs.module.css";
 
 export default function Blogs({ limit }) {
@@ -12,14 +13,15 @@ export default function Blogs({ limit }) {
       <div className="wrap">
         <Reveal className="section-head">
           <p className="eyebrow">Writing</p>
-          <h2 className="section-title outline-cool">Latest blogs</h2>
+          <h2 className="section-title outline">Latest blogs</h2>
           <p className="section-lede">
             Explaining machine learning and cloud infrastructure with the
             analogies I wish someone had used on me.
           </p>
         </Reveal>
 
-        <RevealGroup className={styles.list}>
+        <DexFrame label="Writing Log" entry={`${shown.length} entries`}>
+          <RevealGroup className={styles.list}>
           {shown.map((post) => (
             <RevealItem key={post.url}>
               <article className={`card ${styles.card}`}>
@@ -71,7 +73,8 @@ export default function Blogs({ limit }) {
               </article>
             </RevealItem>
           ))}
-        </RevealGroup>
+          </RevealGroup>
+        </DexFrame>
 
         <div className={styles.all}>
           <a
