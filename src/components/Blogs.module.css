@@ -2,7 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: clamp(1.25rem, 2.5vw, 2rem);
-  max-width: var(--wrap-narrow);
+  /* 820px looked like a ribbon once the page wrap grew; 1120 uses
+     the width without stretching the summary line past comfort. */
+  max-width: min(var(--wrap), 1120px);
   margin-inline: auto;
 }
 

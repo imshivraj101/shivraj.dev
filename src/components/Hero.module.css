@@ -22,9 +22,28 @@
   padding-inline: var(--gutter);
   position: relative;
   z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  align-items: center;
+}
+
+/* The split only earns its keep once there is width to split. Below
+   1024px the spec readout stacks under the identity block, which is
+   also what Googlebot sees under mobile-first indexing. */
+@media (min-width: 1024px) {
+  .inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+  }
+}
+
+.main {
   display: flex;
   flex-direction: column;
-  gap: clamp(1.5rem, 4vw, 2.5rem);
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  min-width: 0;
 }
 
 /* ------------------------------------------------------------
@@ -42,7 +61,7 @@
 
 .polaroid {
   flex-shrink: 0;
-  width: clamp(120px, 30vw, 300px);
+  width: clamp(120px, 26vw, 260px);
   background: var(--surface);
   border: var(--bd-1);
   box-shadow: var(--sh-1);
@@ -135,9 +154,7 @@
 
 .specWrap {
   width: 100%;
-  max-width: var(--wrap);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
+  min-width: 0;
   position: relative;
   z-index: 1;
 }
@@ -198,10 +215,6 @@
   50% { transform: translateY(4px); }
 }
 
-/* ---- Stars: background texture, not foreground stickers ---- */
-.starOne { top: 10%; right: 6%; }
-.starTwo { bottom: 18%; left: 4%; }
-
 @media (max-width: 767px) {
   .lede {
     font-size: var(--t-base);
@@ -220,13 +233,23 @@
     padding-inline: var(--s-5);
     font-size: var(--t-sm);
   }
-
-  .starOne, .starTwo { display: none; }
 }
 
 @media (max-width: 380px) {
   .actions {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* Desktop refinements live at the END of this file on purpose: a
+   media query adds no specificity, so the same rules placed higher up
+   were losing to the base .specRow further down. Rows get more air so
+   the readout carries its half of the split; stretching them to the
+   full column height was tried and read as hollow. */
+@media (min-width: 1024px) {
+  .specRow {
+    padding: var(--s-5);
+    align-items: center;
   }
 }

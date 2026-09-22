@@ -5,6 +5,14 @@
   align-items: stretch;
 }
 
+/* Five projects: let auto-fit run to four columns and the last row
+   is a single orphan card. Three is the balanced split (3 + 2). */
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Every grid child must stretch so cards in a row match height */
 .grid > * {
   display: flex;

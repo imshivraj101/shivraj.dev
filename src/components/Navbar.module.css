@@ -4,7 +4,20 @@
   z-index: 1000;
   background: var(--paper);
   border-bottom: var(--bd-1);
-  transition: background-color var(--dur) ease;
+  transition:
+    background-color var(--dur) ease,
+    transform var(--dur) var(--ease-out);
+}
+
+/* Slides away on scroll down, returns on scroll up. */
+.header[data-hidden] {
+  transform: translateY(-100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    transition: background-color var(--dur) ease;
+  }
 }
 
 .nav {
