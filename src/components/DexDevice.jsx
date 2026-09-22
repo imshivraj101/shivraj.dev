@@ -74,20 +74,7 @@ export default function DexDevice() {
             <i className={styles.lampGreen} />
           </span>
 
-          <div className={styles.tabBar}>
-            <button
-              type="button"
-              className={styles.chev}
-              aria-label="Previous section"
-              onClick={() => {
-                const i = MODES.findIndex((m) => m.id === mode);
-                setMode(MODES[(i - 1 + MODES.length) % MODES.length].id);
-              }}
-            >
-              <span aria-hidden="true">&#9664;</span>
-            </button>
-
-            <div className={styles.tabs} role="tablist" aria-label="Sections">
+          <div className={styles.tabs} role="tablist" aria-label="Sections">
             {MODES.map((m) => (
               <button
                 key={m.id}
@@ -103,19 +90,6 @@ export default function DexDevice() {
                 {m.label}
               </button>
             ))}
-            </div>
-
-            <button
-              type="button"
-              className={styles.chev}
-              aria-label="Next section"
-              onClick={() => {
-                const i = MODES.findIndex((m) => m.id === mode);
-                setMode(MODES[(i + 1) % MODES.length].id);
-              }}
-            >
-              <span aria-hidden="true">&#9654;</span>
-            </button>
           </div>
 
           <span className={styles.counter} aria-hidden="true">

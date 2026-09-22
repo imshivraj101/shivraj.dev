@@ -1,4 +1,4 @@
-import { Oswald, Plus_Jakarta_Sans, Silkscreen } from "next/font/google";
+import { Oswald, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "../components/Navbar";
@@ -17,16 +17,6 @@ const body = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-body",
-  display: "swap",
-});
-
-/* Bitmap face for UI chrome only - tabs, entry numbers, stat labels,
-   type pills. Prose stays in Plus Jakarta: pixel fonts are genuinely
-   hard to read at paragraph length and recruiters skim these. */
-const pixel = Silkscreen({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-pixel",
   display: "swap",
 });
 
@@ -123,7 +113,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${pixel.variable}`}
+      className={`${display.variable} ${body.variable}`}
       /* The pre-paint script below sets data-theme before React
          hydrates, so this element's attributes legitimately differ
          from the server output. Scoped to <html> only - it does not
