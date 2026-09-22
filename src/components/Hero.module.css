@@ -185,25 +185,85 @@
   z-index: 1;
 }
 
-.spec {
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+
+.factCard {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4);
   background: var(--panel);
-  border: var(--bd-1);
+  border: var(--bd-2);
   box-shadow: var(--sh-2);
-  display: grid;
-  gap: 0;
 }
 
-.specRow {
-  display: grid;
-  grid-template-columns: 112px 1fr;
-  gap: var(--s-4);
-  align-items: baseline;
-  padding: var(--s-3) var(--s-4);
-  border-bottom: 2px solid var(--rule);
+.factLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-.specRow:last-child {
-  border-bottom: none;
+.factValue {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ---- Stack rail ---- */
+
+.rail {
+  margin-top: var(--s-3);
+  padding: var(--s-4);
+  background: var(--panel);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+}
+
+.railLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.railList {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--ink);
+  background: var(--surface);
+  border: var(--bd-2);
+  transition:
+    transform var(--dur-fast) var(--ease-pop),
+    box-shadow var(--dur-fast) var(--ease-pop);
+}
+
+.chip:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-2);
 }
 
 /* ------------------------------------------------------------
@@ -301,9 +361,8 @@
     padding-left: var(--s-3);
   }
 
-  .specRow {
+  .facts {
     grid-template-columns: 1fr;
-    gap: 2px;
   }
 
   /* Three actions flowed as a row left LinkedIn stranded alone on a
@@ -339,8 +398,7 @@
    the readout carries its half of the split; stretching them to the
    full column height was tried and read as hollow. */
 @media (min-width: 1024px) {
-  .specRow {
-    padding: var(--s-5);
-    align-items: center;
+  .factCard {
+    padding: var(--s-5) var(--s-4);
   }
 }

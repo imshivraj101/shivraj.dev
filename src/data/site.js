@@ -2,6 +2,8 @@
    the JSON-LD graph all derive from this one value. Moving to a
    custom domain is therefore a single env var in Vercel, not a
    find-and-replace across the codebase. */
+import { stackNames } from "./stack";
+
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://shivraj-dev-eta.vercel.app"
 ).replace(/\/$/, "");
@@ -16,24 +18,15 @@ export const site = {
     "https://mail.google.com/mail/?view=cm&fs=1&to=shivrajtalekar101@gmail.com",
   employer: { name: "ESDS", role: "Artificial Intelligence Product Engineer" },
 
-  /* Shown in the hero spec readout. Kept as an explicit list rather
-     than aggregated from project tags, because those carry non-stack
-     entries like "Swiss Ephemeris" and "Balsamiq". */
   discipline: "Full-stack / AI-ML",
 
   /* What the work is actually about, in the words a recruiter scans
      for. Drawn from the shipped projects, not aspiration. */
   focus: ["Agentic RAG", "Knowledge graphs", "Full-stack product"],
   education: "CS & Design, KKWIEER — class of 2026",
-  stack: [
-    "Python",
-    "FastAPI",
-    "Neo4j",
-    "React",
-    "Next.js",
-    "Docker",
-    "AWS",
-  ],
+  /* Mirrors the rail in data/stack.js so llms.txt and the JSON-LD
+     can never disagree with what the hero shows. */
+  stack: stackNames,
   socials: [
     { label: "GitHub", href: "https://github.com/imshivraj101" },
     {

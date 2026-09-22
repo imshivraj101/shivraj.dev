@@ -5,17 +5,16 @@ import { site } from "../data/site";
 import { projects } from "../data/projects";
 import { blogs } from "../data/blogs";
 import { college, spanOf, work } from "../data/experience";
+import { stack } from "../data/stack";
 import styles from "./Hero.module.css";
 
-/* The readout answers the four things a hiring manager checks in the
-   first ten seconds: where he works now, what the work is about, what
-   he builds with, and where he is in his degree. "Type / Shipped" was
-   answering none of them. Every value comes from data that renders
-   elsewhere on the site, so nothing here can quietly become untrue. */
-const spec = [
+/* Three of the four things a hiring manager checks in the first ten
+   seconds. The fourth - what he builds with - is the rail underneath,
+   because eleven tool names set as running text was the row that made
+   the old panel look like a spreadsheet. */
+const facts = [
   { label: "Now", value: `${site.employer.role} @ ${site.employer.name}` },
   { label: "Focus", value: site.focus.join(" · ") },
-  { label: "Stack", value: site.stack.join(" · ") },
   { label: "Study", value: site.education },
 ];
 
@@ -97,14 +96,38 @@ export default function Hero() {
         </div>
 
         <div className={styles.specWrap}>
-          <dl className={styles.spec}>
-            {spec.map((row) => (
-              <div key={row.label} className={styles.specRow}>
-                <dt className="readout-label">{row.label}</dt>
-                <dd className="readout-value">{row.value}</dd>
+          <dl className={styles.facts}>
+            {facts.map((row) => (
+              <div key={row.label} className={styles.factCard}>
+                <dt className={styles.factLabel}>{row.label}</dt>
+                <dd className={styles.factValue}>{row.value}</dd>
               </div>
             ))}
           </dl>
+
+          {/* Marks render in currentColor, not brand colour. Half of
+              these brands are a shade of sky blue - React, Docker,
+              Neo4j, LangChain - which the palette rules out. */}
+          <div className={styles.rail}>
+            <p className={styles.railLabel}>Built with</p>
+            <ul className={styles.railList}>
+              {stack.map((tool) => (
+                <li key={tool.name}>
+                  <span className={styles.chip} title={tool.name}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="21"
+                      height="21"
+                      role="img"
+                      aria-label={tool.name}
+                    >
+                      <path d={tool.d} fill="currentColor" />
+                    </svg>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
