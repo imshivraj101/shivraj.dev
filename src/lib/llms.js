@@ -17,7 +17,7 @@ function header() {
 
   return `# ${site.name}
 
-> ${site.role} based in Nashik, India. Builds agentic RAG and knowledge-graph systems, and the full-stack products that ship them. Currently ${site.employer.role} at ${work[0].org}.
+> ${site.role} based in Nashik, India. Engineers AI products end to end - the systems, infrastructure and intelligence behind them, from idea to production. Works on agentic RAG and knowledge-graph systems. Currently ${site.employer.role} at ${work[0].org}.
 
 Shivraj Talekar is an AI/ML engineer and full-stack developer. At ${work[0].org} he has held: ${roles}. He studied CS & Design at KKWIEER, Nashik, graduating 2026, where he was President of the Design Society and Head of Design & Branding for TEDxKKWIEER.
 

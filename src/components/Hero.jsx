@@ -65,9 +65,10 @@ export default function Hero() {
 
           <div className={styles.copy}>
             <p className={styles.lede}>
-              I build AI systems end to end &mdash; retrieval, knowledge graphs
-              and the product that ships them. Currently {site.employer.role} at{" "}
-              {site.employer.name}, after starting there in cloud and DevOps.
+              I engineer AI products end to end &mdash; designing the systems,
+              infrastructure, and intelligence behind them, and taking them from
+              idea to production. Currently an {site.employer.role} at{" "}
+              {site.employer.name}, after starting out in Cloud &amp; DevOps.
             </p>
 
             <div className={styles.actions}>

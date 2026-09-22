@@ -35,7 +35,7 @@ export function person() {
     image: `${SITE_URL}/sne.png`,
     jobTitle: site.employer.role,
     description:
-      "AI/ML engineer building agentic RAG and knowledge-graph systems, and the full-stack products that ship them.",
+      "Engineers AI products end to end - the systems, infrastructure and intelligence behind them, from idea to production. Works on agentic RAG and knowledge-graph systems, and the full-stack products that ship them.",
     worksFor: { "@id": ORG_ID },
     ...(current && {
       hasOccupation: {
