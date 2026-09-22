@@ -1,0 +1,200 @@
+.page {
+  padding-block: clamp(2rem, 5vw, 3.5rem) clamp(3.5rem, 8vw, 6rem);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
+}
+
+.back:hover {
+  color: var(--accent-ink);
+  border-bottom-color: var(--accent);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+
+.title {
+  font-size: var(--t-3xl);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.015em;
+}
+
+.summary {
+  font-size: var(--t-md);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  list-style: none;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+
+/* ---- Full-bleed screenshot ---- */
+.shotWrap {
+  margin-block: clamp(2.5rem, 6vw, 4rem);
+  padding-block: clamp(2rem, 5vw, 3rem);
+  background: var(--highlight);
+  border-block: var(--bd-1);
+}
+
+.shot {
+  width: 100%;
+  height: auto;
+  border: var(--bd-1);
+  box-shadow: var(--sh-1);
+}
+
+/* ---- Content blocks ---- */
+.block {
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.blockTitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  font-size: var(--t-xl);
+  font-weight: 700;
+  margin-bottom: var(--s-5);
+  padding-bottom: var(--s-3);
+  border-bottom: 3px solid var(--ink);
+}
+
+.num {
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--accent-ink);
+  letter-spacing: 0.1em;
+}
+
+.prose {
+  font-size: var(--t-base);
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+
+/* ---- Approach steps ---- */
+.steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  counter-reset: step;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.stepNum {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  background: var(--highlight);
+  border: 2px solid var(--ink);
+  padding: 2px var(--s-2);
+  line-height: 1.5;
+}
+
+/* ---- Outcome ---- */
+.outcome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  list-style: none;
+}
+
+.outcome li {
+  padding-left: var(--s-5);
+  position: relative;
+}
+
+.outcome li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 10px;
+  height: 10px;
+  background: var(--action);
+  border: 2px solid var(--ink);
+}
+
+/* ---- Next project ---- */
+.next {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-top: var(--s-5);
+  border-top: 3px solid var(--ink);
+}
+
+.nextLabel {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.nextLink {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xl);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  transition: color var(--dur-fast) ease;
+  width: fit-content;
+}
+
+.nextLink:hover {
+  color: var(--accent-ink);
+}
+
+@media (max-width: 520px) {
+  .actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

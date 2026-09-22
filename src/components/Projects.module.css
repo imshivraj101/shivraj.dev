@@ -1,0 +1,198 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: stretch;
+}
+
+/* Every grid child must stretch so cards in a row match height */
+.grid > * {
+  display: flex;
+}
+
+/* ---- Card: Tier 2. No tilt, 2px border, 4px shadow. ---- */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.media {
+  display: block;
+  position: relative;
+  border-bottom: var(--bd-2);
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--s-3);
+  padding: var(--s-5);
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.role {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.year {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+
+.title {
+  font-size: var(--t-lg);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.titleLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Expand the title link to cover the card, so the whole surface is
+   clickable while only one real link sits in the tab order. */
+.titleLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.summary {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  list-style: none;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+  padding-top: var(--s-4);
+  border-top: 2px solid var(--rule);
+  /* lift above the title overlay so these stay individually clickable */
+  position: relative;
+  z-index: 2;
+}
+
+.cta {
+  padding: var(--s-2) var(--s-4);
+}
+
+/* Tier 3 secondary links - no border, no shadow */
+.quiet {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
+}
+
+.quiet:hover {
+  color: var(--accent-ink);
+  border-bottom-color: var(--accent);
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--s-8);
+}
+
+/* ---- Filter bar (projects index) ---- */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-2);
+  margin-bottom: var(--s-7);
+}
+
+.filter {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 2px solid var(--rule);
+  padding: var(--s-2) var(--s-4);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.filter:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.filter[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.count {
+  text-align: center;
+  font-size: var(--t-sm);
+  color: var(--ink-faint);
+  margin-bottom: var(--s-5);
+}
+
+.empty {
+  text-align: center;
+  color: var(--ink-faint);
+  padding-block: var(--s-8);
+}

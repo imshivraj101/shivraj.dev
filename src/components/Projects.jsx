@@ -1,91 +1,41 @@
 import Link from "next/link";
-
-// Import images
-import travelloreImg from "../assets/travellore.png";
-import trailerparkImg from "../assets/trailerpark.png";
-import radiusImg from "../assets/radius.png";
-import stoicImg from "../assets/stoic.png";
-
-const projects = [
-  {
-    title: "Travellore",
-    role: "UI/UX Research & Design",
-    description: "An AI-powered solo travel planner for intuitive and personalized itineraries.",
-    tags: ["Figma", "ReactJS", "Vite", "CSS", "Vercel"],
-    image: travelloreImg,
-    live: "https://travellore-case-study.vercel.app/",
-    github: "https://github.com/yourusername/travellore",
-  },
-  {
-    title: "Trailer-Park",
-    role: "UI/UX Development",
-    description: "Netflix trailer clone using TMDB API for seamless trailer browsing.",
-    tags: ["ReactJS", "TMDB API", "Vite", "CSS", "Vercel"],
-    image: trailerparkImg,
-    live: "https://trailer-park-tau.vercel.app/",
-    github: "https://github.com/yourusername/trailer-park",
-  },
-  {
-    title: "Radius",
-    role: "UI/UX Research & Design",
-    description: "A hyperlocal social app with custom user flows and backend-ready concepts.",
-    tags: ["Figma", "ReactJS", "Vite", "CSS", "Vercel"],
-    image: radiusImg,
-    live: "https://radius-case-study.vercel.app/",
-    github: "https://github.com/yourusername/radius",
-  },
-  {
-    title: "Stoiric",
-    role: "UI/UX Flow Design",
-    description: "A gamified self-growth journaling app based on Stoic principles.",
-    tags: ["Figma", "Balsamiq", "Canva"],
-    image: stoicImg,
-    live: "https://stoiric.vercel.app/",
-    github: "https://github.com/yourusername/stoiric"
-  }
-];
+import { projects } from "../data/projects";
+import ProjectCard from "./ProjectCard";
+import Reveal, { RevealGroup, RevealItem } from "./Reveal";
+import styles from "./Projects.module.css";
 
 export default function Projects({ limit }) {
-  const displayProjects = limit ? projects.slice(0, limit) : projects;
+  const shown = limit ? projects.slice(0, limit) : projects;
+  const hasMore = Boolean(limit) && projects.length > limit;
 
   return (
-    <section className="projects-section">
-      <h2 className="projects-title text-outline-yellow">NOTABLE PROJECTS</h2>
-      <div className="projects-grid">
-        {displayProjects.map((project, index) => (
-          <div key={index} className="project-card">
-            <img
-              src={project.image.src}
-              alt={project.title}
-              className="project-image"
-            />
-            <div className="project-content">
-              <div>
-                <h3 className="project-name">{project.title}</h3>
-                <p className="project-role">{project.role}</p>
-                <p className="project-desc">{project.description}</p>
-                <div className="project-tags">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="tag-tools">{tag}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="project-links">
-                <a href={project.live} target="_blank" rel="noopener noreferrer" className="project-link">Live</a>
-                <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">GitHub</a>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <section id="projects" className="section">
+      <div className="wrap">
+        <Reveal className="section-head">
+          <p className="eyebrow">Selected work</p>
+          <h2 className="section-title outline">Notable projects</h2>
+          <p className="section-lede">
+            AI/ML systems, product design and front-end builds &mdash; each
+            written up as a short case study rather than a screenshot.
+          </p>
+        </Reveal>
 
-      {limit && (
-        <div className="view-more">
-          <Link href="/projects" className="view-more-bton">
-            View More Projects
-          </Link>
-        </div>
-      )}
+        <RevealGroup className={styles.grid}>
+          {shown.map((project, i) => (
+            <RevealItem key={project.slug}>
+              <ProjectCard project={project} priority={i < 2} />
+            </RevealItem>
+          ))}
+        </RevealGroup>
+
+        {hasMore && (
+          <div className={styles.more}>
+            <Link href="/projects" className="btn">
+              All {projects.length} projects
+            </Link>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

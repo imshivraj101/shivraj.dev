@@ -1,0 +1,160 @@
+/* Dark surface: re-point the text tokens rather than hard-coding
+   white everywhere, so contrast stays managed in one place. */
+.footer {
+  --on-dark: #f4f4f6;
+  --on-dark-soft: #a9a9b8;
+
+  /* Redeclare the weight-tier composites for this dark surface. An
+     ink offset shadow is invisible against ink, which flattened the
+     primary button into a plain green rectangle. These have to be
+     restated in full - overriding an inner colour token would not
+     reach the composites, which were already substituted on :root. */
+  --bd-1: 4px solid var(--on-dark);
+  --bd-2: 2px solid var(--on-dark);
+  --sh-1: 8px 8px 0 var(--on-dark);
+  --sh-1-lift: 11px 11px 0 var(--on-dark);
+  --sh-2: 4px 4px 0 var(--on-dark);
+  --sh-2-lift: 6px 6px 0 var(--on-dark);
+  --sh-press: 1px 1px 0 var(--on-dark);
+
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--on-dark);
+  padding-block: clamp(3rem, 8vw, 5.5rem) var(--s-6);
+  border-top: var(--bd-1);
+}
+
+.footer :focus-visible {
+  outline-color: var(--highlight);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+.lead {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+}
+
+.eyebrow {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--highlight);
+}
+
+.heading {
+  font-size: var(--t-2xl);
+  font-weight: 700;
+  line-height: 0.95;
+  color: var(--on-dark);
+}
+
+.sub {
+  font-size: var(--t-sm);
+  color: var(--on-dark-soft);
+  max-width: 42ch;
+}
+
+.email {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-sm);
+  letter-spacing: 0.06em;
+  color: var(--on-dark-soft);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--dur-fast) ease,
+    border-color var(--dur-fast) ease;
+}
+
+.email:hover {
+  color: var(--on-dark);
+  border-bottom-color: var(--highlight);
+}
+
+/* ---- Socials: Tier 3 list, not four shadowed pills ---- */
+.social ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.socialTitle {
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--on-dark);
+  margin-bottom: var(--s-3);
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-base);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--on-dark-soft);
+  padding-block: var(--s-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: color var(--dur-fast) ease;
+}
+
+.socialLink:hover {
+  color: var(--highlight);
+}
+
+.arrow {
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.socialLink:hover .arrow {
+  transform: translate(3px, -3px);
+}
+
+/* ---- Bottom bar ---- */
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: clamp(2.5rem, 6vw, 4rem);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-dark-soft);
+}
+
+.built {
+  color: var(--on-dark-soft);
+}
+
+@media (max-width: 767px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom {
+    justify-content: center;
+    text-align: center;
+  }
+}

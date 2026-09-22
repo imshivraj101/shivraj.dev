@@ -1,79 +1,90 @@
-import React from "react";
-
-import blog1 from "../assets/blog1.webp";
-import blog2 from "../assets/blog2.webp";
-import blog3 from "../assets/blog3.webp";
-
-const blogs = [
-  {
-    title: "X to Y: Mapping My Life with Machine Learning",
-    url: "https://medium.com/@shivrajtalekar101/x-to-y-mapping-my-life-with-machine-learning-06b01814cc65",
-    date: "Jul 24, 2025",
-    description:
-      "Reflecting on personal growth and career choices through the lens of machine learning, emphasizing the importance of data and algorithms in decision-making.",
-    image: blog1,
-  },
-  {
-    title: "The Guide to Cloud Computing: With a Cup of Coffee",
-    url: "https://medium.com/@shivrajtalekar101/the-guide-to-cloud-computing-with-a-cup-of-coffeeask-c-2290762a61b8",
-    date: "Aug 9, 2025",
-    description:
-      "A beginner-friendly introduction to cloud computing, using the coffee shop analogy to explain the client-server model and AWS's evolution.",
-    image: blog2,
-  },
-  {
-    title: "AWS Regions, Infrastructure as Code and McAloo Tikkis",
-    url: "https://medium.com/@shivrajtalekar101/aws-regions-infrastructure-as-code-and-mcaloo-tikkis-1dd84de0642d",
-    date: "Aug 11, 2025",
-    description:
-      "Exploring AWS's global infrastructure and how Infrastructure as Code (IaC) ensures high availability and fault tolerance, using the McAloo Tikki analogy.",
-    image: blog3,
-  },
-];
+import Image from "next/image";
+import { blogs } from "../data/blogs";
+import { site } from "../data/site";
+import Reveal, { RevealGroup, RevealItem } from "./Reveal";
+import styles from "./Blogs.module.css";
 
 export default function Blogs({ limit }) {
-  const displayBlogs = limit ? blogs.slice(0, limit) : blogs;
+  const shown = limit ? blogs.slice(0, limit) : blogs;
 
   return (
-    <section className="blogs-section">
-      <h1 className="blogs-title text-outline-cyan">LATEST BLOGS</h1>
-      <div className="blogs-list">
-        {displayBlogs.map((blog, index) => (
-          <div key={index} className="blog-card">
-            <img
-              src={blog.image.src}
-              alt={blog.title}
-              className="blog-image"
-            />
-            <div className="blog-content">
-              <h2 className="blog-title">{blog.title}</h2>
-              <p className="blog-date">{blog.date}</p>
-              <p className="blog-description">{blog.description}</p>
-              <a
-                href={blog.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="read-more"
-              >
-                Read more →
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
+    <section id="writing" className="section">
+      <div className="wrap">
+        <Reveal className="section-head">
+          <p className="eyebrow">Writing</p>
+          <h2 className="section-title outline-cool">Latest blogs</h2>
+          <p className="section-lede">
+            Explaining machine learning and cloud infrastructure with the
+            analogies I wish someone had used on me.
+          </p>
+        </Reveal>
 
-      {limit && (
-        <div className="view-more-wrapper">
+        <RevealGroup className={styles.list}>
+          {shown.map((post) => (
+            <RevealItem key={post.url}>
+              <article className={`card ${styles.card}`}>
+                <a
+                  className={styles.media}
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                >
+                  <Image
+                    src={post.image}
+                    alt=""
+                    className={styles.image}
+                    sizes="(max-width: 767px) 92vw, 260px"
+                    placeholder="blur"
+                  />
+                </a>
+
+                <div className={styles.body}>
+                  <div className={styles.meta}>
+                    <time dateTime={post.date}>{post.dateLabel}</time>
+                    <span aria-hidden="true">&middot;</span>
+                    <span>{post.readingTime} read</span>
+                  </div>
+
+                  <h3 className={styles.title}>
+                    <a
+                      className={styles.titleLink}
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {post.title}
+                      <span className="visually-hidden">
+                        {" "}
+                        (opens on Medium in a new tab)
+                      </span>
+                    </a>
+                  </h3>
+
+                  <p className={styles.excerpt}>{post.description}</p>
+
+                  <span className={styles.more} aria-hidden="true">
+                    Read on Medium &#8599;
+                  </span>
+                </div>
+              </article>
+            </RevealItem>
+          ))}
+        </RevealGroup>
+
+        <div className={styles.all}>
           <a
-            href="https://medium.com/@shivrajtalekar101"
+            className="btn"
+            href={site.medium}
             target="_blank"
             rel="noopener noreferrer"
-            className="view-more-btn"
           >
-            View All Blogs
+            All writing on Medium
+            <span aria-hidden="true">&#8599;</span>
           </a>
         </div>
-      )}
+      </div>
     </section>
   );
 }

@@ -1,26 +1,46 @@
+import { Oswald, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import "../App.css";
-import "../components/Navbar.css";
-import "../components/Home.css";
-import "../components/Projects.css";
-import "../components/Blogs.css";
-import "../components/Experience.css";
-import "../components/Footer.css";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { site } from "../data/site";
+
+const display = Oswald({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const body = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export const metadata = {
-  title: "Shivraj Talekar — Creative Frontend Developer & UI/UX Designer | Portfolio 2025",
+  metadataBase: new URL(site.url),
+  title: {
+    default: "Shivraj Talekar - AI/ML Engineer | Portfolio",
+    template: "%s | Shivraj Talekar",
+  },
   description:
-    "Explore projects, design solutions, and leadership stories by Shivraj Talekar—Frontend Developer, UI/UX Designer & Student Leader. Specializing in React, Figma and AI-powered web design at KKWIEER, DeSoc, TEDx, and Innov-Era Hackathon.",
+    "Portfolio of Shivraj Talekar - AI/ML engineer building agentic RAG and knowledge-graph systems. Artificial Intelligence Product Engineer at ESDS. Case studies in Python, FastAPI, Neo4j and React.",
   keywords: [
     "Shivraj Talekar",
-    "Frontend Developer",
-    "UI/UX Designer",
+    "AI/ML Engineer",
+    "Machine Learning Engineer",
+    "Agentic RAG",
+    "Knowledge Graph",
+    "Neo4j",
+    "FastAPI",
+    "LLM",
+    "Python",
+    "ESDS",
+    "Full Stack Engineer",
     "ReactJS",
     "Figma",
-    "Web Designer",
     "Portfolio",
     "KKWIEER",
     "DeSoc",
@@ -29,20 +49,23 @@ export const metadata = {
     "Hackathon",
     "Nashik",
     "AI-Driven Design",
-    "Web Development",
     "Creative Technologist",
-    "lord_shivraj",
-    "lordcast",
   ],
+  authors: [{ name: site.name, url: site.url }],
+  creator: site.name,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Shivraj Talekar | Frontend Developer & UI/UX Designer",
+    title: "Shivraj Talekar | AI/ML Engineer",
     description:
-      "Portfolio featuring innovative web projects, design leadership, and AI-focused solutions by Shivraj Talekar. See work with KKWIEER, DeSoc, TEDx, and more.",
-    url: "https://shivraj-dev-eta.vercel.app",
+      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product Engineer at ESDS.",
+    url: site.url,
     siteName: "Shivraj Talekar Portfolio",
     images: [
       {
         url: "/sne.png",
+        width: 1200,
+        height: 630,
+        alt: "Shivraj Talekar - AI/ML Engineer",
       },
     ],
     locale: "en_US",
@@ -50,48 +73,62 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shivraj Talekar | Frontend Developer | UI/UX Designer",
+    title: "Shivraj Talekar | AI/ML Engineer",
     description:
-      "Showcasing projects, tech blogs & student leadership by Shivraj Talekar. Explore React, Figma, AI Design portfolios, and more.",
+      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product Engineer at ESDS.",
+    creator: "@lord_shivraj",
     images: ["/sne.png"],
   },
-  icons: {
-    icon: "/profile.jpeg",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+};
+
+export const viewport = {
+  themeColor: "#faf8f5",
+  colorScheme: "light",
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Shivraj Talekar",
-  "url": "https://shivraj-dev-eta.vercel.app/",
-  "sameAs": [
-    "https://github.com/imshivraj101",
-    "https://linkedin.com/in/shivrajtalekar101",
-    "https://twitter.com/lord_shivraj",
+  name: site.name,
+  url: site.url,
+  sameAs: site.socials.map((s) => s.href),
+  jobTitle: "Artificial Intelligence Product Engineer",
+  worksFor: { "@type": "Organization", name: "ESDS Software Solution" },
+  knowsAbout: [
+    "Machine Learning",
+    "Retrieval Augmented Generation",
+    "Knowledge Graphs",
+    "Full Stack Engineering",
+    "UI/UX Design",
   ],
-  "jobTitle": "Frontend Developer & ML Enthusiast",
-  "affiliation": [
-    { "@type": "Organization", "name": "KKWIEER" },
-    { "@type": "Organization", "name": "KK Wagh" },
-    { "@type": "Organization", "name": "DeSoc" },
-    { "@type": "Organization", "name": "TEDxKKWIEER" },
-    { "@type": "Organization", "name": "CSD" },
+  alumniOf: { "@type": "CollegeOrUniversity", name: "KKWIEER" },
+  affiliation: [
+    { "@type": "Organization", name: "KKWIEER" },
+    { "@type": "Organization", name: "KK Wagh" },
+    { "@type": "Organization", name: "DeSoc" },
+    { "@type": "Organization", name: "TEDxKKWIEER" },
+    { "@type": "Organization", name: "CSD" },
   ],
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <head>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body>
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
         <Navbar />
-        {children}
+        <main id="main">{children}</main>
         <Footer />
       </body>
     </html>

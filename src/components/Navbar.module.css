@@ -1,0 +1,185 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--paper);
+  border-bottom: var(--bd-1);
+}
+
+.nav {
+  height: var(--nav-h);
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+/* ---- Logo: the only Tier-1 item in the bar ---- */
+.logo {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  transition: color var(--dur-fast) ease;
+}
+
+.logo:hover {
+  color: var(--accent-ink);
+}
+
+.logoDot {
+  color: var(--accent-ink);
+}
+
+/* ---- Links: Tier 3. Quiet until active or hovered. ----
+   The old design gave every link a border, a shadow and a pill.
+   Now weight is reserved for the page you are actually on.      */
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  list-style: none;
+}
+
+.link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: var(--s-2) var(--s-3);
+  transition: color var(--dur-fast) ease;
+}
+
+.link::after {
+  content: "";
+  position: absolute;
+  left: var(--s-3);
+  right: var(--s-3);
+  bottom: 2px;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--ink);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+}
+
+.link[data-active] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.link[data-active]::after {
+  transform: scaleX(1);
+  background: var(--ink);
+}
+
+/* ---- Burger ---- */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 0 8px;
+  background: var(--surface);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+  cursor: pointer;
+}
+
+.burger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: var(--ink);
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.burger span[data-open]:first-child {
+  transform: translateY(4.5px) rotate(45deg);
+}
+
+.burger span[data-open]:last-child {
+  transform: translateY(-4.5px) rotate(-45deg);
+}
+
+.burger:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--sh-press);
+}
+
+/* ---- Mobile sheet ---- */
+.sheet {
+  display: none;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-5) var(--gutter) var(--s-7);
+  background: var(--paper);
+  border-bottom: var(--bd-1);
+}
+
+.sheet ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.sheetLink {
+  display: block;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xl);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: var(--s-2) 0;
+  border-bottom: 2px solid var(--rule);
+}
+
+.sheetLink[data-active] {
+  color: var(--ink);
+}
+
+.sheetLink[data-active]::before {
+  content: "→ ";
+  color: var(--accent-ink);
+}
+
+.sheetCta {
+  align-self: flex-start;
+}
+
+@media (max-width: 767px) {
+  .links {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+  .sheet[data-open] {
+    display: flex;
+  }
+}

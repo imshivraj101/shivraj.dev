@@ -1,61 +1,60 @@
-import React from "react";
+import { site } from "../data/site";
+import styles from "./Footer.module.css";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="footer-section">
-      <div className="footer-content">
-        {/* Left Section */}
-        <div className="footer-left">
-          <h2 className="text-outline-white">WANNA CHAT? HIT ME UP!</h2>
+    <footer id="contact" className={styles.footer}>
+      <div className={`wrap ${styles.inner}`}>
+        <div className={styles.lead}>
+          <p className={styles.eyebrow}>Contact</p>
+          <h2 className={styles.heading}>
+            Wanna chat?
+            <br />
+            Hit me up.
+          </h2>
+          <p className={styles.sub}>
+            Open to frontend and product design work, internships, and the
+            occasional hackathon.
+          </p>
           <a
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=shivrajtalekar101@gmail.com"
+            className="btn btn-primary"
+            href={site.mailto}
             target="_blank"
             rel="noopener noreferrer"
-            className="message-btn"
           >
-            WRITE ME A MESSAGE
+            Write me a message
+          </a>
+          <a className={styles.email} href={`mailto:${site.email}`}>
+            {site.email}
           </a>
         </div>
 
-        {/* Right Section */}
-        <div className="footer-right">
-          <h3>FIND ME ON</h3>
-          <div className="social-links">
-            <a
-              href="https://github.com/imshivraj101"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              + GITHUB
-            </a>
-            <a
-              href="https://www.linkedin.com/in/shivraj-talekar-259099336/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              + LINKEDIN
-            </a>
-            <a
-              href="https://x.com/lord_shivraj"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              + TWITTER
-            </a>
-            <a
-              href="https://www.instagram.com/shades_of_shivraj/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              + INSTAGRAM
-            </a>
-          </div>
-        </div>
+        <nav className={styles.social} aria-label="Social links">
+          <h3 className={styles.socialTitle}>Find me on</h3>
+          <ul>
+            {site.socials.map((s) => (
+              <li key={s.label}>
+                <a
+                  className={styles.socialLink}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>{s.label}</span>
+                  <span aria-hidden="true" className={styles.arrow}>
+                    &#8599;
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
-      <p className="footer-bottom">&copy; 2025 SHIVRAJ TALEKAR</p>
+      <div className={`wrap ${styles.bottom}`}>
+        <p>&copy; {new Date().getFullYear()} {site.name}</p>
+        <p className={styles.built}>Built with Next.js &middot; Nashik, India</p>
+      </div>
     </footer>
   );
-};
-
-export default Footer;
+}

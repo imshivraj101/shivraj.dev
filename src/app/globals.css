@@ -1,119 +1,452 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+/* ============================================================
+   DESIGN TOKENS
+   Neo-brutalist system built on three weight tiers.
+   Tier 1 = hero / primary action   (4px border, 8px shadow, tilt)
+   Tier 2 = cards / containers      (2px border, 4px shadow, no tilt)
+   Tier 3 = tags / meta             (no border, tinted fill)
+   ============================================================ */
 
 :root {
-  --bg-warm: #faf8f5;
-  --bg-yellow: #ffd043;
-  --accent-green: #0dfc71;
-  --accent-cyan: #00f0ff;
-  --accent-orange: #ff6b00;
+  /* ---- Surfaces ---------------------------------------- */
   --ink: #121216;
-  --border-thick: 3px solid #121216;
-  --shadow-offset: 8px 8px 0 #121216;
-  --shadow-active: 3px 3px 0 #121216;
+  --ink-soft: #4a4a55;      /* secondary text   ~9:1 on surface */
+  --ink-faint: #6e6e7a;     /* meta text        ~4.8:1 on paper */
+  --paper: #faf8f5;
+  --surface: #ffffff;
+  --rule: rgba(18, 18, 22, 0.12);
+  --grid-line: rgba(18, 18, 22, 0.055);
+
+  /* ---- Colour roles ------------------------------------
+     Each colour has exactly one job. Do not cross-assign.  */
+  --action: #0dfc71;        /* primary interactive fill ONLY  */
+  --action-hover: #00e063;
+  --accent: #ff6b00;        /* brand accent, decorative fills */
+  --accent-ink: #b84800;    /* text-safe accent, 5.0:1 on paper */
+  --highlight: #ffd043;     /* marker / highlight fills ONLY  */
+  --cool: #00f0ff;          /* decoration ONLY, never text    */
+
+  /* ---- Weight tiers ------------------------------------
+     A dark surface has to redeclare this whole block, not just a
+     colour token: the var() inside a custom property is substituted
+     where the property is DECLARED, so overriding an inner token
+     further down the tree leaves these composites untouched.
+     See .footer in Footer.module.css. */
+  --bd-1: 4px solid var(--ink);
+  --bd-2: 2px solid var(--ink);
+  --sh-1: 8px 8px 0 var(--ink);
+  --sh-1-lift: 11px 11px 0 var(--ink);
+  --sh-2: 4px 4px 0 var(--ink);
+  --sh-2-lift: 6px 6px 0 var(--ink);
+  --sh-press: 1px 1px 0 var(--ink);
+
+  /* ---- Tilt: one switch turns the whole scrapbook off --- */
+  --tilt: 1deg;
+  --tilt-alt: -1deg;
+
+  /* ---- Fluid type scale -------------------------------- */
+  --t-xs: clamp(0.75rem, 0.73rem + 0.10vw, 0.8125rem);
+  --t-sm: clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
+  --t-base: clamp(1rem, 0.96rem + 0.20vw, 1.0625rem);
+  --t-md: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --t-lg: clamp(1.35rem, 1.20rem + 0.70vw, 1.75rem);
+  --t-xl: clamp(1.75rem, 1.40rem + 1.60vw, 2.5rem);
+  --t-2xl: clamp(2.25rem, 1.60rem + 3.00vw, 3.75rem);
+  --t-3xl: clamp(2.75rem, 1.60rem + 5.20vw, 6rem);
+
+  /* ---- Spacing scale ----------------------------------- */
+  --s-1: 0.25rem;  --s-2: 0.5rem;   --s-3: 0.75rem;
+  --s-4: 1rem;     --s-5: 1.5rem;   --s-6: 2rem;
+  --s-7: 3rem;     --s-8: 4rem;     --s-9: 6rem;
+  --s-10: 8rem;
+
+  /* ---- Layout ------------------------------------------ */
+  --measure: 65ch;
+  --wrap: 1140px;
+  --wrap-narrow: 820px;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --nav-h: 68px;
+
+  /* ---- Motion ------------------------------------------ */
+  --ease-pop: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 0.15s;
+  --dur: 0.25s;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  /* keep anchored sections clear of the fixed navbar */
+  scroll-padding-top: calc(var(--nav-h) + var(--s-5));
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--bg-warm);
+  background-color: var(--paper);
   color: var(--ink);
-  font-family: 'Oswald', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.5;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--t-base);
+  line-height: 1.6;
+  min-height: 100svh;
   position: relative;
+  /* NOTE: no overflow-x:hidden here. The 100vw overflow bug it
+     used to mask is fixed at the source. Keep it that way. */
 }
 
-/* Technical Dotted Grid Background */
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Technical grid backdrop */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 30px 30px;
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: -2;
 }
 
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Oswald', sans-serif;
+  font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
+  line-height: 1.05;
+  text-wrap: balance;
   color: var(--ink);
 }
 
-p, span, li, a {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+p {
+  text-wrap: pretty;
 }
 
-/* Outline Typography Classes */
-.text-outline-yellow {
-  color: var(--bg-yellow);
-  -webkit-text-stroke: 2.5px var(--ink);
-  text-shadow: 6px 6px 0 var(--ink);
+a {
+  color: inherit;
 }
 
-.text-outline-white {
-  color: #ffffff;
-  -webkit-text-stroke: 2.5px var(--ink);
-  text-shadow: 6px 6px 0 var(--ink);
+/* ============================================================
+   FOCUS - every interactive element gets a visible ring.
+   ============================================================ */
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
-.text-outline-cyan {
-  color: var(--accent-cyan);
-  -webkit-text-stroke: 2.5px var(--ink);
-  text-shadow: 6px 6px 0 var(--ink);
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+.wrap-narrow {
+  width: 100%;
+  max-width: var(--wrap-narrow);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-warm);
-  border-left: var(--border-thick);
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--bg-yellow);
-  border: var(--border-thick);
+/* Skip link - first tab stop on every page */
+.skip-link {
+  position: absolute;
+  top: var(--s-2);
+  left: var(--s-2);
+  z-index: 2000;
+  padding: var(--s-2) var(--s-4);
+  background: var(--highlight);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-160%);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-orange);
+.skip-link:focus-visible {
+  transform: translateY(0);
 }
 
-/* 4-point Star Decoration (pure CSS via clip-path) */
+/* ------------------------------------------------------------
+   Outline display type.
+   The base rule is SOLID ink so the text is always legible.
+   The stroked treatment layers on only where the browser really
+   supports -webkit-text-stroke, and paint-order keeps the stroke
+   behind the fill so letterforms keep their true weight.
+   ------------------------------------------------------------ */
+
+.outline {
+  color: var(--ink);
+  text-shadow: 4px 4px 0 var(--highlight);
+}
+
+.outline-cool { text-shadow: 4px 4px 0 var(--cool); }
+.outline-accent { text-shadow: 4px 4px 0 var(--accent); }
+
+@supports (-webkit-text-stroke: 2px #000) and (paint-order: stroke) {
+  .outline {
+    color: var(--highlight);
+    -webkit-text-stroke: 2.5px var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 6px 6px 0 var(--ink);
+  }
+  .outline-cool { color: var(--cool); text-shadow: 6px 6px 0 var(--ink); }
+  .outline-accent { color: var(--surface); text-shadow: 6px 6px 0 var(--ink); }
+}
+
+/* ------------------------------------------------------------
+   Section furniture
+   ------------------------------------------------------------ */
+
+.section {
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+  position: relative;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-8);
+  text-align: center;
+}
+
+.section-title {
+  font-size: var(--t-2xl);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.section-lede {
+  font-size: var(--t-base);
+  color: var(--ink-faint);
+  max-width: 52ch;
+}
+
+/* Eyebrow - Tier 3 */
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  padding: var(--s-1) var(--s-3);
+}
+
+/* ------------------------------------------------------------
+   Buttons - Tier 1 (primary) and Tier 2 (secondary)
+   ------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  border: var(--bd-2);
+  background: var(--surface);
+  color: var(--ink);
+  padding: var(--s-3) var(--s-5);
+  font-size: var(--t-sm);
+  box-shadow: var(--sh-2);
+  transition:
+    transform var(--dur-fast) var(--ease-pop),
+    box-shadow var(--dur-fast) var(--ease-pop),
+    background-color var(--dur-fast) ease;
+}
+
+.btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--sh-2-lift);
+  background: var(--highlight);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--sh-press);
+}
+
+/* Tier 1: at most one of these per view */
+.btn-primary {
+  border: var(--bd-1);
+  background: var(--action);
+  padding: var(--s-4) var(--s-7);
+  font-size: var(--t-md);
+  font-weight: 900;
+  box-shadow: var(--sh-1);
+}
+
+.btn-primary:hover {
+  background: var(--action-hover);
+  box-shadow: var(--sh-1-lift);
+  transform: translate(-3px, -3px);
+}
+
+/* Tier 3: quiet text action */
+.btn-quiet {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: var(--s-2) 0;
+  color: var(--accent-ink);
+  border-bottom: 2px solid currentColor;
+}
+
+.btn-quiet:hover {
+  background: transparent;
+  box-shadow: none;
+  transform: translate(0, -2px);
+}
+
+/* ------------------------------------------------------------
+   Cards - Tier 2
+   ------------------------------------------------------------ */
+
+.card {
+  background: var(--surface);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+  transition:
+    transform var(--dur) var(--ease-pop),
+    box-shadow var(--dur) var(--ease-pop);
+}
+
+.card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: var(--sh-1);
+}
+
+/* Tags - Tier 3: tinted fill, no border, no shadow */
+.tag {
+  display: inline-block;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  padding: 0.2rem var(--s-2);
+}
+
+/* ------------------------------------------------------------
+   Decorative stars
+   ------------------------------------------------------------ */
+
 .decor-star {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   pointer-events: none;
   z-index: 0;
 }
 
-.star-cyan {
-  background: var(--accent-cyan);
-  box-shadow: 2px 2px 0 var(--ink);
+.star-cool { background: var(--cool); }
+.star-accent { background: var(--accent); }
+.star-highlight { background: var(--highlight); }
+
+/* ------------------------------------------------------------
+   Scrollbar
+   ------------------------------------------------------------ */
+
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--paper); border-left: var(--bd-2); }
+::-webkit-scrollbar-thumb { background: var(--highlight); border: var(--bd-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+::selection {
+  background: var(--highlight);
+  color: var(--ink);
 }
 
-.star-orange {
-  background: var(--accent-orange);
+/* ============================================================
+   REDUCED MOTION
+   Kill transitions, animations and the decorative tilt.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --tilt: 0deg;
+    --tilt-alt: 0deg;
+  }
+
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.star-yellow {
-  background: var(--bg-yellow);
+/* Tilt is decorative - drop it where space is tight */
+@media (max-width: 767px) {
+  :root {
+    --tilt: 0deg;
+    --tilt-alt: 0deg;
+  }
 }

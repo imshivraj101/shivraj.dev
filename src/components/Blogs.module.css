@@ -1,0 +1,120 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  max-width: var(--wrap-narrow);
+  margin-inline: auto;
+}
+
+/* ---- Card: Tier 2, horizontal editorial row ---- */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.media {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-right: var(--bd-2);
+  background: var(--paper);
+  padding: var(--s-3);
+}
+
+/* These covers are illustrations carrying their own headline text, so
+   they get contained rather than cropped - object-fit:cover was
+   slicing the wording off both edges. */
+.image {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-5);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.title {
+  font-size: var(--t-md);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.titleLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.titleLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.titleLink:hover {
+  color: var(--accent-ink);
+}
+
+.excerpt {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+/* Tier 3: a cue, not a button. The card itself is the target. */
+.more {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin-top: var(--s-2);
+}
+
+.all {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--s-8);
+}
+
+@media (max-width: 700px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .media {
+    border-right: none;
+    border-bottom: var(--bd-2);
+  }
+
+  .image {
+    max-height: none;
+  }
+}
