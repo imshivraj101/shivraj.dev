@@ -1,8 +1,6 @@
 import Hero from "../components/Hero";
+import DexDevice from "../components/DexDevice";
 import { graph, profilePage } from "../lib/schema";
-import Projects from "../components/Projects";
-import Blogs from "../components/Blogs";
-import Experience from "../components/Experience";
 
 export default function Page() {
   return (
@@ -12,9 +10,7 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(graph(profilePage())) }}
       />
       <Hero />
-      <Projects limit={3} />
-      <Experience />
-      <Blogs limit={3} />
+      <DexDevice />
     </>
   );
 }

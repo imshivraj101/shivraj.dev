@@ -1,0 +1,234 @@
+.panel {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  gap: var(--s-4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+/* ---- Current posting ---- */
+.now {
+  background: var(--surface);
+  border: var(--bd-2);
+  box-shadow: var(--sh-2);
+  padding: var(--s-4);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.nowTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.org {
+  font-size: var(--t-md);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.badge {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #121216;
+  background: var(--action);
+  border: 2px solid var(--ink);
+  padding: 0 var(--s-2);
+  flex-shrink: 0;
+}
+
+.facts {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 2px;
+  padding-bottom: var(--s-3);
+  border-bottom: 2px solid var(--rule);
+}
+
+.track {
+  list-style: none;
+  position: relative;
+  padding-left: 26px;
+  margin-top: var(--s-4);
+}
+
+.trackItem {
+  position: relative;
+  padding-bottom: var(--s-4);
+}
+
+.trackItem:last-child {
+  padding-bottom: 0;
+}
+
+.trackItem::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 16px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--rule);
+}
+
+.trackItem:last-child::before {
+  display: none;
+}
+
+.dot {
+  position: absolute;
+  left: -26px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.trackItem[data-current] .dot {
+  background: var(--action);
+}
+
+.role {
+  font-size: var(--t-base);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.when {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.span {
+  color: var(--ink-faint);
+}
+
+.blurb {
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-top: var(--s-2);
+}
+
+/* ---- College archive ---- */
+.archive {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.archiveTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.rule {
+  flex: 1;
+  height: 2px;
+  background: var(--ink);
+}
+
+.count {
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  color: #121216;
+  background: var(--highlight);
+  border: 2px solid var(--ink);
+  padding: 0 var(--s-2);
+}
+
+.archiveLede {
+  font-size: var(--t-xs);
+  color: var(--ink-faint);
+  margin-top: var(--s-1);
+}
+
+.list {
+  list-style: none;
+  margin-top: var(--s-3);
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "role when"
+    "org  when";
+  gap: 0 var(--s-3);
+  align-items: center;
+  padding: var(--s-2) var(--s-3);
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+}
+
+.itemRole {
+  grid-area: role;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemOrg {
+  grid-area: org;
+  font-size: var(--t-xs);
+  color: var(--ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemWhen {
+  grid-area: when;
+  font-family: var(--font-display), sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .panel {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .archive, .list, .now {
+    overflow: visible;
+  }
+}
