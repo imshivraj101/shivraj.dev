@@ -6,6 +6,13 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { projects, entryNoOf } from "../data/projects";
 import { TYPE_CLASS } from "./ProjectCard";
+
+/* Type pills mirror TYPE_CLASS but in the dex pill shape. */
+const PILL_CLASS = {
+  "AI/ML": "dex-pill-ai",
+  Design: "dex-pill-design",
+  Development: "dex-pill-dev",
+};
 import styles from "./ProjectDex.module.css";
 
 const MAX_TAGS = Math.max(...projects.map((p) => p.tags.length));
@@ -61,11 +68,11 @@ export default function ProjectDex({ selected, onSelect, openRef, compact }) {
             data-active={i === selected || undefined}
             onClick={() => onSelect(i)}
           >
-            <span className={styles.rowNo}>{entryNoOf(p.slug)}</span>
             <span
-              className={`led ${p.live ? "led-on" : ""} ${styles.rowLed}`}
+              className={`pokeball ${p.live ? "pokeball-on" : ""}`}
               aria-hidden="true"
             />
+            <span className={styles.rowNo}>{entryNoOf(p.slug)}</span>
             <span className={styles.rowName}>{p.title}</span>
           </li>
         ))}
@@ -86,19 +93,26 @@ export default function ProjectDex({ selected, onSelect, openRef, compact }) {
 
         <div className={styles.info}>
           <div className={styles.infoTop}>
-            <h3 className={styles.name}>{project.title}</h3>
-            <span className={`type-chip ${TYPE_CLASS[project.discipline] ?? ""}`}>
+            <span className={styles.plate}>
+              <span className="pokeball" aria-hidden="true" />
+              <span className={styles.plateNo}>{entryNoOf(project.slug)}</span>
+              <h3 className={styles.name}>{project.title}</h3>
+            </span>
+            <span className={`dex-pill ${PILL_CLASS[project.discipline] ?? ""}`}>
               {project.discipline}
             </span>
           </div>
 
-          <p className={styles.summary}>{project.summary}</p>
+          {/* The "Seed Pokemon" genus strip - here, the actual role */}
+          <span className="dex-genus">{project.role}</span>
 
-          {/* Stat bars are derived from real data: the bar is styling,
-              the number is the actual tag count. Nothing invented. */}
-          <dl className={styles.stats}>
-            <div className={styles.stat}>
-              <dt className="readout-label">Stack</dt>
+          <p className={`dex-desc ${styles.summary}`}>{project.summary}</p>
+
+          {/* Laid out like the Height / Weight block. Values are real:
+              the bar is styling, the number is the actual tag count. */}
+          <dl className={`dex-stats ${styles.stats}`}>
+            <div className="dex-stat-row">
+              <dt>Stack</dt>
               <dd className={styles.barWrap}>
                 <span className={styles.bar}>
                   <span
@@ -111,21 +125,19 @@ export default function ProjectDex({ selected, onSelect, openRef, compact }) {
                 <b className={styles.barNum}>{project.tags.length}</b>
               </dd>
             </div>
-            <div className={styles.stat}>
-              <dt className="readout-label">Year</dt>
-              <dd className="readout-value">{project.year}</dd>
+            <div className="dex-stat-row">
+              <dt>Year</dt>
+              <dd>{project.year}</dd>
             </div>
-            <div className={styles.stat}>
-              <dt className="readout-label">Status</dt>
-              <dd className="readout-value">
-                {project.live ? "Live" : "Source"}
-              </dd>
+            <div className="dex-stat-row">
+              <dt>Status</dt>
+              <dd>{project.live ? "Live" : "Source"}</dd>
             </div>
           </dl>
 
           <ul className={styles.tags}>
             {project.tags.map((t) => (
-              <li key={t} className="tag">
+              <li key={t} className="dex-pill">
                 {t}
               </li>
             ))}

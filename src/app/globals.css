@@ -57,6 +57,14 @@
   --sh-2-lift: 6px 6px 0 var(--ink);
   --sh-press: 1px 1px 0 var(--ink);
 
+  /* ---- Dex panel geometry ------------------------------
+     Rounding is scoped to dex panels; the rest of the site keeps
+     its hard brutalist edges. */
+  --r-panel: 10px;
+  --r-inner: 6px;
+  --r-pill: 999px;
+  --dex-edge: var(--highlight);   /* inner border on dex panels */
+
   /* ---- Tilt: one switch turns the scrapbook motif off --- */
   --tilt: 0.6deg;
   --tilt-alt: -0.6deg;
@@ -344,10 +352,9 @@ a {
 
 .eyebrow {
   display: inline-block;
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-xs);
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--accent-ink);
   background: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -363,17 +370,16 @@ a {
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
-  font-family: var(--font-display), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-pixel), var(--font-display), monospace;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-decoration: none;
   cursor: pointer;
   border: var(--bd-2);
   background: var(--surface);
   color: var(--ink);
   padding: var(--s-3) var(--s-5);
-  font-size: var(--t-sm);
+  font-size: 10px;
   box-shadow: var(--sh-2);
   transition:
     transform var(--dur-fast) var(--ease-pop),
@@ -400,8 +406,7 @@ a {
   background: var(--action);
   color: #121216;
   padding: var(--s-4) var(--s-7);
-  font-size: var(--t-md);
-  font-weight: 900;
+  font-size: 12px;
   box-shadow: var(--sh-1);
 }
 
@@ -448,16 +453,20 @@ a {
 }
 
 /* Tags - Tier 3: tinted fill, no border, no shadow */
+/* Tags read as dex type pills sitewide. */
 .tag {
-  display: inline-block;
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: var(--ink);
   background: color-mix(in srgb, var(--ink) 8%, transparent);
-  padding: 0.2rem var(--s-2);
+  border: 2px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: var(--r-pill);
+  padding: 5px var(--s-3);
 }
 
 /* ============================================================
@@ -470,10 +479,9 @@ a {
   display: inline-flex;
   align-items: baseline;
   gap: 0.25em;
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-xs);
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   color: var(--ink-faint);
@@ -490,12 +498,12 @@ a {
 .type-chip {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-xs);
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0.1rem var(--s-3);
+  padding: 5px var(--s-3);
+  border-radius: var(--r-pill);
   border: 2px solid var(--ink);
   color: var(--ink);
   background: var(--surface);
@@ -533,10 +541,9 @@ a {
 
 /* Recessed readout row */
 .readout-label {
-  font-family: var(--font-display), sans-serif;
-  font-size: var(--t-xs);
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
@@ -549,6 +556,205 @@ a {
   text-transform: uppercase;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+}
+
+
+/* ============================================================
+   DEX UI KIT
+   Structural cues lifted from the Gen 4/5 Pokedex: nested
+   double-bordered panels, pokeball-bulleted index rows, gradient
+   type pills, a stat table and a bordered description box.
+   Rendered in this project's yellow/ink palette - deliberately
+   no blue anywhere.
+   ============================================================ */
+
+.pixel {
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Nested panel: dark outer edge, bright inner keyline ---- */
+.dex-panel {
+  position: relative;
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  border-radius: var(--r-panel);
+  box-shadow: inset 0 0 0 2px var(--dex-edge);
+  padding: var(--s-3);
+}
+
+.dex-panel-quiet {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+/* ---- Pokeball bullet ---- */
+.pokeball {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: linear-gradient(
+    to bottom,
+    var(--accent) 0 47%,
+    var(--ink) 47% 53%,
+    var(--surface) 53% 100%
+  );
+}
+
+.pokeball::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1.5px solid var(--ink);
+}
+
+.pokeball-on {
+  background: linear-gradient(
+    to bottom,
+    var(--action) 0 47%,
+    var(--ink) 47% 53%,
+    var(--surface) 53% 100%
+  );
+}
+
+/* ---- Type pill ---- */
+.dex-pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px var(--s-3);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  color: #121216;
+  background: linear-gradient(to bottom, #ffffff33 0 50%, #00000022 50% 100%),
+    var(--highlight);
+  white-space: nowrap;
+}
+
+.dex-pill-ai {
+  background: linear-gradient(to bottom, #ffffff26 0 50%, #00000033 50% 100%),
+    var(--ink);
+  color: var(--paper);
+}
+
+.dex-pill-design {
+  background: linear-gradient(to bottom, #ffffff33 0 50%, #00000022 50% 100%),
+    var(--accent);
+}
+
+.dex-pill-dev {
+  background: linear-gradient(to bottom, #ffffff33 0 50%, #00000022 50% 100%),
+    var(--action);
+}
+
+/* ---- Genus line: the "Seed Pokemon" strip ---- */
+.dex-genus {
+  display: inline-block;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--dex-edge);
+  border-radius: var(--r-inner);
+  padding: 3px var(--s-3);
+}
+
+/* ---- Stat table: the Height / Weight block ---- */
+.dex-stats {
+  background: var(--surface);
+  border: 2px solid var(--dex-edge);
+  border-radius: var(--r-inner);
+  padding: var(--s-2) var(--s-3);
+  display: grid;
+  gap: 2px;
+}
+
+.dex-stat-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s-3);
+  align-items: center;
+  font-family: var(--font-pixel), var(--font-display), monospace;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.dex-stat-row dt { color: var(--ink-faint); }
+.dex-stat-row dd { color: var(--ink); }
+
+/* ---- Description box ---- */
+.dex-desc {
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  border-radius: var(--r-panel);
+  box-shadow: inset 0 0 0 2px var(--dex-edge);
+  padding: var(--s-3) var(--s-4);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ---- Chunky arrow scrollbar ---- */
+.dex-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.dex-scroll button {
+  width: 22px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--paper);
+  background: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-inner);
+}
+
+.dex-scroll button:hover:not(:disabled) { background: var(--accent-ink); }
+.dex-scroll button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.dex-scroll-track {
+  flex: 1;
+  width: 8px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--ink) 16%, transparent);
+  position: relative;
+  min-height: 24px;
+}
+
+.dex-scroll-thumb {
+  position: absolute;
+  left: 0;
+  width: 8px;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  transition: top var(--dur) var(--ease-out);
 }
 
 /* ------------------------------------------------------------
