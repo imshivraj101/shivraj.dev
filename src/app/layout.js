@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SiteChrome from "../components/SiteChrome";
 import { site } from "../data/site";
 import { graph, person, organization, website } from "../lib/schema";
 
@@ -139,9 +140,13 @@ export default function RootLayout({ children }) {
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <Navbar />
+        <SiteChrome>
+          <Navbar />
+        </SiteChrome>
         <main id="main">{children}</main>
-        <Footer />
+        <SiteChrome>
+          <Footer />
+        </SiteChrome>
       </body>
     </html>
   );

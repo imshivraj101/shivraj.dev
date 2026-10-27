@@ -37,6 +37,12 @@ export const site = {
     { label: "Instagram", href: "https://www.instagram.com/shades_of_shivraj/" },
   ],
   medium: "https://medium.com/@shivrajtalekar101",
+  /* Shivraj FM, the corner radio on the home page. Paste a public
+     Apple Music (preferred) or Spotify playlist share link here, or set
+     NEXT_PUBLIC_RADIO_URL. Empty = the radio stays hidden. */
+  radio:
+    process.env.NEXT_PUBLIC_RADIO_URL ||
+    "https://music.apple.com/in/playlist/favorite-songs/pl.u-r0UeJvLqjp",
   linkedin: "https://www.linkedin.com/in/shivraj-talekar-259099336/",
 };
 

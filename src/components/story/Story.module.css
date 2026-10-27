@@ -1,0 +1,1025 @@
+/* Scroll story for the home page. Three voices: a chunky condensed
+   display (--f-chunk), a thin high-contrast serif (--f-serif) and the
+   site's Oswald for labels and body (--font-display). */
+
+.story {
+  --text: #f1edff;
+  --muted: rgba(241, 237, 255, 0.72);
+  --hair: rgba(241, 237, 255, 0.22);
+  --accent: #ffd166;
+  --hot: #ff7a59;
+  --mint: #7bdcb5;
+  --gutter: clamp(16px, 3vw, 40px);
+
+  position: relative;
+  color: var(--text);
+  font-family: var(--font-display), system-ui, sans-serif;
+  background: #2b2d5c;
+  overflow-x: clip;
+}
+
+/* The site's light paper colour must never peek through on this page
+   (overscroll, or tiles not yet painted on very large screens). */
+:global(html):has(.story),
+:global(body):has(.story) { background: #110e26; }
+/* The director scrolls the page itself; CSS smooth scrolling would
+   fight every frame of it. */
+:global(html):has(.story) { scroll-behavior: auto; }
+
+/* Site-wide autoplay ------------------------------------------- */
+.playBtn {
+  position: fixed;
+  z-index: 55;
+  right: var(--gutter);
+  bottom: 52px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 8px;
+  border: 3px solid #15131f;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #15131f;
+  box-shadow: 4px 4px 0 #15131f;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.animated .playBtn { display: inline-flex; }
+.playBtn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #15131f; }
+.playBtn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #15131f; }
+.playIcon {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #15131f;
+}
+.playIcon::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 12px;
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent var(--accent);
+}
+.playBtn[aria-pressed="true"] { background: var(--text); }
+.playBtn[aria-pressed="true"] .playIcon::after {
+  left: 13px;
+  top: 12px;
+  width: 4px;
+  height: 16px;
+  border: 0;
+  border-left: 4px solid var(--accent);
+  border-right: 4px solid var(--accent);
+  box-sizing: content-box;
+  padding: 0 2px;
+  background: transparent;
+}
+/* Shivraj FM: min (a cassette), cassette mode, poster mode ------- */
+.radio { position: fixed; z-index: 56; right: var(--gutter); top: 8px; display: flex; flex-direction: column; align-items: flex-end; }
+.tapeBtn { padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; transition: transform 0.2s; }
+.tapeBtn:hover { transform: rotate(-4deg) scale(1.04); }
+.cassette { width: 84px; height: auto; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35)); }
+.reelSpin { animation: reel 2.4s linear infinite; }
+@keyframes reel { to { transform: rotate(360deg); } }
+.radioPanel {
+  margin-top: 8px;
+  width: min(340px, calc(100vw - 2 * var(--gutter)));
+  padding: 10px;
+  border: 1px solid var(--hair);
+  border-radius: 16px;
+  background: rgba(14, 11, 32, 0.96);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  /* Hidden, never unmounted: the music keeps going while it's closed. */
+  position: absolute;
+  top: 100%;
+  right: 0;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0s 0.2s;
+}
+.radio:not([data-mode="min"]) .radioPanel { visibility: visible; opacity: 1; transform: none; transition: opacity 0.2s, transform 0.2s; }
+.radio[data-mode="poster"] .radioPanel {
+  width: min(420px, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100svh - 110px);
+  overflow-y: auto;
+  border: 3px solid #15131f;
+  background: #f4efe6;
+  color: #15131f;
+  box-shadow: 8px 8px 0 #15131f;
+}
+.poster {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 10px;
+  padding: 18px 16px 16px;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(135deg, rgba(21, 19, 31, 0.06) 0 8px, transparent 8px 16px),
+    linear-gradient(160deg, #ff7a59, #ffd166);
+  text-align: left;
+}
+.posterKicker { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.posterTitle { font-family: var(--f-chunk), sans-serif; font-size: 54px; line-height: 0.92; text-transform: uppercase; }
+.posterSub { font-family: var(--f-serif), serif; font-size: 18px; }
+.radioHead { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 8px; font-size: 12px; letter-spacing: 0.06em; color: var(--muted); }
+.radioHead strong { color: var(--text); }
+.radio[data-mode="poster"] .radioHead,
+.radio[data-mode="poster"] .radioHead strong { color: #15131f; }
+.radioCtrls { display: flex; gap: 6px; }
+.radioCtrls button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(241, 237, 255, 0.12);
+  color: inherit;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.radio[data-mode="poster"] .radioCtrls button { background: rgba(21, 19, 31, 0.1); color: #15131f; }
+.radioPanel iframe { display: block; width: 100%; border: 0; border-radius: 10px; background: transparent; transition: height 0.25s; }
+
+.cueKeys { margin-left: 4px; opacity: 0.8; }
+.cueKeys kbd { font: inherit; padding: 0 5px; border: 1px solid var(--hair); border-radius: 4px; }
+
+.story a { color: inherit; }
+.story :is(h1, h2, h3) {
+  color: inherit;
+  text-transform: none;
+  text-wrap: wrap;
+}
+
+/* Fixed layers ------------------------------------------------ */
+.backdrop,
+.stars,
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.backdrop { background: #2b2d5c; z-index: 0; }
+.stars { z-index: 1; }
+.stars i {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.35;
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle { 50% { opacity: 0.05; } }
+
+.grain {
+  z-index: 60;
+  opacity: 0.09;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(4) infinite;
+  /* Its own layer: the jitter is then a pure composite, never a repaint. */
+  will-change: transform;
+}
+@keyframes grain {
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-1%, 3%); }
+}
+
+/* Header and chapter rail ------------------------------------- */
+.header {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px var(--gutter);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* A soft scrim so content scrolling underneath never collides with it. */
+  background: linear-gradient(rgba(12, 10, 24, 0.55), rgba(12, 10, 24, 0));
+}
+.brand { font-weight: 600; text-decoration: none; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border: 1px solid var(--hair);
+  border-radius: 99px;
+  font-size: 11px;
+  background: rgba(21, 19, 31, 0.25);
+  backdrop-filter: blur(6px);
+}
+.pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 0 rgba(123, 220, 181, 0.7);
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(123, 220, 181, 0); } 100% { box-shadow: 0 0 0 0 rgba(123, 220, 181, 0); } }
+
+.rail {
+  position: fixed;
+  z-index: 50;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 14px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.railTrack {
+  height: 1px;
+  background: var(--hair);
+  margin-bottom: 10px;
+  /* tick marks, like a ruler */
+  background-image: repeating-linear-gradient(90deg, var(--hair) 0 1px, transparent 1px 12px);
+  height: 6px;
+  position: relative;
+}
+.railFill {
+  position: absolute;
+  inset: 0;
+  background: var(--text);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  height: 2px;
+  top: 2px;
+}
+.rail ul { display: flex; justify-content: space-between; list-style: none; margin: 0; padding: 0; }
+.rail a { text-decoration: none; opacity: 0.7; }
+.rail a:hover { opacity: 1; }
+
+/* Scenes ------------------------------------------------------- */
+.scene {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 90px var(--gutter);
+  background: var(--bg);
+  overflow: hidden;
+}
+/* With motion on, the fixed backdrop carries the colour instead. */
+.animated .scene { background: transparent; }
+
+.kicker {
+  margin: 0;
+  font-size: clamp(12px, 1.1vw, 15px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Hero */
+.heroText {
+  position: absolute;
+  top: clamp(80px, 13vh, 130px);
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+}
+.name {
+  margin: 10px 0 6px;
+  font-family: var(--f-serif), serif;
+  font-weight: 400;
+  font-size: clamp(54px, 10.5vw, 168px);
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.nameChar { display: inline-block; }
+/* Words never split; on narrow screens the surname takes its own line. */
+.nameWord { display: inline-block; white-space: nowrap; }
+.role {
+  margin: 0;
+  font-family: var(--f-serif), serif;
+  font-size: clamp(18px, 2.2vw, 30px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* inline-block swallows the trailing space, so space the words here. */
+.roleWord { display: inline-block; margin-right: 0.3em; }
+/* The avatar is 1448x1086; every anchor below is a fraction of that
+   so the cut, the hinge and the zoom origin track at any size. */
+.mascotWrap {
+  --w: min(100vw, 96vh);
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--w);
+  aspect-ratio: 1448 / 1086;
+  margin-left: calc(var(--w) / -2);
+  /* A point in his left pupil (648.6, 409) with clear dark all round it:
+     the iris centroid sits too close to the white highlight. */
+  transform-origin: 44.79% 37.66%;
+  z-index: 2;
+}
+.avatar { position: relative; width: 100%; height: 100%; }
+.avatarImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Feather the sides into the page so no rectangle shows on wide screens. */
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+.avatarImg svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.hey {
+  position: absolute;
+  left: 4%;
+  top: 22%;
+  padding: 6px 14px;
+  border: 3px solid #15131f;
+  border-radius: 14px 14px 14px 2px;
+  background: #f4efe6;
+  color: #15131f;
+  font-family: var(--f-chunk), sans-serif;
+  font-size: clamp(16px, 1.8vw, 26px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform-origin: 0 100%;
+}
+.heroFade { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+/* "Rendering the life of..." — the dots tick like a loader. */
+.dots i { font-style: normal; animation: dotTick 1.4s infinite; opacity: 0.2; }
+.dots i:nth-child(2) { animation-delay: 0.2s; }
+.dots i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotTick { 30% { opacity: 1; } 60%, 100% { opacity: 0.2; } }
+.cue {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 120px; /* clear of the radio and play buttons */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  z-index: 3;
+}
+.cueDot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.heroMeta {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 120px; /* clear of the radio and play buttons */
+  margin: 0;
+  text-align: right;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  z-index: 3;
+}
+
+/* Solar: the product lifecycle. Sizes use container units so the
+   whole system scales with its stage on any screen. */
+.solarScene {
+  /* Exactly one screen tall so it always pins; the stage takes the rest. */
+  height: 100vh;
+  height: 100svh;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(8px, 2vh, 24px);
+  padding-top: clamp(70px, 11vh, 110px);
+  padding-bottom: clamp(56px, 9vh, 90px);
+}
+.solarHead { text-align: center; position: relative; z-index: 5; }
+.solarTitle {
+  margin: 8px 0 0;
+  font-family: var(--f-serif), serif;
+  font-weight: 400;
+  font-size: clamp(26px, 4vw, 58px);
+  line-height: 1.1;
+}
+.system { display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; }
+.solarStage {
+  position: relative;
+  container-type: size;
+  width: min(94vw, 220vh);
+  height: min(100%, 50vw);
+}
+.orbit {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border: 1px dashed rgba(233, 228, 255, 0.22);
+  border-radius: 50%;
+}
+.sun {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  z-index: 3;
+  width: min(15cqw, 30cqh);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+/* Disc and glow are separate layers. The glow is a soft gradient that
+   only pulses with transform/opacity, so the GPU composites it instead
+   of re-blurring a huge box-shadow every frame while the camera zooms. */
+.sun::before,
+.sun::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.sun::before {
+  inset: -110%;
+  z-index: -1;
+  background: radial-gradient(circle, rgba(255, 190, 90, 0.45) 0, rgba(255, 140, 60, 0.18) 32%, rgba(255, 140, 60, 0) 62%);
+  animation: sunGlow 3.2s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.sun::after {
+  inset: 0;
+  background: radial-gradient(circle at 38% 34%, #fff4c2, #ffd166 38%, #ff9f43 72%, #e8663d);
+}
+.sun span {
+  position: relative;
+  z-index: 1;
+  font-family: var(--f-chunk), sans-serif;
+  font-size: min(2.6cqw, 5cqh);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #3a1d08;
+}
+@keyframes sunGlow {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.planet {
+  --s: clamp(24px, min(4cqw, 9cqh), 56px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+}
+.planetBody { position: absolute; left: calc(var(--s) / -2); top: calc(var(--s) / -2); }
+.planetDot {
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  border: 2px solid #15131f;
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.65), var(--c) 42%, color-mix(in srgb, var(--c), #000 45%));
+  color: #15131f;
+  font-size: calc(var(--s) * 0.3);
+  font-weight: 700;
+  transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.35s;
+}
+.planetName {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(10px, 1.6cqh, 14px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  transition: opacity 0.3s, color 0.3s;
+}
+.planet.active .planetDot {
+  transform: scale(1.4);
+  /* A hard ring is cheap; the soft halo comes from the gradient below. */
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.planetBody::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(var(--s) / 2);
+  width: calc(var(--s) * 3);
+  height: calc(var(--s) * 3);
+  margin: calc(var(--s) * -1.5) 0 0 calc(var(--s) * -1.5);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--c) 55%, transparent) 0, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.planet.active .planetBody::before { opacity: 1; }
+.planet.active .planetName { opacity: 1; color: var(--c); }
+.zoomed .planetName { opacity: 0 !important; }
+
+/* The camera wraps the whole system; the planet journey moves and
+   scales it so the visited planet sits in the middle of the screen. */
+.camera { position: absolute; inset: 0; transform-origin: 50% 50%; }
+
+/* Planet panels: one pyramid-site scene and belief per phase. */
+.panels {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  padding: 80px var(--gutter) 60px;
+  pointer-events: none;
+}
+.planetPanel {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(16px, 2.6vw, 36px);
+  align-items: center;
+  width: min(1040px, 100%);
+  padding: clamp(14px, 1.8vw, 24px);
+  border: 2px solid var(--c);
+  border-radius: 22px;
+  background: rgba(14, 11, 32, 0.95);
+  /* Panels fade every frame of a fly-in, so keep them on their own
+     compositor layer and skip the costly blur and big soft shadow. */
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 14%, transparent);
+  will-change: opacity, transform;
+  pointer-events: auto;
+}
+.animated .planetPanel { grid-area: 1 / 1; opacity: 0; visibility: hidden; }
+.panelArt { display: block; width: 100%; height: auto; border-radius: 14px; border: 2px solid #15131f; }
+.panelKicker { margin: 0; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--c); }
+.panelBelief {
+  margin: 10px 0 0;
+  font-family: var(--f-serif), serif;
+  font-weight: 400;
+  font-size: clamp(26px, 3vw, 46px);
+  line-height: 1.08;
+}
+.panelBody { margin: 14px 0 0; font-size: clamp(14px, 1.15vw, 17px); line-height: 1.6; color: var(--muted); }
+.toolkit { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 14px 0 0; padding: 0; }
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 99px;
+  background: #f4efe6;
+  color: #15131f;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.tool svg { width: 16px; height: 16px; flex: none; }
+.panelScene { margin: 12px 0 0; font-size: 13px; font-style: italic; color: color-mix(in srgb, var(--c) 70%, #fff); }
+
+/* Planet hopper: buttons and arrow keys jump card to card instantly. */
+.planetNav {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  z-index: 8;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  transform: translateX(-50%);
+  padding: 6px;
+  border: 1px solid var(--hair);
+  border-radius: 99px;
+  background: rgba(14, 11, 32, 0.8);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+}
+.animated .planetNav { display: flex; }
+.navArrow,
+.navDot {
+  display: grid;
+  place-items: center;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.navArrow { font-size: 16px; background: rgba(241, 237, 255, 0.1); }
+.tourBtn {
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #15131f;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.tourBtn[aria-pressed="true"] { background: var(--text); }
+.navArrow:hover, .navDot:hover { background: rgba(241, 237, 255, 0.16); }
+.navDot.active { background: var(--c); color: #15131f; font-weight: 700; }
+.keyHint { margin: 0 6px 0 8px; font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
+.keyHint kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--hair);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font: inherit;
+  color: var(--text);
+}
+/* Touch screens have no arrow keys; keep the buttons, drop the tip. */
+@media (hover: none), (max-width: 819px) {
+  .keyHint { display: none; }
+  .planetNav { bottom: 34px; gap: 2px; }
+  .navDot { min-width: 26px; height: 28px; padding: 0 2px; font-size: 10px; }
+  .navArrow { min-width: 28px; height: 28px; }
+  .tourBtn { height: 28px; padding: 0 8px; font-size: 10px; }
+}
+@media (max-width: 420px) {
+  /* Narrow phones: tour + arrows only; the dots don't fit. */
+  .navDot { display: none; }
+}
+
+/* Idle life inside the Egypt scenes (class names from Egypt.jsx). */
+.story :global(.eg-bob) { animation: egBob 3s ease-in-out infinite; }
+.story :global(.eg-beam) { animation: egBeam 1.6s ease-in-out infinite; }
+.story :global(.eg-sun) { animation: egSun 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.story :global(.eg-cap) { animation: egCap 3s ease-in-out infinite; }
+@keyframes egBob { 50% { transform: translateY(-5px); } }
+@keyframes egBeam { 50% { opacity: 0.6; } }
+@keyframes egSun { 50% { transform: scale(1.08); } }
+@keyframes egCap { 50% { transform: translateY(8px); } }
+
+/* Hi */
+.hiStage { position: relative; width: 100%; text-align: center; }
+.hiLine {
+  margin: 0;
+  font-family: var(--f-chunk), sans-serif;
+  font-weight: 400;
+  font-size: clamp(40px, 12.5vw, 230px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.chunkChar,
+.uniChar { display: inline-block; }
+.chunkChar { transform: rotate(var(--r)); }
+.squiggle { width: min(46vw, 420px); color: var(--accent); margin: 6px auto 0; display: block; }
+.sparkle { position: absolute; width: 22px; color: var(--accent); }
+.bio {
+  max-width: 560px;
+  margin: 26px auto 0;
+  font-size: clamp(15px, 1.3vw, 19px);
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* Scenery strips (Scenery.jsx): pinned to the bottom of their section,
+   behind the words. The stages sit above them. */
+.scenery {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 28px;
+  width: 100%;
+  height: clamp(150px, 30vh, 300px);
+  z-index: 0;
+  pointer-events: none;
+}
+.belt {
+  position: absolute;
+  left: 0;
+  bottom: 40px;
+  width: 100%;
+  height: 72px;
+  z-index: 0;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.hiStage, .uniStage, .expStage, .blogStage, .track { position: relative; z-index: 1; }
+.story :global(.sc-led) { animation: led 1.2s steps(2) infinite; }
+@keyframes led { 50% { opacity: 0.25; } }
+.story :global(.sc-steam) { animation: deskSteam 2.6s ease-in-out infinite; }
+@keyframes deskSteam { 50% { transform: translateY(-6px); opacity: 0.25; } }
+
+/* Uni: one compact screen. */
+.uniStage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 80px);
+  align-items: center;
+  width: min(1180px, 100%);
+}
+.uniBig {
+  margin: 10px 0 0;
+  font-family: var(--f-chunk), sans-serif;
+  font-weight: 400;
+  font-size: clamp(56px, 9vw, 150px);
+  line-height: 0.92;
+}
+.cityRow { display: block; overflow: hidden; }
+.uniSub { max-width: 440px; margin: 18px 0 0; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; color: var(--muted); }
+.uniRight { position: relative; }
+.uniListHead { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+.uniList { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
+.uniRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hair);
+  font-size: clamp(13px, 1vw, 15px);
+}
+.uniRow strong { font-weight: 600; }
+.uniRow span { grid-column: 1; color: var(--muted); font-size: 0.92em; }
+.uniRow em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; color: var(--muted); font-size: 0.85em; white-space: nowrap; }
+.stamp {
+  position: absolute;
+  right: -6px;
+  bottom: -46px;
+  padding: 8px 14px;
+  border: 3px solid var(--hot);
+  border-radius: 10px;
+  color: var(--hot);
+  font-family: var(--f-chunk), sans-serif;
+  font-size: clamp(14px, 1.3vw, 20px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+}
+
+/* Experience: ESDS and the roles inside it. */
+.expStage { width: min(1100px, 100%); }
+.expGrid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(24px, 5vw, 80px); align-items: start; }
+.expOrg {
+  margin: 10px 0 0;
+  font-family: var(--f-chunk), sans-serif;
+  font-weight: 400;
+  font-size: clamp(44px, 6vw, 96px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.expMeta { margin: 16px 0 0; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); line-height: 1.6; }
+.expRoles { position: relative; list-style: none; margin: 0; padding: 0 0 0 34px; display: grid; gap: 26px; }
+.expLine { position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: var(--hair); transform-origin: 50% 0; }
+.expRole {
+  position: relative;
+  padding: 18px 20px;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: rgba(21, 19, 31, 0.28);
+}
+.expDot {
+  position: absolute;
+  left: -32px;
+  top: 22px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--text);
+  background: #1f3b52;
+}
+.expDot[data-current] { background: var(--mint); box-shadow: 0 0 0 6px rgba(123, 220, 181, 0.25); }
+.expWhen { margin: 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.expTitle { margin: 6px 0 2px; font-family: var(--f-serif), serif; font-weight: 400; font-size: clamp(22px, 2.2vw, 34px); line-height: 1.15; }
+.expWhere { margin: 0; font-size: 13px; color: var(--muted); }
+.expSummary { margin: 10px 0 0; font-size: 15px; line-height: 1.55; color: var(--muted); }
+
+/* CTA and About share the serif statement */
+.about, .ctaStage { width: min(860px, 100%); }
+.serifHead {
+  margin: 0;
+  font-family: var(--f-serif), serif;
+  font-weight: 400;
+  font-size: clamp(36px, 5.4vw, 84px);
+  line-height: 1.08;
+}
+.word { display: inline; }
+.aboutLead {
+  max-width: 520px;
+  margin: 22px 0 0;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* CTA */
+.ctaStage { text-align: center; position: relative; z-index: 2; }
+.ctaMask { display: inline-block; overflow: hidden; padding-bottom: 0.08em; }
+.ctaWord { display: inline-block; white-space: pre; }
+.ctaBody { max-width: 540px; margin: 26px auto 0; font-size: clamp(15px, 1.25vw, 18px); line-height: 1.6; color: var(--muted); }
+.ctaBtns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+.btn, .btnGhost {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 99px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid var(--text);
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+.btn { background: var(--text); color: #15131f !important; }
+.btnGhost:hover, .btn:hover { transform: translateY(-2px); }
+.btnGhost:hover { background: var(--text); color: #15131f !important; }
+.doodle { position: absolute; width: clamp(44px, 5vw, 72px); color: var(--text); z-index: 1; }
+.doodle svg { width: 100%; display: block; }
+
+/* Work */
+/* place-items: normal matters: newer Chrome honours the scene's
+   centring even in block layout, which would centre this 3000px-wide
+   reel and start it with the first card already off the left edge. */
+.workScene { display: block; padding: 0; place-items: normal; }
+.track {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+  height: 100vh;
+  height: 100svh;
+  padding: 90px var(--gutter);
+  width: max-content;
+}
+/* "Selected" is ~3.7em wide in Anton, so the title is sized off the
+   intro's width and can never spill into the first card. */
+.workIntro { width: clamp(280px, 28vw, 420px); flex: none; }
+.workTitle {
+  margin: 0 0 16px;
+  font-family: var(--f-chunk), sans-serif;
+  font-weight: 400;
+  font-size: clamp(48px, 5.6vw, 104px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.workIntro p { color: var(--muted); line-height: 1.6; }
+.inlineLink { text-underline-offset: 5px; letter-spacing: 0.08em; text-transform: uppercase; font-size: 13px; }
+.card {
+  flex: none;
+  width: clamp(300px, 34vw, 520px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+}
+.cardStatus {
+  margin-right: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 99px;
+  font-style: normal;
+  color: var(--accent);
+}
+.cardMeta { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.cardFrame {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 2px solid rgba(21, 19, 31, 0.6);
+  background: rgba(21, 19, 31, 0.3);
+}
+.cardImg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s; }
+.card:hover .cardFrame img { filter: saturate(1.15); }
+.cardTitle { font-family: var(--f-serif), serif; font-size: clamp(28px, 2.6vw, 42px); line-height: 1.1; }
+.cardSummary { font-size: 15px; line-height: 1.5; color: var(--muted); max-width: 46ch; }
+
+/* About */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hair);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.factLabel { display: block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 24px 0 0; padding: 0; }
+.chip { padding: 5px 12px; border-radius: 99px; background: rgba(241, 237, 255, 0.12); font-size: 12px; letter-spacing: 0.06em; }
+.aboutLinks { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 22px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+.aboutLinks a { text-underline-offset: 5px; }
+
+/* Blogs */
+.blogStage { width: min(1180px, 100%); }
+.blogHead { margin-bottom: clamp(18px, 3vh, 32px); }
+.blogLinks { display: flex; flex-wrap: wrap; gap: 18px; margin: 14px 0 0; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+.blogLinks a { text-underline-offset: 5px; }
+.blogGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 2vw, 28px); }
+.blogCard { display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+.blogFrame { display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 12px; border: 2px solid rgba(21, 19, 31, 0.6); }
+.blogImg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
+.blogCard:hover .blogImg { transform: scale(1.05); }
+.blogMeta { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.blogTitle { font-family: var(--f-serif), serif; font-size: clamp(20px, 1.8vw, 28px); line-height: 1.15; }
+.blogDesc { font-size: 14px; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Outro */
+.outroRings { position: absolute; width: 120vmax; height: 120vmax; left: 50%; top: 50%; margin: -60vmax 0 0 -60vmax; }
+.outroText { position: relative; text-align: center; display: grid; gap: 22px; justify-items: center; }
+.copy { margin: 0; font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
+
+/* Narrow screens ---------------------------------------------- */
+/* Short landscape screens (phones on their side): give the orbits the
+   height by trimming the chrome around them. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .solarHead .kicker, .badge { display: none; }
+  .solarTitle { font-size: clamp(18px, 3.2vw, 28px); margin: 0; }
+  .solarScene { padding-top: 52px; padding-bottom: 40px; gap: 4px; }
+  .rail ul { display: none; }
+  .heroMeta { display: none; }
+  .panels { padding: 44px var(--gutter) 30px; }
+  .planetPanel { grid-template-columns: 0.9fr 1fr; gap: 12px; padding: 10px; }
+  .panelBelief { font-size: 20px; margin-top: 4px; }
+  .panelBody { font-size: 12.5px; margin-top: 6px; line-height: 1.45; }
+  .panelScene { display: none; }
+  .toolkit { margin-top: 6px; gap: 4px; }
+  .tool { padding: 3px; font-size: 0; gap: 0; }
+  .playBtn { bottom: 24px; }
+}
+
+/* Superscreens (4K and up): the px-sized UI scales with the viewport
+   so it doesn't shrink to postage stamps. */
+@media (min-width: 2200px) and (min-height: 1200px) {
+  .header { font-size: 0.62vw; padding: 1.1vw var(--gutter); }
+  .badge, .rail, .cardMeta, .chip, .panelKicker, .expWhen, .uniListHead { font-size: 0.5vw; }
+  .kicker { font-size: 0.68vw; }
+  .bio, .aboutLead, .ctaBody, .cardSummary, .workIntro p, .panelBody,
+  .uniSub, .uniRow, .expSummary, .expMeta {
+    font-size: 0.8vw;
+    max-width: 34vw;
+  }
+  .btn, .btnGhost, .aboutLinks, .inlineLink { font-size: 0.6vw; }
+  .btn, .btnGhost { padding: 0.6vw 1.1vw; }
+  .about, .ctaStage { width: min(46vw, 100%); }
+  .serifHead { font-size: 3.6vw; }
+  .planetPanel, .uniStage, .expStage { width: min(56vw, 100%); }
+  .panelBelief { font-size: 2.4vw; }
+  .card { width: 30vw; }
+  .cardTitle { font-size: 2vw; }
+  .planetName { font-size: 1.6cqh; }
+}
+
+@media (orientation: portrait) {
+  /* Rounder orbits when there is height to spare. */
+  .solarStage { height: min(100%, 96vw); }
+}
+@media (max-width: 819px) {
+  .planetName { display: none; }
+  .planet.active .planetName { display: block; }
+  .badge { font-size: 9px; padding: 4px 9px; }
+  .rail ul { overflow-x: auto; gap: 16px; justify-content: flex-start; scrollbar-width: none; }
+  .rail ul::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; }
+  .heroMeta { display: none; }
+  .mascotWrap { --w: 130vw; }
+  .hey { left: 20%; top: 12%; }
+  .uniStage, .expGrid { grid-template-columns: 1fr; gap: 22px; }
+  .uniBig { font-size: clamp(52px, 16vw, 90px); }
+  .uniRow { padding: 7px 0; }
+  .stamp { position: static; display: inline-block; margin-top: 14px; }
+  .blogGrid { grid-template-columns: 1fr; }
+  /* Phones: the play button collapses to its icon. */
+  .playBtn { padding: 5px; bottom: 34px; }
+  .playBtn [data-label] { display: none; }
+  .playIcon { width: 36px; height: 36px; }
+  .playIcon::after { left: 13px; top: 10px; }
+  .playBtn[aria-pressed="true"] .playIcon::after { left: 11px; top: 10px; }
+  .cueKeys { display: none; }
+  /* Keep the planet hopper clear of the play button. */
+  .planetNav { left: var(--gutter); transform: none; }
+  /* Radio sits above the play button as an icon; its panel spans the width. */
+  .radio { top: 8px; }
+  .cassette { width: 64px; }
+
+  .track { flex-direction: column; width: auto; height: auto; align-items: stretch; }
+  .workIntro, .card { width: 100%; }
+}
+@media (max-width: 480px) {
+}
+@media (orientation: portrait) and (max-width: 819px) {
+  /* Phones: art on top, belief underneath. */
+  .planetPanel { grid-template-columns: 1fr; gap: 12px; }
+  .panelBelief { font-size: clamp(22px, 6.4vw, 30px); }
+}

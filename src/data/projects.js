@@ -3,8 +3,34 @@ import travelloreImg from "../assets/travellore.webp";
 import trailerparkImg from "../assets/trailerpark.webp";
 import radiusImg from "../assets/radius.webp";
 import stoicImg from "../assets/stoic.webp";
+import pulseImg from "../assets/pulse.webp";
 
 export const projects = [
+  {
+    slug: "pulse",
+    updated: "2026-10-28",
+    status: "In development",
+    title: "PULSE",
+    role: "Product & AI Engineering",
+    year: "2026",
+    discipline: "AI/ML",
+    summary:
+      "A personal AI information feed: finite daily briefings, story fusion and source-grounded summaries. More signal, less noise.",
+    tags: ["Next.js", "TypeScript", "FastAPI", "PostgreSQL", "pgvector", "Redis", "LLM"],
+    image: pulseImg,
+    live: null,
+    github: null,
+    problem:
+      "Staying informed has turned into staying online. The same story arrives ten times from ten feeds, ranking is tuned for time spent rather than understanding, and AI summaries sound confident whether or not anything backs them. The result is more content and less clarity.",
+    approach: [
+      "Treat the feed as finite by design: a daily briefing of five to ten stories with a real end state, a reading budget, and no infinite scroll, autoplay or streaks.",
+      "Ingest from RSS, Hacker News and arXiv through one connector interface that respects rate limits and source terms, then normalise everything into a single content model that never loses the original URL.",
+      "Use embeddings to remove near-duplicates and fuse coverage of the same event into one story card: what happened, why it matters, where sources disagree and what is still unconfirmed, with citations next to the claims they support.",
+      "Rank with a transparent weighted model (relevance, novelty, freshness, source quality, diversity and explicit feedback) instead of raw engagement, and explain every recommendation in a line.",
+      "Keep it a modular monolith: Next.js on the front, FastAPI and Python workers behind it, PostgreSQL with pgvector and Redis underneath, all running locally in Docker.",
+    ],
+    outcome: [],
+  },
   {
     slug: "astrobot",
     updated: "2026-09-21",

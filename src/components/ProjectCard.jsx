@@ -23,6 +23,7 @@ export default function ProjectCard({ project, priority = false }) {
     image,
     live,
     github,
+    status,
   } = project;
 
   return (
@@ -35,7 +36,7 @@ export default function ProjectCard({ project, priority = false }) {
 
         <span className={styles.status}>
           <span className={`led ${live ? "led-on" : ""}`} aria-hidden="true" />
-          <span className={styles.statusText}>{live ? "Live" : "Source"}</span>
+          <span className={styles.statusText}>{status ?? (live ? "Live" : "Source")}</span>
         </span>
 
         <span className={`type-chip ${TYPE_CLASS[discipline] ?? ""}`}>

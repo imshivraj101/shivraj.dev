@@ -72,7 +72,7 @@ export default async function Page({ params }) {
                 className={`led ${project.live ? "led-on" : ""}`}
                 aria-hidden="true"
               />
-              {project.live ? "Live" : "Source"}
+              {project.status ?? (project.live ? "Live" : "Source")}
             </span>
           </div>
 
