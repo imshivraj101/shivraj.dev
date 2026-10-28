@@ -6,6 +6,8 @@
    timelines animate. Continuous touches (blinking LEDs, packets, steam)
    are native SVG/CSS so they cost nothing per scroll frame. */
 
+import esdsLogo from "../../assets/esds-logo.webp";
+
 const LINE = "#e9e4ff";
 const INK = "#15131f";
 const strip = { viewBox: "0 0 1440 320", preserveAspectRatio: "xMidYMax slice", "aria-hidden": true };
@@ -105,31 +107,46 @@ export function NashikScene({ className }) {
 /** ESDS: racks with live LEDs, packets riding up to the cloud. */
 export function DataCentreScene({ className }) {
   const racks = [120, 300, 480, 960, 1140, 1320];
-  const cloud = (cx, cy, s = 1) =>
-    `M${cx - 50 * s} ${cy + 18 * s} a22 22 0 0 1 8 -42 a30 30 0 0 1 56 -10 a24 24 0 0 1 36 30 a18 18 0 0 1 -6 22 Z`;
+  // The hub sits low, between the racks: the strip is cropped from the
+  // top on wide screens, so anything above y~150 can disappear.
+  const HX = 720;
+  const HY = 220;
   return (
     <svg className={className} {...strip}>
-      <path data-sc="cloud" d={cloud(720, 70, 1.3)} fill="rgba(233,228,255,0.1)" stroke={LINE} strokeWidth="2.5" />
-      {racks.map((x, i) => (
-        <path
-          key={`l${x}`}
-          id={`esds-link-${i}`}
-          data-sc="draw"
-          d={`M${x} 160 C${x} 110 ${(x + 720) / 2} 110 720 92`}
-          fill="none"
-          stroke={LINE}
-          strokeWidth="1.5"
-          strokeDasharray="4 6"
-          opacity="0.5"
-        />
-      ))}
+      <defs>
+        <radialGradient id="esds-glow">
+          <stop offset="0" stopColor="#5ec8e5" stopOpacity="0.45" />
+          <stop offset="1" stopColor="#5ec8e5" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      {racks.map((x, i) => {
+        const side = x < HX ? HX - 96 : HX + 96;
+        return (
+          <path
+            key={`l${x}`}
+            id={`esds-link-${i}`}
+            data-sc="draw"
+            d={`M${x} 160 C${x} 118 ${(x + side) / 2} 128 ${side} ${HY}`}
+            fill="none"
+            stroke={LINE}
+            strokeWidth="1.5"
+            strokeDasharray="4 6"
+            opacity="0.55"
+          />
+        );
+      })}
       {racks.map((x, i) => (
         <circle key={`p${x}`} r="4" fill="#7bdcb5">
-          <animateMotion dur={`${2.4 + (i % 3) * 0.6}s`} begin={`${i * 0.4}s`} repeatCount="indefinite">
+          <animateMotion dur={`${2.4 + (i % 3) * 0.6}s`} begin={`${i * 0.4}s`} repeatCount="indefinite" keyPoints={i % 2 ? "1;0" : "0;1"} keyTimes="0;1" calcMode="linear">
             <mpath href={`#esds-link-${i}`} />
           </animateMotion>
         </circle>
       ))}
+      {/* ESDS: the cloud everything feeds into */}
+      <g data-sc="cloud">
+        <ellipse className="sc-pulse" cx={HX} cy={HY} rx="150" ry="96" fill="url(#esds-glow)" />
+        <image href={esdsLogo.src} x={HX - 88} y="150" width="176" height="135" />
+      </g>
       {racks.map((x, i) => (
         <g key={x} data-sc="rack">
           <rect x={x - 46} y="160" width="92" height="126" rx="6" fill="#16263a" stroke={LINE} strokeWidth="2.5" />

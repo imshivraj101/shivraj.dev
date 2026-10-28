@@ -9,6 +9,7 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
 import { PhaseScene } from "./Egypt";
+import { Ufo, PlanetArt } from "./Cosmos";
 import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
@@ -17,6 +18,7 @@ import { stackNames } from "../../data/stack";
 import { projects } from "../../data/projects";
 import { blogs } from "../../data/blogs";
 import { toolkit } from "../../data/toolkit";
+import esdsLogo from "../../assets/esds-logo.webp";
 import s from "./Story.module.css";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, MotionPathPlugin);
@@ -27,6 +29,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, MotionPathPlugin);
 const BG = {
   hero: "#252a5f", // sampled from the avatar's sky so its edges disappear
   solar: "#110e26",
+  tour: "#110e26", // the teaser is already out in space
   hi: "#6e3a63",
   uni: "#4a2333",
   exp: "#1f3b52",
@@ -39,20 +42,24 @@ const BG = {
 
 const CHAPTERS = [
   { id: "hero", label: "Hello" },
-  { id: "solar", label: "Lifecycle" },
-  { id: "uni", label: "Uni" },
-  { id: "exp", label: "Experience" },
   { id: "work", label: "Work" },
+  { id: "exp", label: "Experience" },
+  { id: "uni", label: "Uni" },
+  { id: "tour", label: "Lifecycle" },
   { id: "blogs", label: "Blogs" },
   { id: "about", label: "About" },
 ];
 
 /* The product lifecycle as a solar system: the product is the sun and
    each phase is a planet, innermost first. Landing on a planet opens
-   its pyramid-site scene and the belief it stands for. */
+   its pyramid-site scene and the belief it stands for. `focus` (1-5)
+   is how much of his work lives in that phase, and sets the planet's
+   size; `kind` picks what sort of world it is drawn as. */
 const PHASES = [
   {
     name: "Plan",
+    kind: "earth",
+    focus: 3,
     color: "#7bdcb5",
     belief: "Start with the why.",
     body: "Before anyone touches a tool, I want one sentence: who is this for, and what changes for them. If we can’t write it, we’re not ready to build it.",
@@ -60,6 +67,8 @@ const PHASES = [
   },
   {
     name: "Analysis",
+    kind: "survey",
+    focus: 3,
     color: "#8fa8ff",
     belief: "Measure the ground before you lay a stone.",
     body: "Requirements come from users and data, not from the loudest voice in the room. Constraints found now are cheap; found later, they’re rebuilds.",
@@ -67,6 +76,8 @@ const PHASES = [
   },
   {
     name: "Design",
+    kind: "ringed",
+    focus: 5,
     color: "#ff7a59",
     belief: "Design is the cheapest place to be wrong.",
     body: "A sketch costs minutes, a migration costs months. I argue about flows and structure on paper, so the build becomes the boring part.",
@@ -74,6 +85,8 @@ const PHASES = [
   },
   {
     name: "Development",
+    kind: "giant",
+    focus: 5,
     color: "#f4a3c9",
     belief: "Ship in blocks, not boulders.",
     body: "Small, reviewable pieces that each stand on their own. Big-bang launches are how pyramids end up as rubble.",
@@ -81,6 +94,8 @@ const PHASES = [
   },
   {
     name: "AI/ML",
+    kind: "neural",
+    focus: 4,
     color: "#f0a6ff",
     belief: "Use AI where it earns its place.",
     body: "Not every feature needs a model. I reach for AI when it removes real friction or does what plain rules can’t — and keep the craft, the judgment and the last word human.",
@@ -88,6 +103,8 @@ const PHASES = [
   },
   {
     name: "Testing",
+    kind: "moon",
+    focus: 2,
     color: "#b8e05a",
     belief: "Tap every stone before anyone climbs.",
     body: "The empty state, the slow network, the user who does it backwards. The happy path is the one case I worry about least.",
@@ -95,6 +112,8 @@ const PHASES = [
   },
   {
     name: "Deployment",
+    kind: "ice",
+    focus: 5,
     color: "#5ec8e5",
     belief: "Launch with a way back.",
     body: "CI/CD, staged rollouts and a rollback plan written before it’s needed. The capstone goes on last, and carefully.",
@@ -102,6 +121,8 @@ const PHASES = [
   },
   {
     name: "Maintenance",
+    kind: "swirl",
+    focus: 3,
     color: "#c49bff",
     belief: "Shipping is the start, not the finish.",
     body: "Watch the numbers, read the feedback, fix the cracks — then go round the sun again with what you learned.",
@@ -114,6 +135,8 @@ const PHASES = [
 const tilt = (i) => ((i * 37) % 11) - 5;
 const scatter = (i, span) => (((i * 7919) % 1000) / 1000) * span;
 const pad2 = (n) => String(n).padStart(2, "0");
+// Planet size from focus: the phases he lives in are the giants.
+const SIZE_OF = { 1: 0.5, 2: 0.62, 3: 0.9, 4: 1.15, 5: 1.45 };
 const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
@@ -144,6 +167,14 @@ function Words({ text, className }) {
     </span>
   );
 }
+
+/* "Here's the short version": the chapters after Hi, in story order. */
+const AGENDA = [
+  { id: "work", label: "My projects" },
+  { id: "exp", label: "Work experience" },
+  { id: "uni", label: "University life" },
+  { id: "tour", label: "Why I love product" },
+];
 
 const DOODLES = [
   { k: "brackets", x: "8%", y: "18%" },
@@ -263,6 +294,30 @@ export default function Story({ fonts, avatar }) {
     const speeds = PHASES.map((_, i) => 0.32 / (1 + i * 0.35));
     const pos = PHASES.map(() => [0, 0]);
     const frac = (i) => 0.28 + (i * 0.7) / (PHASES.length - 1);
+    /* Layout the per-frame code needs, read once per resize/refresh so
+       the ticker never forces a layout. Offsets are relative to the
+       solar section, which is also where the UFO is positioned. */
+    const ufoPos = q(`.${s.ufoPos}`);
+    const geo = { cx: 0, cy: 0, sizes: [], panel: [], uw: 0, uh: 0 };
+    const solarSection = q('[data-scene="solar"]');
+    const measure = () => {
+      // Walk the offset chain: transforms (the system shrinking away at
+      // the end) don't affect offsets, so this is safe at any time.
+      let ox = 0;
+      let oy = 0;
+      for (let n = stage; n && n !== solarSection; n = n.offsetParent) {
+        ox += n.offsetLeft;
+        oy += n.offsetTop;
+      }
+      geo.cx = ox + stage.offsetWidth / 2;
+      geo.cy = oy + stage.offsetHeight / 2;
+      geo.sizes = planets.map((p) => p.querySelector(`.${s.planetDot}`).offsetWidth || 40);
+      geo.panel = panels.map((p) => [p.offsetLeft, p.offsetTop]);
+      geo.W = stage.offsetWidth / 2;
+      geo.H = stage.offsetHeight / 2;
+      geo.uw = ufoPos.offsetWidth;
+      geo.uh = ufoPos.offsetHeight;
+    };
     const placeOrbits = (dt = 0) => {
       const W = stage.offsetWidth / 2;
       const H = stage.offsetHeight / 2;
@@ -281,6 +336,7 @@ export default function Story({ fonts, avatar }) {
           orbits[i].style.height = `${ry * 2}px`;
         }
       });
+      if (!dt) measure();
     };
 
     /* The planet journey. journey.target is set from scroll; journey.f
@@ -386,10 +442,14 @@ export default function Story({ fonts, avatar }) {
     window.addEventListener("keydown", onKey);
     window.addEventListener("wheel", onUserScroll, { passive: true });
     window.addEventListener("touchstart", onUserScroll, { passive: true });
-    const applyCamera = () => {
+    /* The UFO: circles the sun in the overview, flies with the camera
+       to each planet, then docks on the corner of the open card. It
+       lives outside the camera so it never scales with the zoom. */
+    const ufo = { x: 0, y: 0, a: 2.4, clock: 0 };
+    const lerp = (a, b, k) => a + (b - a) * k;
+    const applyCamera = (dt) => {
       const f = journey.f;
-      const dot = planets[0].querySelector(`.${s.planetDot}`).offsetWidth || 40;
-      const Z = Math.min(12, Math.max(3, (Math.min(window.innerWidth, window.innerHeight) * 0.55) / dot));
+      const minDim = Math.min(window.innerWidth, window.innerHeight);
       let z = 1;
       let fx = 0;
       let fy = 0;
@@ -399,6 +459,8 @@ export default function Story({ fonts, avatar }) {
       if (f >= 0 && f < PHASES.length) {
         const i = Math.floor(f);
         const u = f - i;
+        // Each planet is sized by focus, so each gets its own zoom.
+        const Z = Math.min(16, Math.max(3, (minDim * 0.55) / (geo.sizes[i] || 40)));
         t = u < 0.25 ? easeInOut(u / 0.25) : u > 0.75 ? easeInOut((1 - u) / 0.25) : 1;
         z = 1 + (Z - 1) * t;
         fx = pos[i][0] * t;
@@ -421,17 +483,45 @@ export default function Story({ fonts, avatar }) {
         p.style.transform = `translateY(${(1 - o) * 30}px) scale(${0.96 + 0.04 * o})`;
       });
       setPhase(open);
+
+      // UFO target, relative to the stage centre.
+      ufo.a += dt * 0.35;
+      ufo.clock += dt;
+      let tx = Math.cos(ufo.a) * geo.W * 0.6;
+      let ty = Math.sin(ufo.a) * geo.H * 0.55;
+      if (open >= 0) {
+        const r = (geo.sizes[open] / 2) * z * 1.4;
+        const px = pos[open][0] * (1 - t) * z;
+        const py = pos[open][1] * (1 - t) * z;
+        tx = lerp(tx, px - r * 0.7 - geo.uw * 0.3, t);
+        ty = lerp(ty, py - r * 0.7 - geo.uh * 0.3, t);
+        // Dock on the card's top-left corner; on phones the card reaches
+        // up to the header, so it parks just inside the corner instead.
+        const [lx, ly] = geo.panel[open] ?? [0, 0];
+        const roomAbove = ly > geo.uh * 0.6 + 70;
+        tx = lerp(tx, lx - geo.cx + geo.uw * (roomAbove ? 0.2 : 0.6), show);
+        ty = lerp(ty, ly - geo.cy + (roomAbove ? -geo.uh * 0.55 : geo.uh * 0.2), show);
+      }
+      const k = Math.min(1, dt * 4);
+      const vx = (tx - ufo.x) * k;
+      ufo.x += vx;
+      ufo.y += (ty - ufo.y) * k;
+      const bob = Math.sin(ufo.clock * 2.2) * 6;
+      const tilt = Math.max(-14, Math.min(14, vx * 0.6));
+      ufoPos.style.transform = `translate(${geo.cx + ufo.x - geo.uw / 2}px, ${geo.cy + ufo.y - geo.uh / 2 + bob}px) rotate(${tilt}deg)`;
+      ufoPos.style.opacity = done ? "0" : "1";
     };
     const orbitTick = (time, deltaMs) => {
       const dt = Math.min(deltaMs, 50) / 1000;
       if (!journey.lock) journey.f += (journey.target - journey.f) * Math.min(1, dt * 3.2);
       // Planets slow right down while the camera is visiting one.
       placeOrbits(journey.f >= 0 && journey.f < PHASES.length ? dt * 0.2 : dt);
-      applyCamera();
+      applyCamera(dt);
     };
     const onResize = () => placeOrbits();
     placeOrbits();
     window.addEventListener("resize", onResize);
+    ScrollTrigger.addEventListener("refresh", measure);
 
     const mm = gsap.matchMedia();
 
@@ -480,6 +570,7 @@ export default function Story({ fonts, avatar }) {
         // so the gap before the next pin never flashes the old colour.
         const order = qa("[data-scene]").map((n) => n.dataset.scene);
         const nextBg = (id) => BG[order[order.indexOf(id) + 1]] ?? BG[id];
+        const holdAt = {};
         const scene = (id, end, build, extra = {}) => {
           const sec = q(`[data-scene="${id}"]`);
           // A scene taller than the screen (About on a phone, anything on
@@ -502,12 +593,18 @@ export default function Story({ fonts, avatar }) {
             },
           });
           build(tl, (sel) => sec.querySelector(sel), (sel) => gsap.utils.toArray(sec.querySelectorAll(sel)));
+          // A "hold" label marks the moment everything has played in;
+          // the director lands there.
+          if (tl.labels.hold != null) holdAt[id] = tl.labels.hold / tl.duration();
           return tl;
         };
 
+        // Pins are created in page order: each one's start depends on the
+        // pin spacing of every pinned scene above it.
         // Hero: the camera dives straight into his pupil. Nothing is
         // faked: the whole vector face scales in proportion until the
-        // dark of the eye fills the screen, and that dark becomes space.
+        // dark of the eye fills the screen, and out the other side he
+        // says hello.
         let inside = false;
         scene("hero", "+=180%", (tl, $) => {
           // Only wrappers the intro never touches, so the two timelines
@@ -521,33 +618,10 @@ export default function Story({ fonts, avatar }) {
             const now = st.progress > 0.88;
             if (now !== inside) {
               inside = now;
-              setBg(inside ? BG.solar : BG.hero);
+              setBg(inside ? BG.hi : BG.hero);
             }
           },
         });
-
-        // Solar: the system grows in while the section is still rising
-        // out of the eye, so there's no empty stretch; once pinned, the
-        // camera visits each planet in turn.
-        const solarSec = q('[data-scene="solar"]');
-        gsap.timeline({
-          defaults: { ease: "none" },
-          scrollTrigger: { trigger: solarSec, start: "top bottom", end: "top top", scrub: 0.6 },
-        })
-          .from(q(`.${s.sun}`), { scale: 0, duration: 0.5, ease: "back.out(1.6)" }, 0)
-          .from(qa(`.${s.orbit}`), { scale: 0.2, opacity: 0, stagger: 0.04, duration: 0.5 }, 0.1)
-          .from(qa(`.${s.planetBody}`), { scale: 0, stagger: 0.04, duration: 0.3, ease: "back.out(2)" }, 0.4)
-          .from(q(`.${s.solarHead}`), { y: 30, opacity: 0, duration: 0.3 }, 0.6);
-        scene("solar", `+=${(PHASES.length + 1) * 170}%`, (tl, $) => {
-          tl.to({}, { duration: JOURNEY_LEN }, JOURNEY_IN)
-            .to($(`.${s.system}`), { scale: 0.08, rotation: 25, opacity: 0, duration: 0.08, ease: "power2.in" });
-        }, {
-          onUpdate: (st) => {
-            const f = ((st.progress - JOURNEY_IN) / JOURNEY_LEN) * PHASES.length;
-            journey.target = Math.min(PHASES.length, Math.max(-0.001, f));
-          },
-        });
-        gsap.ticker.add(orbitTick);
 
         // Line-drawn scenery: strokes start undrawn and draw on scroll.
         const undraw = (els) =>
@@ -568,42 +642,15 @@ export default function Story({ fonts, avatar }) {
           tl.from(chars, { yPercent: 160, rotation: (i) => tilt(i) * 6, opacity: 0, stagger: 0.04, duration: 0.35, ease: "back.out(2)" }, 0)
             .to(line, { strokeDashoffset: 0, duration: 0.3 })
             .from($$(`.${s.sparkle}`), { scale: 0, rotation: -90, stagger: 0.04, duration: 0.2, ease: "back.out(3)" }, "<")
-            .from($(`.${s.bio}`), { y: 30, opacity: 0, duration: 0.25 })
+            .from($(`.${s.hiWork}`), { y: 30, opacity: 0, duration: 0.25 })
+            .from($(`.${s.esds}`), { scale: 0, rotation: -12, duration: 0.2, ease: "back.out(2.4)" }, "<0.1")
+            .from($(`.${s.bio}`), { y: 30, opacity: 0, duration: 0.2 })
+            .from($$(`.${s.agenda} li`), { y: 24, opacity: 0, stagger: 0.05, duration: 0.2, ease: "back.out(2)" }, "<0.05")
+            .addLabel("hold", "+=0.1")
             .to({}, { duration: 0.35 })
-            .to([$(`.${s.bio}`), $(`.${s.squiggle}`), ...$$(`.${s.sparkle}`)], { opacity: 0, duration: 0.15 })
+            .to([$(`.${s.hiWork}`), $(`.${s.bio}`), $(`.${s.agenda}`), $(`.${s.squiggle}`), ...$$(`.${s.sparkle}`)], { opacity: 0, duration: 0.15 })
             .to($(`.${s.hiLine}`), { scale: 7, opacity: 0, duration: 0.6, ease: "power2.in" }, "<")
             .to($(`.${s.scenery}`), { y: 60, opacity: 0, duration: 0.3 }, "<");
-        });
-
-        // Uni: one compact screen, then college life is stamped done.
-        scene("uni", "+=150%", (tl, $, $$) => {
-          // Nashik: hills and river draw in, the vines fill with grapes,
-          // the train runs the whole length, caps fly for the class of '26.
-          undraw($$('[data-sc="draw"]'));
-          tl.to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.08, duration: 0.4 }, 0)
-            .from($$('[data-sc="vine"]'), { scale: 0, transformOrigin: "50% 100%", stagger: 0.008, duration: 0.2, ease: "back.out(2)" }, 0.15)
-            .fromTo($('[data-sc="train"]'), { x: -300 }, { x: 1700, duration: 1.1, ease: "none" }, 0)
-            .from($$('[data-sc="cap"]'), { y: 160, opacity: 0, stagger: 0.08, duration: 0.3, ease: "back.out(1.6)" }, 0.45);
-          tl.from($$(`.${s.uniChar}`), { yPercent: 110, stagger: 0.03, duration: 0.3, ease: "power3.out" }, 0)
-            .from($(`.${s.uniSub}`), { y: 16, opacity: 0, duration: 0.15 }, "<0.15")
-            .from($$(`.${s.uniRow}`), { y: 24, opacity: 0, stagger: 0.05, duration: 0.2 }, "<0.1")
-            .from($(`.${s.stamp}`), { scale: 2.4, rotation: -30, opacity: 0, duration: 0.2, ease: "back.out(2)" })
-            .to({}, { duration: 0.3 })
-            .to([$(`.${s.uniStage}`), $(`.${s.scenery}`)], { y: -40, opacity: 0, duration: 0.2 });
-        });
-
-        // Experience: the timeline draws itself and the roles slot in.
-        scene("exp", "+=160%", (tl, $, $$) => {
-          // ESDS: the racks rise, the cloud forms, the links draw in.
-          undraw($$('[data-sc="draw"]'));
-          tl.from($$('[data-sc="rack"]'), { scaleY: 0, transformOrigin: "50% 100%", stagger: 0.05, duration: 0.25, ease: "back.out(1.4)" }, 0)
-            .from($('[data-sc="cloud"]'), { scale: 0.6, opacity: 0, transformOrigin: "50% 50%", duration: 0.3 }, 0.1)
-            .to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.04, duration: 0.3 }, 0.2);
-          tl.from($$(`.${s.expHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 }, 0)
-            .from($(`.${s.expLine}`), { scaleY: 0, duration: 0.35 }, "<0.1")
-            .from($$(`.${s.expRole}`), { y: 40, opacity: 0, stagger: 0.15, duration: 0.25 }, "<0.1")
-            .to({}, { duration: 0.35 })
-            .to([$(`.${s.expStage}`), $(`.${s.scenery}`)], { y: -40, opacity: 0, duration: 0.2 });
         });
 
         // Work: a horizontal reel on wide screens, a plain stack on narrow.
@@ -632,11 +679,93 @@ export default function Story({ fonts, avatar }) {
           );
         }
 
+        // Experience: the timeline draws itself and the roles slot in.
+        scene("exp", "+=160%", (tl, $, $$) => {
+          // ESDS: the racks rise, the cloud forms, the links draw in.
+          undraw($$('[data-sc="draw"]'));
+          tl.from($$('[data-sc="rack"]'), { scaleY: 0, transformOrigin: "50% 100%", stagger: 0.05, duration: 0.25, ease: "back.out(1.4)" }, 0)
+            .from($('[data-sc="cloud"]'), { scale: 0.6, opacity: 0, transformOrigin: "50% 50%", duration: 0.3 }, 0.1)
+            .to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.04, duration: 0.3 }, 0.2);
+          tl.from($$(`.${s.expHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 }, 0)
+            .from($(`.${s.expLine}`), { scaleY: 0, duration: 0.35 }, "<0.1")
+            .from($$(`.${s.expRole}`), { y: 40, opacity: 0, stagger: 0.15, duration: 0.25 }, "<0.1")
+            .addLabel("hold", "+=0.1")
+            .to({}, { duration: 0.35 })
+            .to([$(`.${s.expStage}`), $(`.${s.scenery}`)], { y: -40, opacity: 0, duration: 0.2 });
+        });
+
+        // Uni: one compact screen, then college life is stamped done.
+        scene("uni", "+=150%", (tl, $, $$) => {
+          // Nashik: hills and river draw in, the vines fill with grapes,
+          // the train runs the whole length, caps fly for the class of '26.
+          undraw($$('[data-sc="draw"]'));
+          tl.to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.08, duration: 0.4 }, 0)
+            .from($$('[data-sc="vine"]'), { scale: 0, transformOrigin: "50% 100%", stagger: 0.008, duration: 0.2, ease: "back.out(2)" }, 0.15)
+            .fromTo($('[data-sc="train"]'), { x: -300 }, { x: 1700, duration: 1.1, ease: "none" }, 0)
+            .from($$('[data-sc="cap"]'), { y: 160, opacity: 0, stagger: 0.08, duration: 0.3, ease: "back.out(1.6)" }, 0.45);
+          tl.from($$(`.${s.uniChar}`), { yPercent: 110, stagger: 0.03, duration: 0.3, ease: "power3.out" }, 0)
+            .from($(`.${s.uniSub}`), { y: 16, opacity: 0, duration: 0.15 }, "<0.15")
+            .from($$(`.${s.uniRow}`), { y: 24, opacity: 0, stagger: 0.05, duration: 0.2 }, "<0.1")
+            .from($(`.${s.stamp}`), { scale: 2.4, rotation: -30, opacity: 0, duration: 0.2, ease: "back.out(2)" })
+            .addLabel("hold", "+=0.1")
+            .to({}, { duration: 0.3 })
+            .to([$(`.${s.uniStage}`), $(`.${s.scenery}`)], { y: -40, opacity: 0, duration: 0.2 });
+        });
+
+        // Tour teaser: the saucer swoops in with its pilot, waits for the
+        // question to land, then shoots off into the system ahead.
+        scene("tour", "+=170%", (tl, $, $$) => {
+          const u = $(`.${s.tourUfo}`);
+          tl.fromTo(u, { xPercent: -320, yPercent: -140, rotation: -24, scale: 0.5 }, { xPercent: 0, yPercent: 0, rotation: 0, scale: 1, duration: 0.35, ease: "power2.out" }, 0)
+            .from($$(`.${s.tourText} > *`), { y: 30, opacity: 0, stagger: 0.08, duration: 0.2 }, 0.15)
+            .addLabel("hold", "+=0.1")
+            .to({}, { duration: 0.35 })
+            .to($(`.${s.tourText}`), { y: -30, opacity: 0, duration: 0.15 })
+            .to(u, { y: () => window.innerHeight * 0.18, scale: 0.08, rotation: 30, opacity: 0, duration: 0.3, ease: "power2.in" }, "<");
+        }, { invalidateOnRefresh: true });
+
+        // Solar: the system grows in while the section is still rising
+        // out of the eye, so there's no empty stretch; once pinned, the
+        // camera visits each planet in turn.
+        const solarSec = q('[data-scene="solar"]');
+        gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: { trigger: solarSec, start: "top bottom", end: "top top", scrub: 0.6 },
+        })
+          .from(q(`.${s.sun}`), { scale: 0, duration: 0.5, ease: "back.out(1.6)" }, 0)
+          .from(qa(`.${s.orbit}`), { scale: 0.2, opacity: 0, stagger: 0.04, duration: 0.5 }, 0.1)
+          .from(qa(`.${s.planetBody}`), { scale: 0, stagger: 0.04, duration: 0.3, ease: "back.out(2)" }, 0.4)
+          .from(q(`.${s.solarHead}`), { y: 30, opacity: 0, duration: 0.3 }, 0.6)
+          .from(q(`.${s.ufoPos} svg`), { scale: 0, opacity: 0, duration: 0.3, ease: "back.out(2)" }, 0.6);
+        scene("solar", `+=${(PHASES.length + 1) * 170}%`, (tl, $) => {
+          tl.to({}, { duration: JOURNEY_LEN }, JOURNEY_IN)
+            .to($(`.${s.system}`), { scale: 0.08, rotation: 25, opacity: 0, duration: 0.08, ease: "power2.in" });
+        }, {
+          onUpdate: (st) => {
+            const f = ((st.progress - JOURNEY_IN) / JOURNEY_LEN) * PHASES.length;
+            journey.target = Math.min(PHASES.length, Math.max(-0.001, f));
+          },
+        });
+        gsap.ticker.add(orbitTick);
+
+        // Blogs: the notes rise in one after another.
+        scene("blogs", "+=130%", (tl, $, $$) => {
+          tl.from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 })
+            .from($(`.${s.blogCard}`), { y: 60, opacity: 0, stagger: 0.1, duration: 0.3 }, "<0.1");
+          // Paper planes fly their dashed trails across the notes.
+          undraw($$('[data-sc="draw"]'));
+          tl.to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.1, duration: 0.6 }, 0);
+          $$('[data-sc="plane"]').forEach((pl, i) => {
+            tl.to(pl, { motionPath: { path: pl.dataset.path, autoRotate: true }, duration: 0.8, ease: "none" }, i * 0.1);
+          });
+        });
+
         // CTA: doodles pop in around the ask.
         scene("cta", "+=170%", (tl, $, $$) => {
           tl.from($$(`.${s.ctaWord}`), { yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.3 })
             .from($$(`.${s.doodle}`), { scale: 0, rotation: -40, opacity: 0, stagger: 0.06, duration: 0.25, ease: "back.out(2.2)" }, "<0.1")
             .from($$(`.${s.ctaBody} > *`), { y: 20, opacity: 0, stagger: 0.08, duration: 0.2 })
+            .addLabel("hold", "+=0.1")
             .to({}, { duration: 0.4 })
             .to($(`.${s.ctaStage}`), { opacity: 0, y: -40, duration: 0.25 })
             .to($$(`.${s.doodle}`), { y: (i) => (i % 2 ? -200 : 200), opacity: 0, duration: 0.25 }, "<");
@@ -651,18 +780,6 @@ export default function Story({ fonts, avatar }) {
             .from($(`.${s.aboutLead}`), { y: 20, opacity: 0, duration: 0.2 })
             .from($$(`.${s.chip}`), { scale: 0.6, opacity: 0, stagger: 0.02, duration: 0.15, ease: "back.out(2)" })
             .from($$(`.${s.aboutLinks} a`), { y: 10, opacity: 0, stagger: 0.05, duration: 0.15 });
-        });
-
-        // Blogs: the notes rise in one after another.
-        scene("blogs", "+=130%", (tl, $, $$) => {
-          tl.from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 })
-            .from($(`.${s.blogCard}`), { y: 60, opacity: 0, stagger: 0.1, duration: 0.3 }, "<0.1");
-          // Paper planes fly their dashed trails across the notes.
-          undraw($$('[data-sc="draw"]'));
-          tl.to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.1, duration: 0.6 }, 0);
-          $$('[data-sc="plane"]').forEach((pl, i) => {
-            tl.to(pl, { motionPath: { path: pl.dataset.path, autoRotate: true }, duration: 0.8, ease: "none" }, i * 0.1);
-          });
         });
 
         // Outro: the rings come back and close the loop.
@@ -684,7 +801,7 @@ export default function Story({ fonts, avatar }) {
            scene has fully played in. Moving between stops scrolls the
            page with a tween, so every scrubbed animation fast-forwards
            exactly as it would under a slow scroll. */
-        const HOLD_AT = { hi: 0.55, uni: 0.62, exp: 0.62, cta: 0.62, about: 0.95, blogs: 0.75, outro: 0.95 };
+        const HOLD_AT = { tour: 0.5, hi: 0.55, uni: 0.62, exp: 0.62, cta: 0.62, about: 0.95, blogs: 0.75, outro: 0.95 };
         const stops = () => {
           const get = (id) => ScrollTrigger.getById(id);
           const at = (st, f) => st.start + f * (st.end - st.start);
@@ -694,7 +811,7 @@ export default function Story({ fonts, avatar }) {
             out.push({ y: at(sol, JOURNEY_IN), hold: 1.4 });
             PHASES.forEach((_, i) => out.push({ y: at(sol, JOURNEY_IN + ((i + 0.5) / N) * JOURNEY_LEN), hold: 2.6 }));
           }
-          ["hi", "uni", "exp"].forEach((id) => get(id) && out.push({ y: at(get(id), HOLD_AT[id]), hold: 2.4 }));
+          ["hi", "uni", "exp", "tour"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
           const w = get("work");
           if (w) {
             // Land on the intro, then with each project card centred.
@@ -709,7 +826,7 @@ export default function Story({ fonts, avatar }) {
             // Narrow screens list the work vertically: one stop per card.
             qa(`.${s.card}`).forEach((c) => out.push({ y: c.getBoundingClientRect().top + window.scrollY - 90, hold: 1.6 }));
           }
-          ["cta", "about", "blogs", "outro"].forEach((id) => get(id) && out.push({ y: at(get(id), HOLD_AT[id]), hold: 2.4 }));
+          ["cta", "about", "blogs", "outro"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
           return out.sort((a, b) => a.y - b.y);
         };
 
@@ -821,6 +938,7 @@ export default function Story({ fonts, avatar }) {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      ScrollTrigger.removeEventListener("refresh", measure);
       window.removeEventListener("wheel", markTouched);
       window.removeEventListener("touchstart", markTouched);
       window.removeEventListener("keydown", markTouched);
@@ -930,88 +1048,8 @@ export default function Story({ fonts, avatar }) {
         </div>
       </section>
 
-      {/* ---------------- Solar ---------------- */}
-      <section id="solar" data-scene="solar" className={`${s.scene} ${s.solarScene}`} style={{ "--bg": BG.solar }}>
-        <div className={s.solarHead}>
-          <p className={s.kicker}>Inside: the product lifecycle</p>
-          <h2 className={s.solarTitle}>Everything I build orbits one thing.</h2>
-        </div>
-        <div className={s.system}>
-          <div className={s.solarStage}>
-            <div className={s.camera}>
-              {PHASES.map((p) => (
-                <span key={p.name} className={s.orbit} aria-hidden="true" />
-              ))}
-              <div className={s.sun}>
-                <span>Product</span>
-              </div>
-              {PHASES.map((p, i) => (
-                <div key={p.name} className={s.planet} style={{ "--c": p.color }} aria-hidden="true">
-                  <div className={s.planetBody}>
-                    <span className={s.planetDot}>{pad2(i + 1)}</span>
-                    <span className={s.planetName}>{p.name}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className={s.panels}>
-          {PHASES.map((p, i) => (
-            <article key={p.name} className={s.planetPanel} style={{ "--c": p.color }}>
-              <PhaseScene name={p.name} className={s.panelArt} />
-              <div className={s.panelText}>
-                <p className={s.panelKicker}>
-                  Planet {pad2(i + 1)} / {pad2(PHASES.length)} · {p.name}
-                </p>
-                <h3 className={s.panelBelief}>{p.belief}</h3>
-                <p className={s.panelBody}>{p.body}</p>
-                <ul className={s.toolkit} aria-label={`Tools for ${p.name}`}>
-                  {(toolkit[p.name] ?? []).map((t) => (
-                    <li key={t.name} className={s.tool}>
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d={t.path} fill={t.hex} />
-                      </svg>
-                      {t.name}
-                    </li>
-                  ))}
-                </ul>
-                <p className={s.panelScene}>On site: {p.scene}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-        <nav className={s.planetNav} aria-label="Lifecycle phases">
-          <button type="button" className={s.tourBtn} aria-pressed="false" onClick={() => nav.current.tour()}>
-            ▶ Play tour
-          </button>
-          <button type="button" className={s.navArrow} aria-label="Previous phase" onClick={() => nav.current.step(-1)}>
-            ←
-          </button>
-          {PHASES.map((p, i) => (
-            <button
-              key={p.name}
-              type="button"
-              className={s.navDot}
-              style={{ "--c": p.color }}
-              aria-label={`Go to ${p.name}`}
-              title={p.name}
-              onClick={() => nav.current.to(i)}
-            >
-              {pad2(i + 1)}
-            </button>
-          ))}
-          <button type="button" className={s.navArrow} aria-label="Next phase" onClick={() => nav.current.step(1)}>
-            →
-          </button>
-          <span className={s.keyHint}>
-            Tip: use <kbd>←</kbd> <kbd>→</kbd> to hop planets
-          </span>
-        </nav>
-      </section>
-
       {/* ---------------- Hi ---------------- */}
-      <section data-scene="hi" className={s.scene} style={{ "--bg": BG.hi }}>
+      <section id="hi" data-scene="hi" className={s.scene} style={{ "--bg": BG.hi }}>
         <DeskScene className={s.scenery} />
         <div className={s.hiStage}>
           <Sparkle style={{ left: "12%", top: "22%" }} />
@@ -1024,41 +1062,54 @@ export default function Story({ fonts, avatar }) {
           <svg className={s.squiggle} viewBox="0 0 300 24" aria-hidden="true">
             <path d="M4 12 Q22 0 40 12 T76 12 T112 12 T148 12 T184 12 T220 12 T256 12 T292 12" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
           </svg>
-          <p className={s.bio}>
-            {nowRole?.role} at {site.employer.name}. I take products from the first question to the
-            hundredth release: research, design, build, ship, and round again.
+          <p className={s.hiWork}>
+            I work at
+            <span className={s.esds}>
+              <Image src={esdsLogo} alt="ESDS" className={s.esdsLogo} sizes="80px" />
+            </span>
+            as an {(nowRole?.role ?? site.employer.role).replace("Artificial Intelligence", "AI")}.
           </p>
+          <p className={s.bio}>
+            I take products from the first question to the hundredth release: research, design,
+            build, ship, and round again. Here&apos;s the short version.
+          </p>
+          <ul className={s.agenda}>
+            {AGENDA.map((a, i) => (
+              <li key={a.id}>
+                <a href={`#${a.id}`} data-go={a.id} onClick={onChapter} className={s.agendaLink}>
+                  <b>{pad2(i + 1)}</b> {a.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* ---------------- Uni ---------------- */}
-      <section id="uni" data-scene="uni" className={s.scene} style={{ "--bg": BG.uni }}>
-        <NashikScene className={s.scenery} />
-        <div className={s.uniStage}>
-          <div className={s.uniLeft}>
-            <p className={s.kicker}>Uni life · Nashik</p>
-            <h2 className={s.uniBig} aria-label="Class of '26.">
-              <span className={s.cityRow}><Chars text="CLASS" className={s.uniChar} /></span>
-              <span className={s.cityRow}><Chars text="OF '26." className={s.uniChar} /></span>
-            </h2>
-            <p className={s.uniSub}>
-              B.Tech Computer Science &amp; Design · KKWIEER, Nashik. Four years of building things,
-              and leading the people who built them with me.
-            </p>
+      {/* ---------------- Work ---------------- */}
+      <section id="work" data-scene="work" className={`${s.scene} ${s.workScene}`} style={{ "--bg": BG.work }}>
+        <BeltScene className={s.belt} />
+        <div className={s.track}>
+          <div className={s.workIntro}>
+            <h2 className={s.workTitle}>Selected<br />work</h2>
+            <p>Products I&apos;ve researched, designed and shipped, each one a full lap of the lifecycle.</p>
+            <Link href="/projects" className={s.inlineLink}>Every project →</Link>
           </div>
-          <div className={s.uniRight}>
-            <p className={s.uniListHead}>Where I led</p>
-            <ul className={s.uniList}>
-              {college.map((c) => (
-                <li key={`${c.role}-${c.org}`} className={s.uniRow}>
-                  <strong>{c.role}</strong>
-                  <span>{c.org}</span>
-                  <em>{c.duration}</em>
-                </li>
-              ))}
-            </ul>
-            <span className={s.stamp} aria-label="College life: complete">College life ✓ complete</span>
-          </div>
+          {projects.map((p) => (
+            <Link key={p.slug} href={`/projects/${p.slug}`} className={s.card}>
+              <span className={s.cardMeta}>
+                <span>{p.role}</span>
+                <span>
+                  {p.status && <em className={s.cardStatus}>{p.status}</em>}
+                  {p.year}
+                </span>
+              </span>
+              <span className={s.cardFrame}>
+                <Image src={p.image} alt="" className={s.cardImg} sizes="(min-width: 820px) 34vw, 90vw" />
+              </span>
+              <span className={s.cardTitle}>{p.title}</span>
+              <span className={s.cardSummary}>{p.summary}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -1094,32 +1145,148 @@ export default function Story({ fonts, avatar }) {
         </div>
       </section>
 
-      {/* ---------------- Work ---------------- */}
-      <section id="work" data-scene="work" className={`${s.scene} ${s.workScene}`} style={{ "--bg": BG.work }}>
-        <BeltScene className={s.belt} />
-        <div className={s.track}>
-          <div className={s.workIntro}>
-            <h2 className={s.workTitle}>Selected<br />work</h2>
-            <p>Products I&apos;ve researched, designed and shipped, each one a full lap of the lifecycle.</p>
-            <Link href="/projects" className={s.inlineLink}>Every project →</Link>
+      {/* ---------------- Uni ---------------- */}
+      <section id="uni" data-scene="uni" className={s.scene} style={{ "--bg": BG.uni }}>
+        <NashikScene className={s.scenery} />
+        <div className={s.uniStage}>
+          <div className={s.uniLeft}>
+            <p className={s.kicker}>Uni life · Nashik</p>
+            <h2 className={s.uniBig} aria-label="Class of '26.">
+              <span className={s.cityRow}><Chars text="CLASS" className={s.uniChar} /></span>
+              <span className={s.cityRow}><Chars text="OF '26." className={s.uniChar} /></span>
+            </h2>
+            <p className={s.uniSub}>
+              B.Tech Computer Science &amp; Design · KKWIEER, Nashik. Four years of building things,
+              and leading the people who built them with me.
+            </p>
           </div>
-          {projects.map((p) => (
-            <Link key={p.slug} href={`/projects/${p.slug}`} className={s.card}>
-              <span className={s.cardMeta}>
-                <span>{p.role}</span>
-                <span>
-                  {p.status && <em className={s.cardStatus}>{p.status}</em>}
-                  {p.year}
-                </span>
+          <div className={s.uniRight}>
+            <div className={s.uniHeadRow}>
+              <p className={s.uniListHead}>Where I led</p>
+              <span className={s.stamp} role="img" aria-label="College life: complete">
+                <small>Certified</small>
+                <b>College life ✓ complete</b>
+                <small>KKWIEER · Class of 2026</small>
               </span>
-              <span className={s.cardFrame}>
-                <Image src={p.image} alt="" className={s.cardImg} sizes="(min-width: 820px) 34vw, 90vw" />
-              </span>
-              <span className={s.cardTitle}>{p.title}</span>
-              <span className={s.cardSummary}>{p.summary}</span>
-            </Link>
+            </div>
+            <ul className={s.uniList}>
+              {college.map((c) => (
+                <li key={`${c.role}-${c.org}`} className={s.uniRow}>
+                  <strong>{c.role}</strong>
+                  <span>{c.org}</span>
+                  <em>{c.duration}</em>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- Tour ---------------- */}
+      <section id="tour" data-scene="tour" className={`${s.scene} ${s.tourScene}`} style={{ "--bg": BG.tour }}>
+        <div className={s.tourUfo} aria-hidden="true">
+          <Ufo uid="tour" className={s.ufoArt} />
+        </div>
+        <div className={s.tourText}>
+          <p className={s.kicker}>Story time</p>
+          <h2 className={s.tourTitle}>Wanna know why I love product?</h2>
+          <p className={s.tourSub}>
+            Hop in. Captain Shivraj is flying you round the product lifecycle, one planet at a time.
+            The bigger the planet, the more of my work lives there.
+          </p>
+        </div>
+      </section>
+
+      {/* ---------------- Solar ---------------- */}
+      <section id="solar" data-scene="solar" className={`${s.scene} ${s.solarScene}`} style={{ "--bg": BG.solar }}>
+        <div className={s.solarHead}>
+          <p className={s.kicker}>The product lifecycle · tap a planet</p>
+          <h2 className={s.solarTitle}>Everything I build orbits one thing.</h2>
+        </div>
+        <div className={s.system}>
+          <div className={s.solarStage}>
+            <div className={s.camera}>
+              {PHASES.map((p) => (
+                <span key={p.name} className={s.orbit} aria-hidden="true" />
+              ))}
+              <div className={s.sun}>
+                <span>Product</span>
+              </div>
+              {PHASES.map((p, i) => (
+                <div key={p.name} className={s.planet} style={{ "--c": p.color, "--k": SIZE_OF[p.focus] }}>
+                  <button type="button" className={s.planetBody} aria-label={`Visit ${p.name}`} onClick={() => nav.current.to(i)}>
+                    <span className={s.planetDot}>
+                      <PlanetArt kind={p.kind} c={p.color} uid={i} className={s.planetArt} />
+                    </span>
+                    <span className={s.planetName}>
+                      <b>{pad2(i + 1)}</b> {p.name}
+                    </span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className={s.panels}>
+          {PHASES.map((p, i) => (
+            <article key={p.name} className={s.planetPanel} style={{ "--c": p.color }}>
+              <PhaseScene name={p.name} className={s.panelArt} />
+              <div className={s.panelText}>
+                <p className={s.panelKicker}>
+                  Planet {pad2(i + 1)} / {pad2(PHASES.length)} · {p.name}
+                  <span className={s.focus} aria-label={`Focus ${p.focus} of 5`}>
+                    {Array.from({ length: 5 }, (_, k) => (
+                      <i key={k} data-on={k < p.focus ? "" : undefined} />
+                    ))}
+                  </span>
+                </p>
+                <h3 className={s.panelBelief}>{p.belief}</h3>
+                <p className={s.panelBody}>{p.body}</p>
+                <ul className={s.toolkit} aria-label={`Tools for ${p.name}`}>
+                  {(toolkit[p.name] ?? []).map((t) => (
+                    <li key={t.name} className={s.tool}>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d={t.path} fill={t.hex} />
+                      </svg>
+                      {t.name}
+                    </li>
+                  ))}
+                </ul>
+                <p className={s.panelScene}>On site: {p.scene}</p>
+              </div>
+            </article>
           ))}
         </div>
+        <div className={s.ufoPos} aria-hidden="true">
+          <Ufo uid="solar" className={s.ufoArt} />
+        </div>
+        <nav className={s.planetNav} aria-label="Lifecycle phases">
+          <button type="button" className={s.tourBtn} aria-pressed="false" onClick={() => nav.current.tour()}>
+            ▶ Play tour
+          </button>
+          <button type="button" className={s.navArrow} aria-label="Previous phase" onClick={() => nav.current.step(-1)}>
+            ←
+          </button>
+          {PHASES.map((p, i) => (
+            <button
+              key={p.name}
+              type="button"
+              className={s.navDot}
+              style={{ "--c": p.color }}
+              aria-label={`Go to ${p.name}`}
+              title={p.name}
+              onClick={() => nav.current.to(i)}
+            >
+              {pad2(i + 1)}
+            </button>
+          ))}
+          <button type="button" className={s.navArrow} aria-label="Next phase" onClick={() => nav.current.step(1)}>
+            →
+          </button>
+          <span className={s.keyHint}>
+            Tip: use <kbd>←</kbd> <kbd>→</kbd> to hop planets
+          </span>
+        </nav>
       </section>
 
       {/* ---------------- Blogs ---------------- */}
