@@ -322,8 +322,8 @@ export default function Story({ fonts, avatar }) {
       journey.f = from;
       ff = gsap.to(journey, {
         f: to,
-        duration: Math.min(2.4, 0.3 + Math.abs(to - from) * 0.3),
-        ease: "power2.inOut",
+        duration: Math.min(3.6, 0.7 + Math.abs(to - from) * 0.55),
+        ease: "sine.inOut",
         onComplete: () => {
           journey.target = to;
           journey.lock = false;
@@ -424,7 +424,7 @@ export default function Story({ fonts, avatar }) {
     };
     const orbitTick = (time, deltaMs) => {
       const dt = Math.min(deltaMs, 50) / 1000;
-      if (!journey.lock) journey.f += (journey.target - journey.f) * Math.min(1, dt * 7);
+      if (!journey.lock) journey.f += (journey.target - journey.f) * Math.min(1, dt * 3.2);
       // Planets slow right down while the camera is visiting one.
       placeOrbits(journey.f >= 0 && journey.f < PHASES.length ? dt * 0.2 : dt);
       applyCamera();
@@ -538,7 +538,7 @@ export default function Story({ fonts, avatar }) {
           .from(qa(`.${s.orbit}`), { scale: 0.2, opacity: 0, stagger: 0.04, duration: 0.5 }, 0.1)
           .from(qa(`.${s.planetBody}`), { scale: 0, stagger: 0.04, duration: 0.3, ease: "back.out(2)" }, 0.4)
           .from(q(`.${s.solarHead}`), { y: 30, opacity: 0, duration: 0.3 }, 0.6);
-        scene("solar", `+=${(PHASES.length + 1) * 115}%`, (tl, $) => {
+        scene("solar", `+=${(PHASES.length + 1) * 170}%`, (tl, $) => {
           tl.to({}, { duration: JOURNEY_LEN }, JOURNEY_IN)
             .to($(`.${s.system}`), { scale: 0.08, rotation: 25, opacity: 0, duration: 0.08, ease: "power2.in" });
         }, {
@@ -613,8 +613,9 @@ export default function Story({ fonts, avatar }) {
           scene("work", () => `+=${dist()}`, (tl, $, $$) => {
             tl.to(track, { x: () => -dist(), duration: 1 });
             // The belt rolls with the reel.
-            tl.to($$('[data-sc="roller"]'), { rotation: 1080, transformOrigin: "50% 50%", duration: 1 }, 0)
-              .to($('[data-sc="tread"]'), { strokeDashoffset: -640, duration: 1 }, 0);
+            tl.to($$('[data-sc="roller"]'), { rotation: -1440, transformOrigin: "50% 50%", duration: 1 }, 0)
+              .to($$('[data-sc="gear"]'), { rotation: -540, transformOrigin: "50% 50%", duration: 1 }, 0)
+              .to($$('[data-sc="tread"]'), { strokeDashoffset: 800, duration: 1 }, 0);
             $$(`.${s.cardImg}`).forEach((img) => {
               tl.fromTo(img, { scale: 1.2 }, { scale: 1, duration: 0.5 }, 0);
             });
@@ -716,7 +717,7 @@ export default function Story({ fonts, avatar }) {
         let aim = null;
         const scrollToY = (y) => {
           const dist = Math.abs(y - window.scrollY);
-          const d = Math.min(2.6, Math.max(0.6, (dist / window.innerHeight) * 0.42));
+          const d = Math.min(3.4, Math.max(0.8, (dist / window.innerHeight) * 0.5));
           dirTween?.kill();
           aim = y;
           dirTween = gsap.to(window, {
@@ -860,18 +861,20 @@ export default function Story({ fonts, avatar }) {
       <div className={s.grain} aria-hidden="true" />
 
       <header className={s.header}>
-        <a href="#top" className={s.brand} data-go="hero" onClick={onChapter}>
-          Shivraj Talekar
-        </a>
-        <span className={s.badge}>
-          <span className={s.pulse} /> {site.employer.role.replace("Artificial Intelligence", "AI")} @ {site.employer.name}
-        </span>
+        <div className={s.brandBlock}>
+          <a href="#top" className={s.brand} data-go="hero" onClick={onChapter}>
+            Shivraj Talekar
+          </a>
+          <span className={s.badge}>
+            <span className={s.pulse} /> {site.employer.role.replace("Artificial Intelligence", "AI")} @ {site.employer.name}
+          </span>
+        </div>
+        {/* In the header so it can never sit on top of the content. */}
+        <button type="button" className={s.playBtn} aria-pressed="false" onClick={() => nav.current.play()}>
+          <span className={s.playIcon} aria-hidden="true" />
+          <span data-label>Play the story</span>
+        </button>
       </header>
-
-      <button type="button" className={s.playBtn} aria-pressed="false" onClick={() => nav.current.play()}>
-        <span className={s.playIcon} aria-hidden="true" />
-        <span data-label>Play the story</span>
-      </button>
       <Radio url={site.radio} />
 
       <nav className={s.rail} aria-label="Chapters">

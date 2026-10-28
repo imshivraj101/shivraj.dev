@@ -28,21 +28,20 @@
 
 /* Site-wide autoplay ------------------------------------------- */
 .playBtn {
-  position: fixed;
-  z-index: 55;
-  right: var(--gutter);
-  bottom: 52px;
+  /* Sits in the header, so it can never cover the scene below. */
+  margin-left: auto;
+  flex: none;
   display: none;
   align-items: center;
-  gap: 10px;
-  padding: 8px 18px 8px 8px;
-  border: 3px solid #15131f;
+  gap: 8px;
+  padding: 4px 14px 4px 4px;
+  border: 2px solid #15131f;
   border-radius: 99px;
   background: var(--accent);
   color: #15131f;
-  box-shadow: 4px 4px 0 #15131f;
+  box-shadow: 3px 3px 0 #15131f;
   font: inherit;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -50,30 +49,31 @@
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .animated .playBtn { display: inline-flex; }
-.playBtn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 #15131f; }
-.playBtn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #15131f; }
+.playBtn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #15131f; }
+.playBtn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #15131f; }
 .playIcon {
   position: relative;
-  width: 40px;
-  height: 40px;
+  flex: none;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: #15131f;
 }
 .playIcon::after {
   content: "";
   position: absolute;
-  left: 15px;
-  top: 12px;
+  left: 11px;
+  top: 8px;
   border-style: solid;
-  border-width: 8px 0 8px 13px;
+  border-width: 7px 0 7px 11px;
   border-color: transparent transparent transparent var(--accent);
 }
 .playBtn[aria-pressed="true"] { background: var(--text); }
 .playBtn[aria-pressed="true"] .playIcon::after {
-  left: 13px;
-  top: 12px;
+  left: 9px;
+  top: 8px;
   width: 4px;
-  height: 16px;
+  height: 14px;
   border: 0;
   border-left: 4px solid var(--accent);
   border-right: 4px solid var(--accent);
@@ -204,14 +204,16 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px var(--gutter);
+  padding: 12px calc(var(--gutter) + 100px) 12px var(--gutter);
+  min-height: 64px;
   font-size: 13px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   /* A soft scrim so content scrolling underneath never collides with it. */
   background: linear-gradient(rgba(12, 10, 24, 0.55), rgba(12, 10, 24, 0));
 }
-.brand { font-weight: 600; text-decoration: none; }
+.brandBlock { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand { font-weight: 600; text-decoration: none; white-space: nowrap; }
 .badge {
   display: inline-flex;
   align-items: center;
@@ -588,7 +590,7 @@
 .planetNav {
   position: absolute;
   left: 50%;
-  bottom: 44px;
+  bottom: 64px;
   z-index: 8;
   display: none;
   align-items: center;
@@ -649,7 +651,7 @@
 /* Touch screens have no arrow keys; keep the buttons, drop the tip. */
 @media (hover: none), (max-width: 819px) {
   .keyHint { display: none; }
-  .planetNav { bottom: 34px; gap: 2px; }
+  .planetNav { bottom: 58px; gap: 2px; }
   .navDot { min-width: 26px; height: 28px; padding: 0 2px; font-size: 10px; }
   .navArrow { min-width: 28px; height: 28px; }
   .tourBtn { height: 28px; padding: 0 8px; font-size: 10px; }
@@ -657,6 +659,21 @@
 @media (max-width: 420px) {
   /* Narrow phones: tour + arrows only; the dots don't fit. */
   .navDot { display: none; }
+}
+@media (max-width: 819px) {
+  /* Leave room under the planet card for the hopper and progress bar. */
+  .panels { padding-bottom: 116px; }
+  .badge { white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 359px) {
+  /* Foldables folded shut (Galaxy Fold ~280px): tighten the header. */
+  .header { padding-right: calc(var(--gutter) + 60px); gap: 8px; }
+  .brand { font-size: 11px; letter-spacing: 0.04em; }
+  .badge { font-size: 8px; padding: 3px 7px; gap: 5px; }
+  .cassette { width: 54px; }
+  .playIcon { width: 26px; height: 26px; }
+  .playIcon::after { left: 9px; top: 6px; }
+  .playBtn[aria-pressed="true"] .playIcon::after { left: 7px; top: 6px; }
 }
 
 /* Idle life inside the Egypt scenes (class names from Egypt.jsx). */
@@ -708,11 +725,11 @@
 .belt {
   position: absolute;
   left: 0;
-  bottom: 40px;
+  bottom: 52px; /* stands clear of the progress bar */
   width: 100%;
-  height: 72px;
+  height: clamp(100px, 18vh, 170px);
   z-index: 0;
-  opacity: 0.7;
+  opacity: 0.85;
   pointer-events: none;
 }
 .sky { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
@@ -956,7 +973,6 @@
   .panelScene { display: none; }
   .toolkit { margin-top: 6px; gap: 4px; }
   .tool { padding: 3px; font-size: 0; gap: 0; }
-  .playBtn { bottom: 24px; }
 }
 
 /* Superscreens (4K and up): the px-sized UI scales with the viewport
@@ -1001,11 +1017,11 @@
   .stamp { position: static; display: inline-block; margin-top: 14px; }
   .blogGrid { grid-template-columns: 1fr; }
   /* Phones: the play button collapses to its icon. */
-  .playBtn { padding: 5px; bottom: 34px; }
+  /* Phones: name over badge, play shrinks to its icon. */
+  .header { padding-right: calc(var(--gutter) + 74px); gap: 10px; }
+  .brandBlock { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .playBtn { padding: 3px; }
   .playBtn [data-label] { display: none; }
-  .playIcon { width: 36px; height: 36px; }
-  .playIcon::after { left: 13px; top: 10px; }
-  .playBtn[aria-pressed="true"] .playIcon::after { left: 11px; top: 10px; }
   .cueKeys { display: none; }
   /* Keep the planet hopper clear of the play button. */
   .planetNav { left: var(--gutter); transform: none; }

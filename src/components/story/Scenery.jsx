@@ -147,19 +147,66 @@ export function DataCentreScene({ className }) {
   );
 }
 
-/** Projects: a workshop belt; the rollers turn as the reel moves. */
+/** A toothed gear outline centred on (cx, cy). */
+function gearPath(cx, cy, r, teeth = 12, depth = 0.22) {
+  const pts = [];
+  const steps = teeth * 4;
+  for (let k = 0; k < steps; k++) {
+    const a = (k / steps) * Math.PI * 2;
+    const rr = k % 4 < 2 ? r : r * (1 - depth);
+    pts.push(`${(cx + Math.cos(a) * rr).toFixed(1)} ${(cy + Math.sin(a) * rr).toFixed(1)}`);
+  }
+  return `M${pts.join(" L")} Z`;
+}
+
+const BELT_Y = 70; // belt centre line
+
+/** Projects: a workshop line under the reel. As the reel moves the
+    rollers and drive gears turn and the chain tread runs. */
 export function BeltScene({ className }) {
-  const rollers = Array.from({ length: 24 }, (_, i) => 40 + i * 60);
+  const rollers = Array.from({ length: 30 }, (_, i) => 120 + i * 42);
+  const legs = [150, 420, 690, 960, 1230];
+  const Y = BELT_Y;
+
   return (
-    <svg className={className} viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
-      <rect x="10" y="30" width="1420" height="54" rx="27" fill="rgba(21,19,31,0.35)" stroke={LINE} strokeWidth="2.5" />
-      <line data-sc="tread" x1="30" y1="34" x2="1410" y2="34" stroke={LINE} strokeWidth="2" strokeDasharray="14 18" opacity="0.6" />
-      {rollers.map((x) => (
-        <g key={x} data-sc="roller">
-          <circle cx={x} cy="57" r="18" fill="#2a2433" stroke={LINE} strokeWidth="2" />
-          <path d={`M${x - 14} 57 H${x + 14} M${x} 43 V71`} stroke="#ffd166" strokeWidth="2.5" strokeLinecap="round" />
+    <svg className={className} viewBox="0 0 1440 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      {/* floor and the frame: legs with cross-bracing */}
+      <line x1="0" y1="164" x2="1440" y2="164" stroke={LINE} strokeWidth="2" opacity="0.6" />
+      {legs.map((x) => (
+        <g key={x} opacity="0.85">
+          <path d={`M${x - 30} ${Y + 18} L${x - 44} 164 M${x + 30} ${Y + 18} L${x + 44} 164`} stroke={LINE} strokeWidth="5" strokeLinecap="round" />
+          <path d={`M${x - 34} ${Y + 40} L${x + 40} 150 M${x + 34} ${Y + 40} L${x - 40} 150`} stroke={LINE} strokeWidth="2" opacity="0.6" />
+          <rect x={x - 52} y="158" width="20" height="8" rx="2" fill={LINE} />
+          <rect x={x + 32} y="158" width="20" height="8" rx="2" fill={LINE} />
         </g>
       ))}
+      {/* motor housing driving the line */}
+      <g>
+        <rect x="8" y={Y - 6} width="70" height="78" rx="8" fill="#2a2433" stroke={LINE} strokeWidth="2.5" />
+        <path d={`M14 ${Y + 58} h58`} stroke="#ffd166" strokeWidth="8" strokeDasharray="8 8" />
+        <circle className="sc-led" cx="26" cy={Y + 8} r="4" fill="#7bdcb5" />
+        <circle cx="44" cy={Y + 8} r="4" fill="#ff7a59" opacity="0.6" />
+        <rect x="18" y={Y + 22} width="50" height="20" rx="3" fill="#15131f" stroke="#3b3550" strokeWidth="1.5" />
+        <path d={`M24 ${Y + 32} h8 l4 -6 l4 12 l4 -6 h18`} fill="none" stroke="#7bdcb5" strokeWidth="1.5" />
+      </g>
+      {/* drive gears at both ends */}
+      {[[100, Y, 34], [1370, Y, 34], [1416, Y + 40, 20]].map(([cx, cy, r]) => (
+        <g key={cx} data-sc="gear" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+          <path d={gearPath(cx, cy, r, r > 24 ? 14 : 9)} fill="#3b3550" stroke={LINE} strokeWidth="2" />
+          <circle cx={cx} cy={cy} r={r * 0.35} fill="#2a2433" stroke={LINE} strokeWidth="2" />
+          <path d={`M${cx - r * 0.6} ${cy} H${cx + r * 0.6} M${cx} ${cy - r * 0.6} V${cy + r * 0.6} M${cx - r * 0.42} ${cy - r * 0.42} L${cx + r * 0.42} ${cy + r * 0.42} M${cx + r * 0.42} ${cy - r * 0.42} L${cx - r * 0.42} ${cy + r * 0.42}`} stroke="#ffd166" strokeWidth="2.5" strokeLinecap="round" />
+        </g>
+      ))}
+      {/* the belt: casing, rollers, chain tread */}
+      <rect x="96" y={Y - 18} width="1278" height="36" rx="18" fill="rgba(21,19,31,0.55)" stroke={LINE} strokeWidth="2.5" />
+      {rollers.map((x) => (
+        <g key={x} data-sc="roller" style={{ transformOrigin: `${x}px ${Y}px` }}>
+          <circle cx={x} cy={Y} r="12" fill="#2a2433" stroke={LINE} strokeWidth="1.5" />
+          <path d={`M${x} ${Y - 9} V${Y + 9} M${x - 9} ${Y} H${x + 9} M${x - 6.4} ${Y - 6.4} L${x + 6.4} ${Y + 6.4} M${x + 6.4} ${Y - 6.4} L${x - 6.4} ${Y + 6.4}`} stroke="#ffd166" strokeWidth="2" strokeLinecap="round" />
+        </g>
+      ))}
+      <line data-sc="tread" x1="104" y1={Y - 18} x2="1366" y2={Y - 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" />
+      <line data-sc="tread" x1="104" y1={Y + 18} x2="1366" y2={Y + 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" opacity="0.5" />
     </svg>
   );
 }
