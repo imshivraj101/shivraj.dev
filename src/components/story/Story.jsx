@@ -222,10 +222,27 @@ export default function Story({ fonts, avatar }) {
 
   useEffect(() => {
     const el = root.current;
-    // A reload always starts the story from the top (the avatar), not
-    // wherever the browser remembers the scroll was, e.g. mid-solar.
+    // Every load (reload, hard reload, back/forward) starts the story on
+    // the avatar. The browser, ScrollTrigger and a stray #hash all try to
+    // restore an old position, so each one is switched off here, and the
+    // position saved on the way out is always the top.
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    if (!window.location.hash) window.scrollTo(0, 0);
+    if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
+    ScrollTrigger.clearScrollMemory("manual");
+    window.scrollTo(0, 0);
+    let touched = false;
+    const markTouched = () => {
+      touched = true;
+    };
+    const toTop = () => window.scrollTo(0, 0);
+    const onPageShow = (e) => {
+      if (e.persisted) toTop(); // restored from the back/forward cache
+    };
+    window.addEventListener("wheel", markTouched, { passive: true, once: true });
+    window.addEventListener("touchstart", markTouched, { passive: true, once: true });
+    window.addEventListener("keydown", markTouched, { once: true });
+    window.addEventListener("beforeunload", toTop);
+    window.addEventListener("pageshow", onPageShow);
     const q = (sel) => el.querySelector(sel);
     const qa = (sel) => gsap.utils.toArray(el.querySelectorAll(sel));
     const bg = q(`.${s.backdrop}`);
@@ -793,12 +810,21 @@ export default function Story({ fonts, avatar }) {
 
     // Pin spacing depends on fonts and images, so measure once more
     // after everything has settled.
-    const refresh = () => ScrollTrigger.refresh();
+    const refresh = () => {
+      ScrollTrigger.refresh();
+      // Late layout (fonts, images) must not leave a fresh load mid-story.
+      if (!touched) toTop();
+    };
     window.addEventListener("load", refresh);
     document.fonts?.ready.then(refresh);
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", markTouched);
+      window.removeEventListener("touchstart", markTouched);
+      window.removeEventListener("keydown", markTouched);
+      window.removeEventListener("beforeunload", toTop);
+      window.removeEventListener("pageshow", onPageShow);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("wheel", onUserScroll);
       window.removeEventListener("touchstart", onUserScroll);
