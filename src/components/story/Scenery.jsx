@@ -92,8 +92,9 @@ export function NashikScene({ className }) {
           <circle key={x} cx={x} cy="284" r="6" fill={INK} />
         ))}
       </g>
-      {/* mortarboards thrown for the class of '26 */}
-      {[[1180, 90, -18], [1270, 60, 14], [1340, 110, -8]].map(([x, y, r]) => (
+      {/* mortarboards thrown for the class of '26, low enough that the
+          top-cropped strip on wide screens never slices them */}
+      {[[1160, 182, -18], [1262, 168, 14], [1350, 196, -8]].map(([x, y, r]) => (
         <g key={x} data-sc="cap" transform={`rotate(${r} ${x} ${y})`}>
           <path d={`M${x - 26} ${y} L${x} ${y - 12} L${x + 26} ${y} L${x} ${y + 12} Z`} fill={INK} stroke={LINE} strokeWidth="2" />
           <rect x={x - 12} y={y + 4} width="24" height="10" fill={INK} stroke={LINE} strokeWidth="2" />
@@ -178,17 +179,22 @@ function gearPath(cx, cy, r, teeth = 12, depth = 0.22) {
 
 const BELT_Y = 70; // belt centre line
 
-/** Projects: a workshop line under the reel. As the reel moves the
-    rollers and drive gears turn and the chain tread runs. */
+/** Projects: a workshop line under the reel. The belt runs past both
+    edges of the screen (no ends to crop, nowhere for a sign to stand
+    on air), and every moving part is connected: the motor on the floor
+    turns a pulley, a chain carries that up to the drive sprocket on one
+    roller, and the rollers carry the tread. */
 export function BeltScene({ className }) {
-  const rollers = Array.from({ length: 30 }, (_, i) => 120 + i * 42);
+  const rollers = Array.from({ length: 42 }, (_, i) => -80 + i * 42);
   const legs = [150, 420, 690, 960, 1230];
   const Y = BELT_Y;
+  const DX = 550; // the driven roller
+  const PY = 126; // motor pulley centre
 
   return (
     <svg className={className} viewBox="0 0 1440 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
       {/* floor and the frame: legs with cross-bracing */}
-      <line x1="0" y1="164" x2="1440" y2="164" stroke={LINE} strokeWidth="2" opacity="0.6" />
+      <line x1="-100" y1="164" x2="1540" y2="164" stroke={LINE} strokeWidth="2" opacity="0.6" />
       {legs.map((x) => (
         <g key={x} opacity="0.85">
           <path d={`M${x - 30} ${Y + 18} L${x - 44} 164 M${x + 30} ${Y + 18} L${x + 44} 164`} stroke={LINE} strokeWidth="5" strokeLinecap="round" />
@@ -197,33 +203,31 @@ export function BeltScene({ className }) {
           <rect x={x + 32} y="158" width="20" height="8" rx="2" fill={LINE} />
         </g>
       ))}
-      {/* motor housing driving the line */}
+      {/* motor, bolted to the floor, with its drive chain */}
       <g>
-        <rect x="8" y={Y - 6} width="70" height="78" rx="8" fill="#2a2433" stroke={LINE} strokeWidth="2.5" />
-        <path d={`M14 ${Y + 58} h58`} stroke="#ffd166" strokeWidth="8" strokeDasharray="8 8" />
-        <circle className="sc-led" cx="26" cy={Y + 8} r="4" fill="#7bdcb5" />
-        <circle cx="44" cy={Y + 8} r="4" fill="#ff7a59" opacity="0.6" />
-        <rect x="18" y={Y + 22} width="50" height="20" rx="3" fill="#15131f" stroke="#3b3550" strokeWidth="1.5" />
-        <path d={`M24 ${Y + 32} h8 l4 -6 l4 12 l4 -6 h18`} fill="none" stroke="#7bdcb5" strokeWidth="1.5" />
-      </g>
-      {/* drive gears at both ends */}
-      {[[100, Y, 34], [1370, Y, 34], [1416, Y + 40, 20]].map(([cx, cy, r]) => (
-        <g key={cx} data-sc="gear" style={{ transformOrigin: `${cx}px ${cy}px` }}>
-          <path d={gearPath(cx, cy, r, r > 24 ? 14 : 9)} fill="#3b3550" stroke={LINE} strokeWidth="2" />
-          <circle cx={cx} cy={cy} r={r * 0.35} fill="#2a2433" stroke={LINE} strokeWidth="2" />
-          <path d={`M${cx - r * 0.6} ${cy} H${cx + r * 0.6} M${cx} ${cy - r * 0.6} V${cy + r * 0.6} M${cx - r * 0.42} ${cy - r * 0.42} L${cx + r * 0.42} ${cy + r * 0.42} M${cx + r * 0.42} ${cy - r * 0.42} L${cx - r * 0.42} ${cy + r * 0.42}`} stroke="#ffd166" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x={DX - 44} y={PY - 6} width="88" height="44" rx="8" fill="#2a2433" stroke={LINE} strokeWidth="2.5" />
+        <rect x={DX - 54} y="156" width="108" height="8" rx="2" fill={LINE} />
+        <circle className="sc-led" cx={DX - 30} cy={PY + 10} r="3.5" fill="#7bdcb5" />
+        <rect x={DX - 18} y={PY + 4} width="52" height="18" rx="3" fill="#15131f" stroke="#3b3550" strokeWidth="1.5" />
+        <path d={`M${DX - 13} ${PY + 13} h7 l4 -5 l4 10 l4 -5 h22`} fill="none" stroke="#7bdcb5" strokeWidth="1.5" />
+        <line data-sc="tread" x1={DX - 24} y1={Y} x2={DX - 11} y2={PY} stroke="#ffd166" strokeWidth="4" strokeDasharray="5 4" />
+        <line data-sc="tread" x1={DX + 24} y1={Y} x2={DX + 11} y2={PY} stroke="#ffd166" strokeWidth="4" strokeDasharray="5 4" />
+        <g data-sc="pulley" style={{ transformOrigin: `${DX}px ${PY}px` }}>
+          <path d={gearPath(DX, PY, 12, 9)} fill="#3b3550" stroke={LINE} strokeWidth="2" />
+          <path d={`M${DX - 7} ${PY} H${DX + 7} M${DX} ${PY - 7} V${PY + 7}`} stroke="#ffd166" strokeWidth="2" strokeLinecap="round" />
         </g>
-      ))}
-      {/* the belt: casing, rollers, chain tread */}
-      <rect data-sc="deck" x="96" y={Y - 18} width="1278" height="36" rx="18" fill="rgba(21,19,31,0.55)" stroke={LINE} strokeWidth="2.5" />
+      </g>
+      {/* the belt: casing, rollers (one carries the drive sprocket), tread */}
+      <rect data-sc="deck" x="-100" y={Y - 18} width="1640" height="36" fill="rgba(21,19,31,0.55)" stroke={LINE} strokeWidth="2.5" />
       {rollers.map((x) => (
         <g key={x} data-sc="roller" style={{ transformOrigin: `${x}px ${Y}px` }}>
+          {x === DX && <path d={gearPath(x, Y, 24, 14)} fill="#3b3550" stroke={LINE} strokeWidth="2" />}
           <circle cx={x} cy={Y} r="12" fill="#2a2433" stroke={LINE} strokeWidth="1.5" />
           <path d={`M${x} ${Y - 9} V${Y + 9} M${x - 9} ${Y} H${x + 9} M${x - 6.4} ${Y - 6.4} L${x + 6.4} ${Y + 6.4} M${x + 6.4} ${Y - 6.4} L${x - 6.4} ${Y + 6.4}`} stroke="#ffd166" strokeWidth="2" strokeLinecap="round" />
         </g>
       ))}
-      <line data-sc="tread" x1="104" y1={Y - 18} x2="1366" y2={Y - 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" />
-      <line data-sc="tread" x1="104" y1={Y + 18} x2="1366" y2={Y + 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" opacity="0.5" />
+      <line data-sc="tread" x1="-100" y1={Y - 18} x2="1540" y2={Y - 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" />
+      <line data-sc="tread" x1="-100" y1={Y + 18} x2="1540" y2={Y + 18} stroke={LINE} strokeWidth="4" strokeDasharray="10 6" opacity="0.5" />
     </svg>
   );
 }

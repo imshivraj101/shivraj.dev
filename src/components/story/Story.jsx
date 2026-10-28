@@ -35,10 +35,8 @@ const BG = {
   uni: "#4a2333",
   exp: "#1f3b52",
   work: "#8a5a1e",
-  cta: "#1c3a4a",
-  about: "#1e3550",
   blogs: "#2b1f3d",
-  outro: "#252a5f",
+  finale: "#1c3a4a",
 };
 
 const CHAPTERS = [
@@ -177,13 +175,12 @@ const AGENDA = [
   { id: "tour", label: "Why I love product" },
 ];
 
+// Finale doodles live in the side margins, clear of the words.
 const DOODLES = [
-  { k: "brackets", x: "8%", y: "18%" },
-  { k: "pyramid", x: "82%", y: "14%" },
-  { k: "chat", x: "86%", y: "62%" },
-  { k: "chai", x: "10%", y: "70%" },
-  { k: "terminal", x: "22%", y: "84%" },
-  { k: "spark", x: "70%", y: "84%" },
+  { k: "brackets", x: "2%", y: "24%" },
+  { k: "chai", x: "2.5%", y: "62%" },
+  { k: "spark", x: "94%", y: "48%" },
+  { k: "terminal", x: "93.5%", y: "70%" },
 ];
 
 function Doodle({ k }) {
@@ -233,16 +230,6 @@ function Sparkle({ style }) {
   return (
     <svg className={s.sparkle} style={style} viewBox="0 0 20 20" aria-hidden="true">
       <path d="M10 0 L12 8 L20 10 L12 12 L10 20 L8 12 L0 10 L8 8 Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-function Rings({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 1000 1000" aria-hidden="true">
-      {Array.from({ length: 12 }, (_, i) => (
-        <circle key={i} cx="500" cy="500" r={40 + i * 40} fill="none" stroke="rgba(233,228,255,0.28)" strokeWidth="2" />
-      ))}
     </svg>
   );
 }
@@ -539,10 +526,9 @@ export default function Story({ fonts, avatar }) {
         /* ---------- Intro, on load ---------- */
         const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
         intro
-          // He's sat at a desk: it slides in, then he rises from behind
-          // it, so the drawing's cut-off edge is never on show.
-          .from(q(`.${s.desk}`), { yPercent: 100, duration: 0.6 }, 0)
-          .from(`.${s.mascotWrap}`, { yPercent: 22, opacity: 0, duration: 1.1, ease: "power3.out" }, 0.25)
+          // He stays grounded on the screen's bottom edge and simply
+          // fades up in place: no slide, so the cut edge never shows.
+          .from(`.${s.mascotWrap}`, { opacity: 0, duration: 1.1, ease: "power2.out" }, 0)
           .from(qa(`.${s.nameChar}`), { yPercent: 110, opacity: 0, filter: "blur(10px)", stagger: 0.04, duration: 0.9 }, 0.25)
           .from(q(`.${s.kicker}`), { y: 16, opacity: 0, duration: 0.6 }, 0.5)
           .from(qa(`.${s.roleWord}`), { y: 20, opacity: 0, stagger: 0.08, duration: 0.6 }, 0.9)
@@ -614,7 +600,6 @@ export default function Story({ fonts, avatar }) {
           // Only wrappers the intro never touches, so the two timelines
           // can't fight over the same opacity.
           tl.to([$(`.${s.heroText}`), $(`.${s.heroFade}`), $(`.${s.hey}`)], { y: -60, opacity: 0, duration: 0.2 }, 0)
-            .to($(`.${s.desk}`), { yPercent: 100, duration: 0.15 }, 0)
             .to($(`.${s.mascotWrap}`), { scale: 90, duration: 1, ease: "power4.in" }, 0.02)
             .to($(`.${s.mascotWrap}`), { opacity: 0, duration: 0.1 }, 0.94);
         }, {
@@ -678,7 +663,8 @@ export default function Story({ fonts, avatar }) {
             tl.to(track, { x: () => -dist(), duration: 1 });
             // The belt rolls with the reel.
             tl.to($$('[data-sc="roller"]'), { rotation: -1440, transformOrigin: "50% 50%", duration: 1 }, 0)
-              .to($$('[data-sc="gear"]'), { rotation: -540, transformOrigin: "50% 50%", duration: 1 }, 0)
+              // The motor pulley is half the sprocket's size: twice the turns.
+              .to($$('[data-sc="pulley"]'), { rotation: -2880, transformOrigin: "50% 50%", duration: 1 }, 0)
               .to($$('[data-sc="tread"]'), { strokeDashoffset: 800, duration: 1 }, 0);
             $$(`.${s.cardImg}`).forEach((img) => {
               tl.fromTo(img, { scale: 1.2 }, { scale: 1, duration: 0.5 }, 0);
@@ -779,32 +765,21 @@ export default function Story({ fonts, avatar }) {
           });
         });
 
-        // CTA: doodles pop in around the ask.
-        scene("cta", "+=170%", (tl, $, $$) => {
-          tl.from($$(`.${s.ctaWord}`), { yPercent: 100, opacity: 0, stagger: 0.05, duration: 0.3 })
-            .from($$(`.${s.doodle}`), { scale: 0, rotation: -40, opacity: 0, stagger: 0.06, duration: 0.25, ease: "back.out(2.2)" }, "<0.1")
-            .from($$(`.${s.ctaBody} > *`), { y: 20, opacity: 0, stagger: 0.08, duration: 0.2 })
+        // Finale: one closing page. The saucer drops in and beams down,
+        // the pitch rises word by word, then the facts and links.
+        scene("finale", "+=170%", (tl, $, $$) => {
+          tl.from($(`.${s.finaleUfo}`), { y: -220, rotation: -16, opacity: 0, duration: 0.3, ease: "power2.out" })
+            .from($$(`.${s.ctaWord}`), { yPercent: 100, opacity: 0, stagger: 0.04, duration: 0.25 }, "<0.1")
+            .from($$(`.${s.doodle}`), { scale: 0, rotation: -40, opacity: 0, stagger: 0.05, duration: 0.2, ease: "back.out(2.2)" }, "<")
+            .from([$(`.${s.finaleBody}`), $(`.${s.ctaBtns}`)], { y: 20, opacity: 0, stagger: 0.06, duration: 0.2 })
+            .from($$(`.${s.finaleAbout} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 }, "<0.05")
+            .from($$(`.${s.chip}`), { scale: 0.6, opacity: 0, stagger: 0.015, duration: 0.15, ease: "back.out(2)" }, "<0.1")
+            .from($(`.${s.finaleFoot}`), { opacity: 0, duration: 0.15 })
             .addLabel("hold", "+=0.1")
-            .to({}, { duration: 0.4 })
-            .to($(`.${s.ctaStage}`), { opacity: 0, y: -40, duration: 0.25 })
-            .to($$(`.${s.doodle}`), { y: (i) => (i % 2 ? -200 : 200), opacity: 0, duration: 0.25 }, "<");
+            .to({}, { duration: 0.3 });
         });
         qa(`.${s.doodle}`).forEach((d, i) => {
           gsap.to(d.firstChild, { y: 8 + (i % 3) * 4, rotation: i % 2 ? 6 : -6, duration: 1.6 + (i % 3) * 0.4, yoyo: true, repeat: -1, ease: "sine.inOut" });
-        });
-
-        // About: the closing statement and the facts behind it.
-        scene("about", "+=150%", (tl, $, $$) => {
-          tl.fromTo($$(`.${s.word}`), { opacity: 0.12 }, { opacity: 1, stagger: 0.05, duration: 0.2 })
-            .from($(`.${s.aboutLead}`), { y: 20, opacity: 0, duration: 0.2 })
-            .from($$(`.${s.chip}`), { scale: 0.6, opacity: 0, stagger: 0.02, duration: 0.15, ease: "back.out(2)" })
-            .from($$(`.${s.aboutLinks} a`), { y: 10, opacity: 0, stagger: 0.05, duration: 0.15 });
-        });
-
-        // Outro: the rings come back and close the loop.
-        scene("outro", "+=120%", (tl, $) => {
-          tl.fromTo($(`.${s.outroRings}`), { scale: 2.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6 })
-            .from($(`.${s.outroText}`), { y: 30, opacity: 0, duration: 0.3 }, 0.3);
         });
 
         /* ---------- Chapter rail ---------- */
@@ -820,7 +795,7 @@ export default function Story({ fonts, avatar }) {
            scene has fully played in. Moving between stops scrolls the
            page with a tween, so every scrubbed animation fast-forwards
            exactly as it would under a slow scroll. */
-        const HOLD_AT = { tour: 0.5, hi: 0.55, uni: 0.62, exp: 0.62, cta: 0.62, about: 0.95, blogs: 0.75, outro: 0.95 };
+        const HOLD_AT = { finale: 0.9, tour: 0.5, hi: 0.55, uni: 0.62, exp: 0.62, blogs: 0.75 };
         const stops = () => {
           const get = (id) => ScrollTrigger.getById(id);
           const at = (st, f) => st.start + f * (st.end - st.start);
@@ -845,7 +820,7 @@ export default function Story({ fonts, avatar }) {
             // Narrow screens list the work vertically: one stop per card.
             qa(`.${s.card}`).forEach((c) => out.push({ y: c.getBoundingClientRect().top + window.scrollY - 90, hold: 1.6 }));
           }
-          ["cta", "about", "blogs", "outro"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
+          ["blogs", "finale"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
           return out.sort((a, b) => a.y - b.y);
         };
 
@@ -1052,9 +1027,6 @@ export default function Story({ fonts, avatar }) {
             <span className={s.hey} aria-hidden="true">hey!</span>
           </div>
         </div>
-        <div className={s.desk} aria-hidden="true">
-          <span className={s.deskLip} />
-        </div>
         <div className={s.heroFade}>
           <p className={s.cue}>
             <span className={s.cueDot} /> Scroll to step inside
@@ -1117,7 +1089,12 @@ export default function Story({ fonts, avatar }) {
             <Link href="/projects" className={s.inlineLink}>Every project →</Link>
           </div>
           {projects.map((p) => (
-            <Link key={p.slug} href={`/projects/${p.slug}`} className={s.card}>
+            <Link key={p.slug} href={`/projects/${p.slug}`} className={s.card} data-wip={p.status ? "" : undefined}>
+              {/* the sign's two posts, clamped to the belt on big screens */}
+              <span className={s.posts} aria-hidden="true"><i /><i /></span>
+              {p.status && (
+                <span className={s.wipTag} aria-hidden="true">🚧 Work in progress</span>
+              )}
               <span className={s.cardMeta}>
                 <span>{p.role}</span>
                 <span>
@@ -1340,63 +1317,56 @@ export default function Story({ fonts, avatar }) {
         </div>
       </section>
 
-      {/* ---------------- CTA ---------------- */}
-      <section data-scene="cta" className={s.scene} style={{ "--bg": BG.cta }}>
+      {/* ---------------- Finale ---------------- */}
+      <section id="about" data-scene="finale" className={`${s.scene} ${s.finale}`} style={{ "--bg": BG.finale }}>
         {DOODLES.map((d) => (
           <span key={d.k} className={s.doodle} style={{ left: d.x, top: d.y }}>
             <Doodle k={d.k} />
           </span>
         ))}
-        <div className={s.ctaStage}>
-          <h2 className={s.serifHead} aria-label="Got a product to build? Let's make it boring.">
-            <span className={s.ctaMask}><Words text="Got a product to build?" className={s.ctaWord} /></span>
-            <br />
-            <span className={s.ctaMask}><Words text="Let's make it boring." className={s.ctaWord} /></span>
-          </h2>
-          <div className={s.ctaBody}>
-            <p>Reliable is boring. Boring is the goal. If you&apos;re building something that has to work for real people, let&apos;s talk.</p>
+        <div className={s.finaleUfo} aria-hidden="true">
+          <Ufo uid="finale" className={s.ufoArt} />
+        </div>
+        <div className={s.finaleGrid}>
+          <div className={s.finalePitch}>
+            <p className={s.kicker}>That&apos;s the whole head</p>
+            <h2 className={s.serifHead} aria-label="Got a product to build? Let's make it boring.">
+              <span className={s.ctaMask}><Words text="Got a product to build?" className={s.ctaWord} /></span>{" "}
+              <span className={s.ctaMask}><Words text="Let's make it boring." className={s.ctaWord} /></span>
+            </h2>
+            <p className={s.finaleBody}>
+              Reliable is boring. Boring is the goal. If you&apos;re building something that has to work for
+              real people, let&apos;s talk.
+            </p>
             <p className={s.ctaBtns}>
               <a href={site.mailto} target="_blank" rel="noreferrer" className={s.btn}>Say hello</a>
               <a href={site.linkedin} target="_blank" rel="noreferrer" className={s.btnGhost}>LinkedIn</a>
               <a href={site.socials[0].href} target="_blank" rel="noreferrer" className={s.btnGhost}>GitHub</a>
             </p>
           </div>
+          <div className={s.finaleAbout}>
+            <h3 className={s.finaleNote}>I care about the part nobody demos.</h3>
+            <p className={s.aboutLead}>
+              The onboarding nobody notices, the error message that actually helps, the loading state,
+              the second visit. The work that decides whether people come back.
+            </p>
+            <ul className={s.chips}>
+              {stackNames.map((n) => (
+                <li key={n} className={s.chip}>{n}</li>
+              ))}
+            </ul>
+            <p className={s.aboutLinks}>
+              <a href={site.medium} target="_blank" rel="noreferrer">Medium</a>
+              {site.socials.map((x) => (
+                <a key={x.label} href={x.href} target="_blank" rel="noreferrer">{x.label}</a>
+              ))}
+            </p>
+          </div>
         </div>
-      </section>
-
-      {/* ---------------- About ---------------- */}
-      <section id="about" data-scene="about" className={s.scene} style={{ "--bg": BG.about }}>
-        <div className={s.about}>
-          <h2 className={s.serifHead} aria-label="I care about the part nobody demos.">
-            <Words text="I care about the part nobody demos." className={s.word} />
-          </h2>
-          <p className={s.aboutLead}>
-            The onboarding nobody notices, the error message that actually helps, the loading state,
-            the second visit. The work that decides whether people come back.
-          </p>
-          <ul className={s.chips}>
-            {stackNames.map((n) => (
-              <li key={n} className={s.chip}>{n}</li>
-            ))}
-          </ul>
-          <p className={s.aboutLinks}>
-            <a href={site.medium} target="_blank" rel="noreferrer">Read on Medium</a>
-            <Link href="/blogs">Blog</Link>
-            {site.socials.map((x) => (
-              <a key={x.label} href={x.href} target="_blank" rel="noreferrer">{x.label}</a>
-            ))}
-          </p>
-        </div>
-      </section>
-
-      {/* ---------------- Outro ---------------- */}
-      <section data-scene="outro" className={s.scene} style={{ "--bg": BG.outro }}>
-        <Rings className={s.outroRings} />
-        <div className={s.outroText}>
-          <p className={s.kicker}>That&apos;s the whole head.</p>
-          <a href="#top" className={s.btn} data-go="hero" onClick={onChapter}>Back to the top</a>
-          <p className={s.copy}>© {new Date().getFullYear()} {site.name}</p>
-        </div>
+        <footer className={s.finaleFoot}>
+          <a href="#top" data-go="hero" onClick={onChapter} className={s.topLink}>↑ Back to the avatar</a>
+          <span className={s.copy}>© {new Date().getFullYear()} {site.name} · {site.employer.role} @ {site.employer.name}</span>
+        </footer>
       </section>
     </div>
   );

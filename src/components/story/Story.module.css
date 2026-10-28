@@ -10,7 +10,6 @@
   --hot: #ff7a59;
   --mint: #7bdcb5;
   --gutter: clamp(16px, 3vw, 40px);
-  --desk: clamp(44px, 8vh, 90px); /* the hero desk's height */
   /* Fluid type unit: a vw on 16:9, but short or very wide screens
      (ultrabooks under browser chrome, ultrawides) scale by height too,
      so headlines never outgrow the screen they sit on. */
@@ -333,8 +332,7 @@
   --w: min(100vw, 86vh);
   position: absolute;
   left: 50%;
-  /* Sat just behind the desk: the cut edge stays hidden, the cup sits on it. */
-  bottom: calc(var(--desk) * 0.55);
+  bottom: 0; /* grounded: the drawing's bottom edge is the screen's */
   width: var(--w);
   aspect-ratio: 1448 / 1086;
   margin-left: calc(var(--w) / -2);
@@ -366,28 +364,6 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   transform-origin: 0 100%;
-}
-/* The desk he sits at: full width, in front of the avatar, so the
-   bottom of the drawing reads as "behind the desk" rather than cut off. */
-.desk {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3;
-  height: var(--desk);
-  border-top: 3px solid #15131f;
-  background: linear-gradient(180deg, #3d2c55, #2a1f3d 70%, #221a33);
-  pointer-events: none;
-}
-.deskLip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 14px;
-  background: #5a4378;
-  border-bottom: 3px solid #15131f;
 }
 .heroFade { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
 /* "Rendering the life of..." — the dots tick like a loader. */
@@ -582,6 +558,8 @@
 .story :global(.ufo-light) { animation: ufoLight 0.9s steps(2) infinite; }
 .story :global(.ufo-beam) { animation: ufoBeam 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
 .story :global(.ufo-flag) path:first-of-type { animation: flagWave 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 0 50%; }
+.story :global(.ufo-wave) { animation: ufoWave 1.4s ease-in-out infinite; transform-box: view-box; transform-origin: 164px 116px; }
+@keyframes ufoWave { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(14deg); } }
 @keyframes ufoLight { 50% { opacity: 0.35; } }
 @keyframes ufoBeam { 50% { opacity: 0.45; transform: scaleX(0.85); } }
 @keyframes flagWave { 50% { transform: skewY(6deg) scaleX(0.92); } }
@@ -1004,6 +982,8 @@
 .btnGhost:hover { background: var(--text); color: #15131f !important; }
 .doodle { position: absolute; width: clamp(44px, 5vw, 72px); color: var(--text); z-index: 1; }
 .doodle svg { width: 100%; display: block; }
+/* Only screens with real side margins have room for them. */
+@media (max-width: 1299px) { .doodle { display: none; } }
 
 /* Work */
 /* place-items: normal matters: newer Chrome honours the scene's
@@ -1071,35 +1051,100 @@
 @media (max-width: 1023px) {
   .belt { display: none; }
 }
+/* Project cards are road signs: yellow board, black inner rule, a bolt
+   in each corner. The one still being built gets hazard stripes. */
+.card {
+  position: relative;
+  padding: 14px 16px 16px;
+  border: 3px solid #15131f;
+  border-radius: 14px;
+  color: #15131f;
+  background:
+    radial-gradient(circle at 12px 12px, #15131f 3px, transparent 3.5px),
+    radial-gradient(circle at calc(100% - 12px) 12px, #15131f 3px, transparent 3.5px),
+    radial-gradient(circle at 12px calc(100% - 12px), #15131f 3px, transparent 3.5px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #15131f 3px, transparent 3.5px),
+    #ffcf3f;
+  box-shadow: inset 0 0 0 5px #ffcf3f, inset 0 0 0 8px #15131f, 0 6px 0 #15131f;
+}
+.story .card { color: #15131f; }
+.card .cardMeta, .card .cardSummary { color: rgba(21, 19, 31, 0.78); }
+.card .cardMeta { padding: 0 10px; }
+.card .cardTitle { padding: 0 6px; }
+.card .cardSummary { padding: 0 6px; }
+.card .cardFrame { border-color: #15131f; }
+.card .cardStatus { border-color: #15131f; color: #15131f; background: #ffcf3f; }
+.card[data-wip] {
+  border: 10px solid transparent;
+  border-image: repeating-linear-gradient(-45deg, #15131f 0 12px, #ffcf3f 12px 24px) 10;
+  border-radius: 0;
+  box-shadow: 0 6px 0 #15131f;
+  padding: 12px 10px 14px;
+}
+.wipTag {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  z-index: 2;
+  padding: 4px 12px;
+  border: 2px solid #15131f;
+  background: #ff7a59;
+  color: #15131f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 #15131f;
+}
+.posts { display: none; }
+
+/* The belt is a big-screen set piece: phones and tablets just get the
+   signs. On laptops and TVs each sign stands on two posts, clamped to
+   the belt (--deck is the belt's deck height, measured in Story). */
 @media (min-width: 1024px) {
   .track { align-items: flex-end; padding-bottom: calc(var(--deck, 200px) - 2px); }
   .workIntro { align-self: center; }
-  .card {
-    position: relative;
-    margin-bottom: 34px;
-    padding: 12px 14px 16px;
-    border: 3px solid #15131f;
-    border-radius: 14px;
-    background: #3a2614;
-    box-shadow: inset 0 0 0 2px rgba(255, 209, 102, 0.25), 0 6px 0 #15131f;
-  }
-  /* bolts in the corners */
-  .card .cardMeta::before,
-  .card .cardMeta::after { content: none; }
-  .card::before,
-  .card::after {
-    content: "";
+  .card { margin-bottom: 40px; }
+  .card[data-wip] { margin-bottom: 33px; }
+  .posts { display: block; position: absolute; left: 0; right: 0; bottom: -46px; height: 46px; pointer-events: none; }
+  .card[data-wip] .posts { bottom: -46px; height: 46px; left: -10px; right: -10px; }
+  .posts i {
     position: absolute;
-    bottom: -37px;
+    bottom: 6px;
+    top: 0;
     width: 12px;
-    height: 37px;
     border: 3px solid #15131f;
     border-top: 0;
-    border-radius: 0 0 3px 3px;
-    background: linear-gradient(90deg, #e9e4ff, #b9b2d6);
+    background: linear-gradient(90deg, #e9e4ff, #9d96bd);
   }
-  .card::before { left: 22%; }
-  .card::after { right: 22%; }
+  .posts i:first-child { left: 22%; }
+  .posts i:last-child { right: 22%; }
+  /* foot plates clamped onto the belt's deck */
+  .posts i::after {
+    content: "";
+    position: absolute;
+    left: -11px;
+    bottom: -6px;
+    width: 28px;
+    height: 7px;
+    border: 2px solid #15131f;
+    border-radius: 2px;
+    background: #ffcf3f;
+  }
+  /* a cone at the foot of the sign that's still being built */
+  .card[data-wip] .posts::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 26px;
+    height: 32px;
+    margin-left: -13px;
+    background: linear-gradient(#fff 0 0) 50% 40% / 70% 5px no-repeat, #ff7a59;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
 }
 
 /* About */
@@ -1134,8 +1179,65 @@
 .blogDesc { font-size: 14px; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Outro */
-.outroRings { position: absolute; width: 120vmax; height: 120vmax; left: 50%; top: 50%; margin: -60vmax 0 0 -60vmax; }
-.outroText { position: relative; text-align: center; display: grid; gap: 22px; justify-items: center; }
+/* Finale: pitch, about and the way out on one page. */
+.finale { align-content: center; gap: clamp(20px, 5vh, 56px); }
+.finaleUfo {
+  position: absolute;
+  top: clamp(72px, 11vh, 130px);
+  right: 7%;
+  width: clamp(90px, calc(12 * var(--u)), 190px);
+  z-index: 2;
+}
+.finaleGrid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(28px, 5vw, 90px);
+  align-items: center;
+  width: min(1180px, 100%);
+}
+.finalePitch .serifHead { margin: 12px 0 0; }
+.finalePitch .ctaBtns { justify-content: flex-start; }
+.finaleBody { max-width: 520px; margin: 20px 0 0; font-size: clamp(15px, calc(1.25 * var(--u)), 18px); line-height: 1.6; color: var(--muted); }
+.finaleAbout {
+  padding: clamp(18px, calc(2.4 * var(--u)), 34px);
+  border: 2px solid var(--hair);
+  border-radius: 22px;
+  background: rgba(14, 11, 32, 0.4);
+}
+.finaleNote { margin: 0; font-family: var(--f-serif), serif; font-weight: 400; font-size: clamp(24px, calc(2.6 * var(--u)), 42px); line-height: 1.1; }
+.finaleAbout .aboutLead { margin-top: 12px; }
+.finaleAbout .chips { margin-top: 16px; }
+.finaleFoot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: min(1180px, 100%);
+  padding-top: 18px;
+  border-top: 1px solid var(--hair);
+}
+.topLink {
+  padding: 8px 16px;
+  border: 2px solid #15131f;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #15131f !important;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 0 #15131f;
+}
+@media (max-width: 819px) {
+  .finaleGrid { grid-template-columns: 1fr; }
+  .finaleUfo { top: 70px; right: 4%; width: 80px; }
+}
 .copy { margin: 0; font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
 
 /* Narrow screens ---------------------------------------------- */
