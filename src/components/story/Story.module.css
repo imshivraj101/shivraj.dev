@@ -1236,35 +1236,63 @@
 }
 .spideySway { transform-origin: 50% -200px; animation: spSway 4.5s ease-in-out infinite; }
 @keyframes spSway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
-.spideySwing {
-  position: absolute;
-  top: clamp(60px, 9vh, 110px);
-  right: 3%;
-  z-index: 3;
-  width: clamp(70px, calc(9 * var(--u)), 150px);
-  pointer-events: none;
-}
-.spideySwingIdle { transform-origin: 31% 5%; animation: spSwing 3.2s ease-in-out infinite; }
-@keyframes spSwing { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
 .story :global(.sp-sense) { animation: spSense 1.6s steps(2) infinite; }
 @keyframes spSense { 50% { opacity: 0; } }
 .cobweb { position: absolute; z-index: 0; width: clamp(110px, calc(16 * var(--u)), 260px); pointer-events: none; }
 .webTL { top: 0; left: 0; }
-.webBR { right: 0; bottom: 0; }
 
 /* Finale: pitch, about and the way out on one page. */
-.finale { align-content: center; gap: clamp(20px, 5vh, 56px); }
+.finale { align-content: center; gap: clamp(14px, 3vh, 36px); padding-top: 76px; padding-bottom: 64px; }
 .finaleGrid {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: clamp(28px, 5vw, 90px);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "armour pitch einstein" "about about about";
+  column-gap: clamp(16px, 3vw, 48px);
+  row-gap: clamp(18px, 4vh, 40px);
   align-items: center;
-  width: min(1180px, 100%);
+  width: min(1240px, 100%);
 }
+.finalePitch { grid-area: pitch; text-align: center; }
 .finalePitch .serifHead { margin: 12px 0 0; }
-.finalePitch .ctaBtns { justify-content: flex-start; }
+.finalePitch .ctaBtns { justify-content: center; }
+.finalePitch .finaleBody { margin-left: auto; margin-right: auto; }
+.finaleAbout { grid-area: about; justify-self: center; width: min(900px, 100%); }
+
+/* Costumes (Costumes.jsx): the armour and Einstein either side of the
+   pitch, Newton under his tree in Academia. */
+.costume { width: clamp(110px, calc(15 * var(--u)), 230px); }
+.costumeL { grid-area: armour; }
+.costumeR { grid-area: einstein; }
+.costumeArt { display: block; width: 100%; height: auto; overflow: visible; }
+.newton {
+  position: absolute;
+  left: 1%;
+  bottom: 30px;
+  z-index: 0;
+  width: clamp(100px, calc(11 * var(--u)), 190px);
+  pointer-events: none;
+}
+.story :global(.cs-hover) { animation: csHover 2.4s ease-in-out infinite; }
+.story :global(.cs-flame) { animation: csFlame 0.18s steps(2) infinite; transform-box: fill-box; transform-origin: 50% 0; }
+.story :global(.cs-glow) { animation: csGlow 1.6s ease-in-out infinite; }
+.story :global(.cs-ponder) { animation: csPonder 3.6s ease-in-out infinite; transform-box: view-box; transform-origin: 100px 280px; }
+.story :global(.cs-apple) { animation: csApple 5s ease-in infinite; transform-box: fill-box; transform-origin: center; }
+.story :global(.cs-bonk) { animation: csBonk 5s linear infinite; opacity: 0; }
+@keyframes csHover { 50% { transform: translateY(-10px); } }
+@keyframes csFlame { 50% { transform: scaleY(0.8); opacity: 0.8; } }
+@keyframes csGlow { 50% { opacity: 0.45; } }
+@keyframes csPonder { 50% { transform: rotate(-2deg); } }
+@keyframes csApple {
+  0%, 55% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  68% { transform: translate(0, 46px) rotate(20deg); opacity: 1; }
+  80% { transform: translate(30px, 30px) rotate(120deg); opacity: 1; }
+  88% { transform: translate(44px, 120px) rotate(200deg); opacity: 0; }
+  89%, 99% { transform: translate(0, 0); opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes csBonk { 0%, 66% { opacity: 0; } 68%, 82% { opacity: 1; } 86%, 100% { opacity: 0; } }
 .finaleBody { max-width: 520px; margin: 20px 0 0; font-size: clamp(15px, calc(1.25 * var(--u)), 18px); line-height: 1.6; color: var(--muted); }
 .finaleAbout {
   padding: clamp(18px, calc(2.4 * var(--u)), 34px);
@@ -1301,9 +1329,10 @@
   box-shadow: 0 4px 0 #15131f;
 }
 @media (max-width: 819px) {
-  .finaleGrid { grid-template-columns: 1fr; }
-  .spideySwing { top: 64px; right: 5%; width: 60px; }
-  .spideyHang { right: 4%; top: 56px; }
+  .finaleGrid { grid-template-columns: 1fr 1fr; grid-template-areas: "armour einstein" "pitch pitch" "about about"; }
+  .costume { width: 100px; justify-self: center; }
+  .newton { left: auto; right: 3%; width: 90px; }
+    .spideyHang { right: 4%; top: 56px; }
 }
 .copy { margin: 0; font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
 
@@ -1411,4 +1440,15 @@
   /* ...and every scenery strip runs a little shorter there. */
   .scenery { height: clamp(110px, 22vh, 300px); }
   .scene:has(> .scenery) { padding-bottom: calc(28px + clamp(110px, 22vh, 300px) * 0.5); }
+}
+/* Finale on wider screens: the pitch a touch smaller and the "part
+   nobody demos" card laid out sideways, so the page fits and pins. */
+.finalePitch .serifHead { font-size: clamp(32px, calc(4.4 * var(--u)), 76px); }
+@media (min-width: 820px) {
+  .finaleAbout { display: grid; grid-template-columns: 1fr 1fr; column-gap: clamp(20px, 3vw, 40px); align-items: start; }
+  .finaleAbout .finaleNote { grid-area: 1 / 1; }
+  .finaleAbout .aboutLead { grid-area: 2 / 1; }
+  .finaleAbout .chips { grid-area: 1 / 2 / 3 / 3; margin-top: 0; align-self: center; }
+  .finaleAbout .aboutLinks { grid-area: 3 / 1 / 4 / 3; margin-top: 14px; }
+  .costume { width: clamp(100px, calc(13 * var(--u)), 210px); }
 }

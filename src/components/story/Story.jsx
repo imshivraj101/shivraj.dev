@@ -12,6 +12,7 @@ import { PhaseScene } from "./Egypt";
 import { Ufo, PlanetArt } from "./Cosmos";
 import { BlogArt } from "./BlogArt";
 import { Spidey, Cobweb } from "./Spidey";
+import { Armour, Einstein, Newton } from "./Costumes";
 import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
@@ -561,6 +562,7 @@ export default function Story({ fonts, avatar }) {
         // so the gap before the next pin never flashes the old colour.
         const order = qa("[data-scene]").map((n) => n.dataset.scene);
         const nextBg = (id) => BG[order[order.indexOf(id) + 1]] ?? BG[id];
+        const lastScene = qa("[data-scene]").pop();
         const holdAt = {};
         const pinned = {};
         const scene = (id, end, build, extra = {}) => {
@@ -576,7 +578,9 @@ export default function Story({ fonts, avatar }) {
               id,
               trigger: sec,
               start: fits ? "top top" : "top 85%",
-              end: fits ? end : "bottom 35%",
+              // A scrolling scene plays out as it passes; the last one on the
+              // page ends where the page does, or it could never finish.
+              end: fits ? end : sec === lastScene ? "bottom bottom" : "bottom 35%",
               pin: fits,
               scrub: 1,
               onEnter: () => setBg(BG[id]),
@@ -774,11 +778,13 @@ export default function Story({ fonts, avatar }) {
           });
         }, { invalidateOnRefresh: true });
 
-        // Finale: one closing page. He swings in on a web,
+        // Finale: one closing page. The armour and Einstein arrive,
         // the pitch rises word by word, then the facts and links.
         scene("finale", "+=170%", (tl, $, $$) => {
           // He swings in on a web line from off the top-left.
-          tl.from($(`.${s.spideySwing}`), { x: () => -window.innerWidth * 0.7, y: -260, rotation: -50, duration: 0.35, ease: "power2.out" })
+          // The armour flies in from the left, Einstein walks in from the right.
+          tl.from($(`.${s.costumeL}`), { x: () => -window.innerWidth * 0.5, y: -120, rotation: -20, duration: 0.35, ease: "power2.out" })
+            .from($(`.${s.costumeR}`), { x: () => window.innerWidth * 0.4, opacity: 0, duration: 0.35, ease: "power2.out" }, "<")
             .from($$(`.${s.ctaWord}`), { yPercent: 100, opacity: 0, stagger: 0.04, duration: 0.25 }, "<0.1")
             .from($$(`.${s.doodle}`), { scale: 0, rotation: -40, opacity: 0, stagger: 0.05, duration: 0.2, ease: "back.out(2.2)" }, "<")
             .from([$(`.${s.finaleBody}`), $(`.${s.ctaBtns}`)], { y: 20, opacity: 0, stagger: 0.06, duration: 0.2 })
@@ -1191,6 +1197,9 @@ export default function Story({ fonts, avatar }) {
       {/* ---------------- Uni ---------------- */}
       <section id="uni" data-scene="uni" className={s.scene} style={{ "--bg": BG.uni }}>
         <NashikScene className={s.scenery} />
+        <div className={s.newton} aria-hidden="true">
+          <Newton className={s.costumeArt} />
+        </div>
         <div className={s.uniStage}>
           <div className={s.uniLeft}>
             <p className={s.kicker}>Academia · Bordi → Nashik</p>
@@ -1402,13 +1411,14 @@ export default function Story({ fonts, avatar }) {
             <Doodle k={d.k} />
           </span>
         ))}
-        <Cobweb corner="br" className={`${s.cobweb} ${s.webBR}`} />
-        <div className={s.spideySwing} aria-hidden="true">
-          <div className={s.spideySwingIdle}>
-            <Spidey pose="swing" uid="finale" className={s.spideyArt} />
-          </div>
-        </div>
         <div className={s.finaleGrid}>
+          {/* the builder and the thinker, either side of the pitch */}
+          <div className={`${s.costume} ${s.costumeL}`} aria-hidden="true">
+            <Armour className={s.costumeArt} />
+          </div>
+          <div className={`${s.costume} ${s.costumeR}`} aria-hidden="true">
+            <Einstein className={s.costumeArt} />
+          </div>
           <div className={s.finalePitch}>
             <p className={s.kicker}>That&apos;s the whole head</p>
             <h2 className={s.serifHead} aria-label="Got a product to build? Let's make it boring.">
