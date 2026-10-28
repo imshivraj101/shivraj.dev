@@ -94,7 +94,7 @@ export function NashikScene({ className }) {
       </g>
       {/* mortarboards thrown for the class of '26, low enough that the
           top-cropped strip on wide screens never slices them */}
-      {[[1160, 182, -18], [1262, 168, 14], [1350, 196, -8]].map(([x, y, r]) => (
+      {[[1160, 214, -18], [1262, 200, 14], [1350, 226, -8]].map(([x, y, r]) => (
         <g key={x} data-sc="cap" transform={`rotate(${r} ${x} ${y})`}>
           <path d={`M${x - 26} ${y} L${x} ${y - 12} L${x + 26} ${y} L${x} ${y + 12} Z`} fill={INK} stroke={LINE} strokeWidth="2" />
           <rect x={x - 12} y={y + 4} width="24" height="10" fill={INK} stroke={LINE} strokeWidth="2" />

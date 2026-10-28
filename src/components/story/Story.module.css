@@ -691,6 +691,22 @@
   cursor: pointer;
 }
 .tourBtn[aria-pressed="true"] { background: var(--text); }
+.skipBtn {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--hair);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.skipBtn:hover { background: rgba(241, 237, 255, 0.16); }
+.skipTour { display: none; margin-top: 22px; height: 38px; padding: 0 18px; }
+.animated .skipTour { display: inline-block; }
 .navArrow:hover, .navDot:hover { background: rgba(241, 237, 255, 0.16); }
 .navDot.active { background: var(--c); color: #15131f; font-weight: 700; }
 .keyHint { margin: 0 6px 0 8px; font-size: 11px; letter-spacing: 0.08em; color: var(--muted); }
@@ -710,6 +726,7 @@
   .navDot { min-width: 26px; height: 28px; padding: 0 2px; font-size: 10px; }
   .navArrow { min-width: 28px; height: 28px; }
   .tourBtn { height: 28px; padding: 0 8px; font-size: 10px; }
+  .planetNav .skipBtn { height: 28px; padding: 0 8px; font-size: 10px; }
 }
 @media (max-width: 420px) {
   /* Narrow phones: tour + arrows only; the dots don't fit. */
@@ -859,12 +876,40 @@
   margin: 10px 0 0;
   font-family: var(--f-chunk), sans-serif;
   font-weight: 400;
-  font-size: clamp(56px, calc(9 * var(--u)), 150px);
+  font-size: clamp(52px, calc(7.4 * var(--u)), 130px);
   line-height: 0.92;
 }
 .cityRow { display: block; overflow: hidden; }
 .uniSub { max-width: 440px; margin: 18px 0 0; font-size: clamp(15px, calc(1.2 * var(--u)), 18px); line-height: 1.6; color: var(--muted); }
 .uniRight { position: relative; }
+/* Academia: grades as chunky badges, school days as a small card. */
+.gradeRow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.grade {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 2px solid #15131f;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #15131f;
+  box-shadow: 0 4px 0 #15131f;
+}
+.grade b { font-family: var(--f-chunk), sans-serif; font-weight: 400; font-size: clamp(22px, calc(2.2 * var(--u)), 34px); line-height: 1; }
+.grade small { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.schoolCard {
+  max-width: 460px;
+  margin-top: 18px;
+  padding: 12px 16px 14px;
+  border: 1px solid var(--hair);
+  border-left: 4px solid var(--mint);
+  border-radius: 12px;
+  background: rgba(21, 19, 31, 0.3);
+}
+.schoolKicker { margin: 0; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mint); }
+.schoolName { margin: 4px 0 0; font-family: var(--f-serif), serif; font-size: clamp(18px, calc(1.7 * var(--u)), 26px); line-height: 1.15; }
+.schoolChips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 10px 0 0; padding: 0; }
+.schoolChips li { padding: 3px 10px; border-radius: 99px; background: rgba(241, 237, 255, 0.14); font-size: 12px; letter-spacing: 0.04em; }
 .uniListHead { margin: 0 0 10px; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
 .uniList { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
 .uniRow {
@@ -1353,4 +1398,17 @@
 @media (max-height: 760px) and (min-aspect-ratio: 1/1) {
   /* Short laptop screens: a smaller avatar keeps his hair off the title. */
   .mascotWrap { --w: min(100vw, 74vh); }
+}
+@media (min-width: 820px) and (max-height: 760px) {
+  /* Short laptop screens: Academia tightens up so it still fits and pins. */
+  .uniBig { font-size: clamp(44px, calc(6 * var(--u)), 90px); }
+  .uniSub { margin-top: 10px; }
+  .gradeRow, .schoolCard { margin-top: 10px; }
+  .schoolCard { padding: 8px 12px 10px; }
+  .uniRow { padding: 6px 0; }
+}
+@media (min-width: 820px) and (max-height: 760px) {
+  /* ...and every scenery strip runs a little shorter there. */
+  .scenery { height: clamp(110px, 22vh, 300px); }
+  .scene:has(> .scenery) { padding-bottom: calc(28px + clamp(110px, 22vh, 300px) * 0.5); }
 }

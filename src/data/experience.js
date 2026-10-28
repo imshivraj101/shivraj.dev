@@ -128,3 +128,19 @@ export const college = [
     type: "extracurricular",
   },
 ];
+
+/** The academic record behind the story's Academia chapter. */
+export const academics = {
+  degree: {
+    name: "B.Tech, Computer Science & Design",
+    school: "KKWIEER, Nashik",
+    years: "2022–26",
+    cgpa: "8.18",
+    honours: "First Class with Distinction",
+  },
+  school: {
+    name: "PCG English Medium High School",
+    place: "Bordi",
+    highlights: ["Scout Captain", "School board topper", "Scholarship holder"],
+  },
+};

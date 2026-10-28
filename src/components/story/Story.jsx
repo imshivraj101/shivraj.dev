@@ -15,7 +15,7 @@ import { Spidey, Cobweb } from "./Spidey";
 import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
-import { work, college, rangeOf, spanOf } from "../../data/experience";
+import { work, college, academics, rangeOf, spanOf } from "../../data/experience";
 import { stackNames } from "../../data/stack";
 import { projects } from "../../data/projects";
 import { blogs } from "../../data/blogs";
@@ -44,10 +44,10 @@ const CHAPTERS = [
   { id: "hero", label: "Hello" },
   { id: "work", label: "Work" },
   { id: "exp", label: "Experience" },
-  { id: "uni", label: "Uni" },
+  { id: "uni", label: "Academia" },
   { id: "tour", label: "Lifecycle" },
   { id: "blogs", label: "Blogs" },
-  { id: "about", label: "About" },
+  { id: "finale", label: "About" },
 ];
 
 /* The product lifecycle as a solar system: the product is the sun and
@@ -172,7 +172,7 @@ function Words({ text, className }) {
 const AGENDA = [
   { id: "work", label: "My projects" },
   { id: "exp", label: "Work experience" },
-  { id: "uni", label: "University life" },
+  { id: "uni", label: "Academia" },
   { id: "tour", label: "Why I love product" },
 ];
 
@@ -238,7 +238,7 @@ function Sparkle({ style }) {
 export default function Story({ fonts, avatar }) {
   const root = useRef(null);
   // Filled in by the effect: jump straight to a planet's card.
-  const nav = useRef({ to: () => {}, step: () => {}, tour: () => {}, play: () => {}, go: null });
+  const nav = useRef({ to: () => {}, step: () => {}, tour: () => {}, play: () => {}, go: null, land: null, skipSolar: null });
 
   useEffect(() => {
     const el = root.current;
@@ -562,12 +562,14 @@ export default function Story({ fonts, avatar }) {
         const order = qa("[data-scene]").map((n) => n.dataset.scene);
         const nextBg = (id) => BG[order[order.indexOf(id) + 1]] ?? BG[id];
         const holdAt = {};
+        const pinned = {};
         const scene = (id, end, build, extra = {}) => {
           const sec = q(`[data-scene="${id}"]`);
           // A scene taller than the screen (About on a phone, anything on
           // a landscape phone) can't be pinned without clipping, so it
           // scrolls normally and plays as it passes through view.
           const fits = sec.offsetHeight <= window.innerHeight + 2;
+          pinned[id] = fits;
           const tl = gsap.timeline({
             defaults: { ease: "none" },
             scrollTrigger: {
@@ -698,7 +700,8 @@ export default function Story({ fonts, avatar }) {
             .to([$(`.${s.expStage}`), $(`.${s.scenery}`)], { y: -40, opacity: 0, duration: 0.2 });
         });
 
-        // Uni: one compact screen, then college life is stamped done.
+        // Academia: school days and the degree on one screen, then
+        // college life is stamped done.
         scene("uni", "+=150%", (tl, $, $$) => {
           // Nashik: hills and river draw in, the vines fill with grapes,
           // the train runs the whole length, caps fly for the class of '26.
@@ -709,6 +712,9 @@ export default function Story({ fonts, avatar }) {
             .from($$('[data-sc="cap"]'), { y: 160, opacity: 0, stagger: 0.08, duration: 0.3, ease: "back.out(1.6)" }, 0.45);
           tl.from($$(`.${s.uniChar}`), { yPercent: 110, stagger: 0.03, duration: 0.3, ease: "power3.out" }, 0)
             .from($(`.${s.uniSub}`), { y: 16, opacity: 0, duration: 0.15 }, "<0.15")
+            .from($$(`.${s.grade}`), { scale: 0.4, opacity: 0, stagger: 0.06, duration: 0.18, ease: "back.out(2.4)" }, "<0.05")
+            .from($(`.${s.schoolCard}`), { y: 24, opacity: 0, duration: 0.18 }, "<0.05")
+            .from($$(`.${s.schoolChips} li`), { y: 10, opacity: 0, stagger: 0.04, duration: 0.12 }, "<0.08")
             .from($$(`.${s.uniRow}`), { y: 24, opacity: 0, stagger: 0.05, duration: 0.2 }, "<0.1")
             .from($(`.${s.stamp}`), { scale: 2.4, rotation: -30, opacity: 0, duration: 0.2, ease: "back.out(2)" })
             .addLabel("hold", "+=0.1")
@@ -800,6 +806,29 @@ export default function Story({ fonts, avatar }) {
            page with a tween, so every scrubbed animation fast-forwards
            exactly as it would under a slow scroll. */
         const HOLD_AT = { finale: 0.9, tour: 0.5, hi: 0.55, uni: 0.62, exp: 0.62, blogs: 0.75 };
+        // Where a scene "starts" for a visitor. Pinned scenes start where
+        // the pin does. Scenes that scroll (taller than the screen, so most
+        // of them on phones) start with their top just under the header;
+        // their trigger fires earlier, at "top 85%", which is no place to
+        // land.
+        const header = q(`.${s.header}`);
+        const landOn = (id) => {
+          const st = ScrollTrigger.getById(id);
+          if (st && pinned[id]) return st.start + 2;
+          const sec = q(`[data-scene="${id}"]`);
+          if (!sec) return null;
+          return Math.max(0, sec.getBoundingClientRect().top + window.scrollY - header.offsetHeight);
+        };
+        const stopsFor = (id, hold) => {
+          const st = ScrollTrigger.getById(id);
+          if (!st) return [];
+          if (pinned[id]) return [{ y: st.start + (holdAt[id] ?? HOLD_AT[id] ?? 0.5) * (st.end - st.start), hold }];
+          // A scrolling scene: its top, and its bottom if it runs long.
+          const sec = q(`[data-scene="${id}"]`);
+          const top = landOn(id);
+          const extra = sec.offsetHeight + header.offsetHeight - window.innerHeight;
+          return extra > window.innerHeight * 0.2 ? [{ y: top, hold }, { y: top + extra, hold }] : [{ y: top, hold }];
+        };
         const stops = () => {
           const get = (id) => ScrollTrigger.getById(id);
           const at = (st, f) => st.start + f * (st.end - st.start);
@@ -809,7 +838,7 @@ export default function Story({ fonts, avatar }) {
             out.push({ y: at(sol, JOURNEY_IN), hold: 1.4 });
             PHASES.forEach((_, i) => out.push({ y: at(sol, JOURNEY_IN + ((i + 0.5) / N) * JOURNEY_LEN), hold: 2.6 }));
           }
-          ["hi", "uni", "exp", "tour"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
+          ["hi", "uni", "exp", "tour"].forEach((id) => out.push(...stopsFor(id, 2.4)));
           const w = get("work");
           if (w) {
             // Land on the intro, then with each project card centred.
@@ -822,9 +851,10 @@ export default function Story({ fonts, avatar }) {
             });
           } else {
             // Narrow screens list the work vertically: one stop per card.
-            qa(`.${s.card}`).forEach((c) => out.push({ y: c.getBoundingClientRect().top + window.scrollY - 90, hold: 1.6 }));
+            const h = header.offsetHeight + 16;
+            qa(`.${s.card}`).forEach((c) => out.push({ y: c.getBoundingClientRect().top + window.scrollY - h, hold: 1.6 }));
           }
-          ["blogs", "finale"].forEach((id) => get(id) && out.push({ y: at(get(id), holdAt[id] ?? HOLD_AT[id]), hold: 2.4 }));
+          ["blogs", "finale"].forEach((id) => out.push(...stopsFor(id, 2.4)));
           return out.sort((a, b) => a.y - b.y);
         };
 
@@ -891,6 +921,14 @@ export default function Story({ fonts, avatar }) {
         };
         nav.current.play = togglePlay;
         nav.current.go = scrollToY;
+        nav.current.land = landOn;
+        // "Skip the lifecycle": straight past the solar system to Blogs.
+        nav.current.skipSolar = () => {
+          stopTour();
+          cancelFF();
+          const y = landOn("blogs");
+          if (y != null) scrollToY(y);
+        };
 
         const onDirectorKey = (e) => {
           if (e.target.closest?.("input, textarea, [contenteditable]")) return;
@@ -918,6 +956,8 @@ export default function Story({ fonts, avatar }) {
           stopPlay();
           nav.current.play = () => {};
           nav.current.go = null;
+          nav.current.land = null;
+          nav.current.skipSolar = null;
           gsap.ticker.remove(orbitTick);
           el.classList.remove(s.animated);
         };
@@ -955,8 +995,8 @@ export default function Story({ fonts, avatar }) {
   const onChapter = (e) => {
     e.preventDefault();
     const id = e.currentTarget.dataset.go;
-    const st = ScrollTrigger.getById(id);
-    const target = st ? st.start + 2 : document.querySelector(`[data-scene="${id}"]`)?.offsetTop ?? 0;
+    const sec = document.querySelector(`[data-scene="${id}"]`);
+    const target = nav.current.land?.(id) ?? (sec ? sec.getBoundingClientRect().top + window.scrollY : 0);
     // Fast-forward through the scenes in between when motion is on.
     if (nav.current.go) nav.current.go(target);
     else window.scrollTo({ top: target, behavior: "smooth" });
@@ -1153,19 +1193,40 @@ export default function Story({ fonts, avatar }) {
         <NashikScene className={s.scenery} />
         <div className={s.uniStage}>
           <div className={s.uniLeft}>
-            <p className={s.kicker}>Uni life · Nashik</p>
+            <p className={s.kicker}>Academia · Bordi → Nashik</p>
             <h2 className={s.uniBig} aria-label="Class of '26.">
               <span className={s.cityRow}><Chars text="CLASS" className={s.uniChar} /></span>
               <span className={s.cityRow}><Chars text="OF '26." className={s.uniChar} /></span>
             </h2>
             <p className={s.uniSub}>
-              B.Tech Computer Science &amp; Design · KKWIEER, Nashik. Four years of building things,
-              and leading the people who built them with me.
+              {academics.degree.name} · {academics.degree.school}. Four years of building things, and
+              leading the people who built them with me.
             </p>
+            <div className={s.gradeRow}>
+              <span className={s.grade}>
+                <b>{academics.degree.cgpa}</b>
+                <small>CGPA</small>
+              </span>
+              <span className={s.grade}>
+                <b>1st</b>
+                <small>{academics.degree.honours.replace("First ", "")}</small>
+              </span>
+            </div>
+            <div className={s.schoolCard}>
+              <p className={s.schoolKicker}>Before that · school days</p>
+              <p className={s.schoolName}>
+                {academics.school.name}, {academics.school.place}
+              </p>
+              <ul className={s.schoolChips}>
+                {academics.school.highlights.map((h) => (
+                  <li key={h}>{h}</li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className={s.uniRight}>
             <div className={s.uniHeadRow}>
-              <p className={s.uniListHead}>Where I led</p>
+              <p className={s.uniListHead}>Where I led at KKWIEER</p>
               <span className={s.stamp} role="img" aria-label="College life: complete">
                 <small>Certified</small>
                 <b>College life ✓ complete</b>
@@ -1197,6 +1258,9 @@ export default function Story({ fonts, avatar }) {
             Hop in. Captain Shivraj is flying you round the product lifecycle, one planet at a time.
             The bigger the planet, the more of my work lives there.
           </p>
+          <button type="button" className={`${s.skipBtn} ${s.skipTour}`} onClick={() => nav.current.skipSolar?.()}>
+            In a hurry? Skip the lifecycle <span aria-hidden="true">⏭</span>
+          </button>
         </div>
       </section>
 
@@ -1289,6 +1353,9 @@ export default function Story({ fonts, avatar }) {
           <span className={s.keyHint}>
             Tip: use <kbd>←</kbd> <kbd>→</kbd> to hop planets
           </span>
+          <button type="button" className={s.skipBtn} onClick={() => nav.current.skipSolar?.()}>
+            Skip <span aria-hidden="true">⏭</span>
+          </button>
         </nav>
       </section>
 
@@ -1329,7 +1396,7 @@ export default function Story({ fonts, avatar }) {
       </section>
 
       {/* ---------------- Finale ---------------- */}
-      <section id="about" data-scene="finale" className={`${s.scene} ${s.finale}`} style={{ "--bg": BG.finale }}>
+      <section id="finale" data-scene="finale" className={`${s.scene} ${s.finale}`} style={{ "--bg": BG.finale }}>
         {DOODLES.map((d) => (
           <span key={d.k} className={s.doodle} style={{ left: d.x, top: d.y }}>
             <Doodle k={d.k} />
