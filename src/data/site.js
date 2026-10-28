@@ -12,11 +12,11 @@ export const site = {
   name: "Shivraj Talekar",
   handle: "@SHIVRAJ",
   url: SITE_URL,
-  role: "CS + AI/ML Full-Stack Engineer",
+  role: "AI Product & Solutions Engineer",
   email: "shivrajtalekar101@gmail.com",
   mailto:
     "https://mail.google.com/mail/?view=cm&fs=1&to=shivrajtalekar101@gmail.com",
-  employer: { name: "ESDS", role: "Artificial Intelligence Product Engineer" },
+  employer: { name: "ESDS", role: "AI Product & Solutions Engineer" },
 
   discipline: "Full-stack / AI-ML",
 

@@ -215,7 +215,7 @@ export function BeltScene({ className }) {
         </g>
       ))}
       {/* the belt: casing, rollers, chain tread */}
-      <rect x="96" y={Y - 18} width="1278" height="36" rx="18" fill="rgba(21,19,31,0.55)" stroke={LINE} strokeWidth="2.5" />
+      <rect data-sc="deck" x="96" y={Y - 18} width="1278" height="36" rx="18" fill="rgba(21,19,31,0.55)" stroke={LINE} strokeWidth="2.5" />
       {rollers.map((x) => (
         <g key={x} data-sc="roller" style={{ transformOrigin: `${x}px ${Y}px` }}>
           <circle cx={x} cy={Y} r="12" fill="#2a2433" stroke={LINE} strokeWidth="1.5" />
@@ -228,19 +228,22 @@ export function BeltScene({ className }) {
   );
 }
 
-/** Blogs: paper planes trailing dashed paths across the page. */
+/** Blogs: paper planes on dashed trails, in a strip under the notes so
+    no trail ever crosses the words. */
 export function PlanesScene({ className }) {
   const planes = [
-    { path: "M-80 260 C240 120 520 300 860 140 S1300 80 1540 160", y: 0 },
-    { path: "M-80 120 C300 40 620 200 980 90 S1340 40 1540 60", y: 0 },
-    { path: "M-80 300 C360 250 700 320 1040 230 S1360 220 1540 260", y: 0 },
+    // Kept in the strip's bottom band, which stays below the notes even
+    // where the strip itself reaches up behind them.
+    "M-80 270 C240 236 520 290 860 252 S1300 232 1540 262",
+    "M-80 240 C300 222 620 268 980 238 S1340 226 1540 236",
+    "M-80 304 C360 290 700 312 1040 288 S1360 284 1540 300",
   ];
   return (
-    <svg className={className} viewBox="0 0 1440 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      {planes.map((p, i) => (
-        <g key={i}>
-          <path data-sc="draw" d={p.path} fill="none" stroke={LINE} strokeWidth="2" strokeDasharray="6 9" opacity="0.4" />
-          <g data-sc="plane" data-path={p.path}>
+    <svg className={className} {...strip}>
+      {planes.map((d) => (
+        <g key={d}>
+          <path data-sc="trail" d={d} fill="none" stroke={LINE} strokeWidth="2" strokeDasharray="6 9" opacity="0.35" />
+          <g data-sc="plane" data-path={d}>
             <path d="M0 0 L-34 -12 L-24 0 L-34 12 Z" fill="#f4efe6" stroke={INK} strokeWidth="2" strokeLinejoin="round" />
             <path d="M0 0 L-24 0" stroke={INK} strokeWidth="1.5" />
           </g>

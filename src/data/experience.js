@@ -58,7 +58,7 @@ export const work = [
     current: true,
     roles: [
       {
-        role: "Artificial Intelligence Product Engineer",
+        role: "AI Product & Solutions Engineer",
         start: "2026-03",
         end: null,
         location: "Maharashtra, India",

@@ -10,6 +10,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
 import { PhaseScene } from "./Egypt";
 import { Ufo, PlanetArt } from "./Cosmos";
+import { BlogArt } from "./BlogArt";
 import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
@@ -538,7 +539,10 @@ export default function Story({ fonts, avatar }) {
         /* ---------- Intro, on load ---------- */
         const intro = gsap.timeline({ defaults: { ease: "power3.out" } });
         intro
-          .from(`.${s.mascotWrap}`, { yPercent: 70, duration: 1.2, ease: "back.out(1.4)" }, 0)
+          // He's sat at a desk: it slides in, then he rises from behind
+          // it, so the drawing's cut-off edge is never on show.
+          .from(q(`.${s.desk}`), { yPercent: 100, duration: 0.6 }, 0)
+          .from(`.${s.mascotWrap}`, { yPercent: 22, opacity: 0, duration: 1.1, ease: "power3.out" }, 0.25)
           .from(qa(`.${s.nameChar}`), { yPercent: 110, opacity: 0, filter: "blur(10px)", stagger: 0.04, duration: 0.9 }, 0.25)
           .from(q(`.${s.kicker}`), { y: 16, opacity: 0, duration: 0.6 }, 0.5)
           .from(qa(`.${s.roleWord}`), { y: 20, opacity: 0, stagger: 0.08, duration: 0.6 }, 0.9)
@@ -610,6 +614,7 @@ export default function Story({ fonts, avatar }) {
           // Only wrappers the intro never touches, so the two timelines
           // can't fight over the same opacity.
           tl.to([$(`.${s.heroText}`), $(`.${s.heroFade}`), $(`.${s.hey}`)], { y: -60, opacity: 0, duration: 0.2 }, 0)
+            .to($(`.${s.desk}`), { yPercent: 100, duration: 0.15 }, 0)
             .to($(`.${s.mascotWrap}`), { scale: 90, duration: 1, ease: "power4.in" }, 0.02)
             .to($(`.${s.mascotWrap}`), { opacity: 0, duration: 0.1 }, 0.94);
         }, {
@@ -657,6 +662,18 @@ export default function Story({ fonts, avatar }) {
         if (wide) {
           const track = q(`.${s.track}`);
           const dist = () => track.scrollWidth - window.innerWidth;
+          // The project signs stand on the belt: tell CSS how high its
+          // deck sits above the bottom of the section (0 when hidden).
+          const workSec = q('[data-scene="work"]');
+          const deck = q('[data-sc="deck"]');
+          const setDeck = () => {
+            const d = deck.getBoundingClientRect();
+            const h = d.height ? workSec.getBoundingClientRect().bottom - d.top : 0;
+            workSec.style.setProperty("--deck", `${Math.round(h)}px`);
+          };
+          setDeck();
+          ScrollTrigger.addEventListener("refreshInit", setDeck);
+          ctx.add(() => () => ScrollTrigger.removeEventListener("refreshInit", setDeck));
           scene("work", () => `+=${dist()}`, (tl, $, $$) => {
             tl.to(track, { x: () => -dist(), duration: 1 });
             // The belt rolls with the reel.
@@ -748,13 +765,15 @@ export default function Story({ fonts, avatar }) {
         });
         gsap.ticker.add(orbitTick);
 
-        // Blogs: the notes rise in one after another.
+        // Blogs: every note rises in turn and its cover draws itself;
+        // paper planes cross the strip underneath.
         scene("blogs", "+=130%", (tl, $, $$) => {
-          tl.from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 })
-            .from($(`.${s.blogCard}`), { y: 60, opacity: 0, stagger: 0.1, duration: 0.3 }, "<0.1");
-          // Paper planes fly their dashed trails across the notes.
           undraw($$('[data-sc="draw"]'));
-          tl.to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.1, duration: 0.6 }, 0);
+          tl.from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 })
+            .from($$(`.${s.blogCard}`), { y: 60, opacity: 0, stagger: 0.12, duration: 0.3 }, "<0.1")
+            .from($$(`.${s.blogFrame}`), { scale: 0.85, rotation: (i) => (i - 1) * 4, stagger: 0.12, duration: 0.3, ease: "back.out(1.8)" }, "<")
+            .to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.12, duration: 0.4 }, "<0.15")
+            .from($$('[data-sc="trail"]'), { opacity: 0, stagger: 0.1, duration: 0.3 }, 0);
           $$('[data-sc="plane"]').forEach((pl, i) => {
             tl.to(pl, { motionPath: { path: pl.dataset.path, autoRotate: true }, duration: 0.8, ease: "none" }, i * 0.1);
           });
@@ -984,7 +1003,7 @@ export default function Story({ fonts, avatar }) {
             Shivraj Talekar
           </a>
           <span className={s.badge}>
-            <span className={s.pulse} /> {site.employer.role.replace("Artificial Intelligence", "AI")} @ {site.employer.name}
+            <span className={s.pulse} /> {site.employer.role} @ {site.employer.name}
           </span>
         </div>
         {/* In the header so it can never sit on top of the content. */}
@@ -1033,6 +1052,9 @@ export default function Story({ fonts, avatar }) {
             <span className={s.hey} aria-hidden="true">hey!</span>
           </div>
         </div>
+        <div className={s.desk} aria-hidden="true">
+          <span className={s.deskLip} />
+        </div>
         <div className={s.heroFade}>
           <p className={s.cue}>
             <span className={s.cueDot} /> Scroll to step inside
@@ -1067,7 +1089,7 @@ export default function Story({ fonts, avatar }) {
             <span className={s.esds}>
               <Image src={esdsLogo} alt="ESDS" className={s.esdsLogo} sizes="80px" />
             </span>
-            as an {(nowRole?.role ?? site.employer.role).replace("Artificial Intelligence", "AI")}.
+            as an {nowRole?.role ?? site.employer.role}.
           </p>
           <p className={s.bio}>
             I take products from the first question to the hundredth release: research, design,
@@ -1291,7 +1313,7 @@ export default function Story({ fonts, avatar }) {
 
       {/* ---------------- Blogs ---------------- */}
       <section id="blogs" data-scene="blogs" className={s.scene} style={{ "--bg": BG.blogs }}>
-        <PlanesScene className={s.sky} />
+        <PlanesScene className={s.scenery} />
         <div className={s.blogStage}>
           <div className={s.blogHead}>
             <p className={s.kicker}>Field notes</p>
@@ -1305,7 +1327,7 @@ export default function Story({ fonts, avatar }) {
             {blogs.map((b) => (
               <a key={b.url} href={b.url} target="_blank" rel="noreferrer" className={s.blogCard}>
                 <span className={s.blogFrame}>
-                  <Image src={b.image} alt="" className={s.blogImg} sizes="(min-width: 820px) 30vw, 90vw" />
+                  <BlogArt url={b.url} className={s.blogImg} />
                 </span>
                 <span className={s.blogMeta}>
                   {b.dateLabel} · {b.readingTime} read

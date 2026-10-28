@@ -24,13 +24,14 @@ const body = Plus_Jakarta_Sans({
 export const metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Shivraj Talekar - AI/ML Engineer | Portfolio",
+    default: "Shivraj Talekar - AI Product & Solutions Engineer | Portfolio",
     template: "%s | Shivraj Talekar",
   },
   description:
-    "Portfolio of Shivraj Talekar - AI/ML engineer building agentic RAG and knowledge-graph systems. Artificial Intelligence Product Engineer at ESDS. Case studies in Python, FastAPI, Neo4j and React.",
+    "Portfolio of Shivraj Talekar - AI Product & Solutions Engineer at ESDS, building AI products end to end: agentic RAG, knowledge graphs and the platforms around them. Case studies in Python, FastAPI, Neo4j and React.",
   keywords: [
     "Shivraj Talekar",
+    "AI Product & Solutions Engineer",
     "AI/ML Engineer",
     "Machine Learning Engineer",
     "Agentic RAG",
@@ -57,9 +58,9 @@ export const metadata = {
   creator: site.name,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Shivraj Talekar | AI/ML Engineer",
+    title: "Shivraj Talekar | AI Product & Solutions Engineer",
     description:
-      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product Engineer at ESDS.",
+      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product & Solutions Engineer at ESDS.",
     url: site.url,
     siteName: "Shivraj Talekar Portfolio",
     images: [
@@ -67,7 +68,7 @@ export const metadata = {
         url: "/sne.png",
         width: 1200,
         height: 630,
-        alt: "Shivraj Talekar - AI/ML Engineer",
+        alt: "Shivraj Talekar - AI Product & Solutions Engineer",
       },
     ],
     locale: "en_US",
@@ -75,9 +76,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shivraj Talekar | AI/ML Engineer",
+    title: "Shivraj Talekar | AI Product & Solutions Engineer",
     description:
-      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product Engineer at ESDS.",
+      "Agentic RAG, knowledge graphs and the systems to serve them. AI Product & Solutions Engineer at ESDS.",
     creator: "@lord_shivraj",
     images: ["/sne.png"],
   },
