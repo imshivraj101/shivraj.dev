@@ -1179,15 +1179,36 @@
 .blogDesc { font-size: 14px; line-height: 1.55; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Outro */
+/* Spidey (Spidey.jsx): hanging over the Blogs, swinging into the finale. */
+.spideyArt { display: block; width: 100%; height: auto; overflow: visible; }
+.spideyHang {
+  position: absolute;
+  top: clamp(64px, 9vh, 110px);
+  right: 6%;
+  z-index: 2;
+  width: clamp(64px, calc(8 * var(--u)), 130px);
+  pointer-events: none;
+}
+.spideySway { transform-origin: 50% -200px; animation: spSway 4.5s ease-in-out infinite; }
+@keyframes spSway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+.spideySwing {
+  position: absolute;
+  top: clamp(60px, 9vh, 110px);
+  right: 3%;
+  z-index: 3;
+  width: clamp(70px, calc(9 * var(--u)), 150px);
+  pointer-events: none;
+}
+.spideySwingIdle { transform-origin: 31% 5%; animation: spSwing 3.2s ease-in-out infinite; }
+@keyframes spSwing { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+.story :global(.sp-sense) { animation: spSense 1.6s steps(2) infinite; }
+@keyframes spSense { 50% { opacity: 0; } }
+.cobweb { position: absolute; z-index: 0; width: clamp(110px, calc(16 * var(--u)), 260px); pointer-events: none; }
+.webTL { top: 0; left: 0; }
+.webBR { right: 0; bottom: 0; }
+
 /* Finale: pitch, about and the way out on one page. */
 .finale { align-content: center; gap: clamp(20px, 5vh, 56px); }
-.finaleUfo {
-  position: absolute;
-  top: clamp(72px, 11vh, 130px);
-  right: 7%;
-  width: clamp(90px, calc(12 * var(--u)), 190px);
-  z-index: 2;
-}
 .finaleGrid {
   position: relative;
   z-index: 2;
@@ -1236,7 +1257,8 @@
 }
 @media (max-width: 819px) {
   .finaleGrid { grid-template-columns: 1fr; }
-  .finaleUfo { top: 70px; right: 4%; width: 80px; }
+  .spideySwing { top: 64px; right: 5%; width: 60px; }
+  .spideyHang { right: 4%; top: 56px; }
 }
 .copy { margin: 0; font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
 

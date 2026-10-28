@@ -11,6 +11,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { PhaseScene } from "./Egypt";
 import { Ufo, PlanetArt } from "./Cosmos";
 import { BlogArt } from "./BlogArt";
+import { Spidey, Cobweb } from "./Spidey";
 import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
@@ -755,7 +756,9 @@ export default function Story({ fonts, avatar }) {
         // paper planes cross the strip underneath.
         scene("blogs", "+=130%", (tl, $, $$) => {
           undraw($$('[data-sc="draw"]'));
-          tl.from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 })
+          // He drops down his thread first, then the notes follow.
+          tl.from($(`.${s.spideyHang}`), { y: () => -window.innerHeight * 0.5, duration: 0.35, ease: "back.out(1.4)" }, 0)
+            .from($$(`.${s.blogHead} > *`), { y: 24, opacity: 0, stagger: 0.06, duration: 0.2 }, 0.05)
             .from($$(`.${s.blogCard}`), { y: 60, opacity: 0, stagger: 0.12, duration: 0.3 }, "<0.1")
             .from($$(`.${s.blogFrame}`), { scale: 0.85, rotation: (i) => (i - 1) * 4, stagger: 0.12, duration: 0.3, ease: "back.out(1.8)" }, "<")
             .to($$('[data-sc="draw"]'), { strokeDashoffset: 0, stagger: 0.12, duration: 0.4 }, "<0.15")
@@ -763,12 +766,13 @@ export default function Story({ fonts, avatar }) {
           $$('[data-sc="plane"]').forEach((pl, i) => {
             tl.to(pl, { motionPath: { path: pl.dataset.path, autoRotate: true }, duration: 0.8, ease: "none" }, i * 0.1);
           });
-        });
+        }, { invalidateOnRefresh: true });
 
-        // Finale: one closing page. The saucer drops in and beams down,
+        // Finale: one closing page. He swings in on a web,
         // the pitch rises word by word, then the facts and links.
         scene("finale", "+=170%", (tl, $, $$) => {
-          tl.from($(`.${s.finaleUfo}`), { y: -220, rotation: -16, opacity: 0, duration: 0.3, ease: "power2.out" })
+          // He swings in on a web line from off the top-left.
+          tl.from($(`.${s.spideySwing}`), { x: () => -window.innerWidth * 0.7, y: -260, rotation: -50, duration: 0.35, ease: "power2.out" })
             .from($$(`.${s.ctaWord}`), { yPercent: 100, opacity: 0, stagger: 0.04, duration: 0.25 }, "<0.1")
             .from($$(`.${s.doodle}`), { scale: 0, rotation: -40, opacity: 0, stagger: 0.05, duration: 0.2, ease: "back.out(2.2)" }, "<")
             .from([$(`.${s.finaleBody}`), $(`.${s.ctaBtns}`)], { y: 20, opacity: 0, stagger: 0.06, duration: 0.2 })
@@ -777,7 +781,7 @@ export default function Story({ fonts, avatar }) {
             .from($(`.${s.finaleFoot}`), { opacity: 0, duration: 0.15 })
             .addLabel("hold", "+=0.1")
             .to({}, { duration: 0.3 });
-        });
+        }, { invalidateOnRefresh: true });
         qa(`.${s.doodle}`).forEach((d, i) => {
           gsap.to(d.firstChild, { y: 8 + (i % 3) * 4, rotation: i % 2 ? 6 : -6, duration: 1.6 + (i % 3) * 0.4, yoyo: true, repeat: -1, ease: "sine.inOut" });
         });
@@ -1291,6 +1295,13 @@ export default function Story({ fonts, avatar }) {
       {/* ---------------- Blogs ---------------- */}
       <section id="blogs" data-scene="blogs" className={s.scene} style={{ "--bg": BG.blogs }}>
         <PlanesScene className={s.scenery} />
+        <Cobweb corner="tl" className={`${s.cobweb} ${s.webTL}`} />
+        {/* outer: drops down the thread on scroll; inner: idle sway */}
+        <div className={s.spideyHang} aria-hidden="true">
+          <div className={s.spideySway}>
+            <Spidey pose="hang" uid="blogs" className={s.spideyArt} />
+          </div>
+        </div>
         <div className={s.blogStage}>
           <div className={s.blogHead}>
             <p className={s.kicker}>Field notes</p>
@@ -1324,8 +1335,11 @@ export default function Story({ fonts, avatar }) {
             <Doodle k={d.k} />
           </span>
         ))}
-        <div className={s.finaleUfo} aria-hidden="true">
-          <Ufo uid="finale" className={s.ufoArt} />
+        <Cobweb corner="br" className={`${s.cobweb} ${s.webBR}`} />
+        <div className={s.spideySwing} aria-hidden="true">
+          <div className={s.spideySwingIdle}>
+            <Spidey pose="swing" uid="finale" className={s.spideyArt} />
+          </div>
         </div>
         <div className={s.finaleGrid}>
           <div className={s.finalePitch}>
