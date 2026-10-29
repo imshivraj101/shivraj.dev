@@ -798,13 +798,6 @@ export default function Story({ fonts, avatar }) {
           gsap.to(d.firstChild, { y: 8 + (i % 3) * 4, rotation: i % 2 ? 6 : -6, duration: 1.6 + (i % 3) * 0.4, yoyo: true, repeat: -1, ease: "sine.inOut" });
         });
 
-        /* ---------- Chapter rail ---------- */
-        ScrollTrigger.create({
-          start: 0,
-          end: "max",
-          onUpdate: (st) => gsap.set(q(`.${s.railFill}`), { scaleX: st.progress }),
-        });
-
         /* ---------- Director: ↑ ↓ skip scene to scene, ▶ plays it all ----------
            Stops are the moments worth landing on: the top, the solar
            overview, every planet card, then the point where each later
@@ -933,6 +926,46 @@ export default function Story({ fonts, avatar }) {
         nav.current.play = togglePlay;
         nav.current.go = scrollToY;
         nav.current.land = landOn;
+
+        /* ---------- Chapter rail ----------
+           The fill reaches a chapter's label when you reach that chapter,
+           not when you're that far down the page (the solar system alone
+           is a third of it), and the chapter you're in lights up. */
+        const railTrack = q(`.${s.railTrack}`);
+        const railFill = q(`.${s.railFill}`);
+        const railList = q(`.${s.rail} ul`);
+        const railLinks = qa(`.${s.rail} a[data-go]`);
+        let railYs = [];
+        const measureRail = () => {
+          railYs = railLinks.map((a, i) => (i ? landOn(a.dataset.go) ?? 0 : 0));
+        };
+        let railOn = -1;
+        const updateRail = () => {
+          if (!railYs.length) measureRail();
+          const y = window.scrollY;
+          let i = 0;
+          while (i < railYs.length - 1 && y >= railYs[i + 1] - 2) i++;
+          const next = Math.min(i + 1, railYs.length - 1);
+          const f = next === i ? 0 : gsap.utils.clamp(0, 1, (y - railYs[i]) / Math.max(1, railYs[next] - railYs[i]));
+          const box = railTrack.getBoundingClientRect();
+          const mid = (a) => {
+            const r = a.getBoundingClientRect();
+            return r.left + r.width / 2 - box.left;
+          };
+          const x = gsap.utils.interpolate(mid(railLinks[i]), mid(railLinks[next]), f);
+          gsap.set(railFill, { scaleX: gsap.utils.clamp(0, 1, x / box.width) });
+          if (i !== railOn) {
+            railOn = i;
+            railLinks.forEach((a, k) => (k === i ? a.setAttribute("aria-current", "step") : a.removeAttribute("aria-current")));
+            // On a phone the labels scroll sideways: keep this one in view.
+            if (railList.scrollWidth > railList.clientWidth) {
+              const a = railLinks[i];
+              railList.scrollTo({ left: a.offsetLeft - railList.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" });
+            }
+          }
+        };
+        ScrollTrigger.create({ start: 0, end: "max", onUpdate: updateRail, onRefresh: () => { measureRail(); updateRail(); } });
+        railList.addEventListener("scroll", updateRail, { passive: true });
         // "Skip the lifecycle": straight past the solar system to Blogs.
         nav.current.skipSolar = () => {
           stopTour();
@@ -962,6 +995,7 @@ export default function Story({ fonts, avatar }) {
 
         return () => {
           window.removeEventListener("keydown", onDirectorKey);
+          railList.removeEventListener("scroll", updateRail);
           window.removeEventListener("wheel", onDirectorTakeover);
           window.removeEventListener("touchstart", onDirectorTakeover);
           stopPlay();
