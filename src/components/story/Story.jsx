@@ -826,6 +826,8 @@ export default function Story({ fonts, avatar }) {
           if (st && pinned[id]) return st.start +(holdAt[id] ?? HOLD_AT[id] ?? 0.5) * (st.end - st.start);
           const sec = q(`[data-scene="${id}"]`);
           if (!sec) return null;
+          // The last page plays out as it reaches the bottom: land there.
+          if (sec === lastScene) return ScrollTrigger.maxScroll(window);
           return Math.max(0, sec.getBoundingClientRect().top + window.scrollY - header.offsetHeight);
         };
         const stopsFor = (id, hold) => {
