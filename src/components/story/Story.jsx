@@ -820,7 +820,10 @@ export default function Story({ fonts, avatar }) {
         const header = q(`.${s.header}`);
         const landOn = (id) => {
           const st = ScrollTrigger.getById(id);
-          if (st && pinned[id]) return st.start + 2;
+          // A pinned scene is empty at its start, so land where it has played
+          // in. The hero and the belt read from their first frame.
+          if (st && pinned[id] && (id === "hero" || id === "work")) return st.start + 2;
+          if (st && pinned[id]) return st.start +(holdAt[id] ?? HOLD_AT[id] ?? 0.5) * (st.end - st.start);
           const sec = q(`[data-scene="${id}"]`);
           if (!sec) return null;
           return Math.max(0, sec.getBoundingClientRect().top + window.scrollY - header.offsetHeight);
