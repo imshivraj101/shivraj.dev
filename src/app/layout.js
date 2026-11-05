@@ -1,4 +1,5 @@
 import { Oswald, Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 import Navbar from "../components/Navbar";
@@ -149,6 +150,7 @@ export default function RootLayout({ children }) {
         <SiteChrome>
           <Footer />
         </SiteChrome>
+        <Analytics />
       </body>
     </html>
   );
