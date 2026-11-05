@@ -44,6 +44,7 @@ export const metadata = {
     "Full Stack Engineer",
     "ReactJS",
     "Figma",
+    "Game Developer",
     "Portfolio",
     "KKWIEER",
     "DeSoc",

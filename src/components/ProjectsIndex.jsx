@@ -5,7 +5,7 @@ import { projects } from "../data/projects";
 import ProjectCard from "./ProjectCard";
 import styles from "./Projects.module.css";
 
-const disciplines = ["All", "AI/ML", "Design", "Development"];
+const disciplines = ["All", "AI/ML", "Design", "Development", "Game Dev"];
 
 export default function ProjectsIndex() {
   const [active, setActive] = useState("All");

@@ -2,7 +2,7 @@
    the JSON-LD graph all derive from this one value. Moving to a
    custom domain is therefore a single env var in Vercel, not a
    find-and-replace across the codebase. */
-import { stackNames } from "./stack";
+import { stackNames, gameSkills } from "./stack";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://shivraj-dev-eta.vercel.app"
@@ -27,6 +27,7 @@ export const site = {
   /* Mirrors the rail in data/stack.js so llms.txt and the JSON-LD
      can never disagree with what the hero shows. */
   stack: stackNames,
+  gameSkills,
   socials: [
     { label: "GitHub", href: "https://github.com/imshivraj101" },
     {

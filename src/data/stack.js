@@ -63,3 +63,14 @@ export const stack = [
 ];
 
 export const stackNames = stack.map((s) => s.name);
+
+/* Game development, drawn from TRILOK. Shown as their own chips in the
+   finale and mirrored by site.gameSkills for llms.txt and the JSON-LD. */
+export const gameSkills = [
+  "Game Development",
+  "HTML5 Canvas",
+  "Gameplay Systems",
+  "Game AI",
+  "Multiplayer Netcode",
+  "WebRTC",
+];

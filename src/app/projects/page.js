@@ -5,7 +5,7 @@ import { graph, projectList, breadcrumbs } from "../../lib/schema";
 export const metadata = {
   title: "Projects",
   description:
-    "AI/ML, product design and front-end case studies by Shivraj Talekar - Astrobot, Travellore, Radius, Trailer-Park and Stoiric.",
+    "AI/ML, product design, front-end and game development case studies by Shivraj Talekar - TRILOK, Astrobot, Travellore, Radius, Trailer-Park and Stoiric.",
   alternates: { canonical: "/projects" },
 };
 

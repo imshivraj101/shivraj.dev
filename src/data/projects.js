@@ -4,8 +4,37 @@ import trailerparkImg from "../assets/trailerpark.webp";
 import radiusImg from "../assets/radius.webp";
 import stoicImg from "../assets/stoic.webp";
 import pulseImg from "../assets/pulse.webp";
+import trilokImg from "../assets/trilok.webp";
 
 export const projects = [
+  {
+    slug: "trilok",
+    updated: "2026-11-01",
+    title: "TRILOK",
+    role: "Game Design & Development",
+    year: "2026",
+    discipline: "Game Dev",
+    summary:
+      "A 2D arcade fighter where gods and kings of history clash, playable in the browser with online rooms.",
+    tags: ["JavaScript", "HTML5 Canvas", "WebRTC", "PeerJS", "Web Audio", "Python", "Vercel"],
+    image: trilokImg,
+    live: "https://trilok-pi.vercel.app",
+    github: null,
+    problem:
+      "Fighting games are unforgiving to build. Frame timing decides whether a hit feels fair, and online play only works if two machines agree on every frame. TRILOK also had to run in a browser tab with no install, on a keyboard, an Xbox controller or a phone, with no engine to lean on and one person producing the art, music and voices for the whole roster.",
+    approach: [
+      "Wrote the game in plain JavaScript on HTML5 Canvas with no engine. Logic runs at a fixed 60 fps in a 960x540 virtual space, while the canvas renders at the device's real resolution.",
+      "Built eight fighters from Thor and Indra to Alexander and Genghis Khan, each with a home stage, specials and a scripted super. Attacks are spaced by a 12-frame gap with input buffering, a shared lock stops special spam, and the CPU opponent uses the full move set.",
+      "Added private online rooms over WebRTC, joined with a 5-letter code or invite link. Delay-based lockstep means only inputs travel: input delay is set per match from the measured ping, the host sends periodic checksums to catch drift, and a TURN relay covers networks that block direct connections.",
+      "Ran the assets as a pipeline. Sprites and stages came from AI image generation on a magenta key, and a Python slicer keys them out, splits the poses and writes per-frame anchors. AI-generated music and voice lines were cut with scripts and wired into the game.",
+      "Put keyboard, gamepad and touch behind the same controls, with on-screen hints that follow the device. A build step converts images to WebP and compresses the music before deploying to Vercel.",
+    ],
+    outcome: [
+      "Live in the browser with no install: VS CPU, local two-player and private online rooms.",
+      "Eight fighters and eight arenas, with music, voice lines and two power modes (Balanced and Realistic).",
+      "Online rooms held identical game state with no drift or stalls in a two-window test.",
+    ],
+  },
   {
     slug: "pulse",
     updated: "2026-10-28",

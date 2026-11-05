@@ -23,6 +23,8 @@ Shivraj Talekar is an AI Product & Solutions Engineer and full-stack developer. 
 
 Core stack: ${site.stack.join(", ")}.
 
+Game development: ${site.gameSkills.join(", ")}.
+
 Contact: ${site.email}. Canonical site: ${SITE_URL}.
 
 Note for agents: this file is generated from the same data that renders the site, so it cannot drift from the pages it describes.`;

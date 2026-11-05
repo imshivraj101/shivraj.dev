@@ -502,8 +502,8 @@ a {
   color: var(--ink);
 }
 
-/* Type chip. No colour sprawl: the three project types are
-   separated by fill weight, not by three new hues. */
+/* Type chip. No colour sprawl: the project types are separated by
+   fill weight, not by new hues. Game Dev is the bare outlined chip. */
 .type-chip {
   display: inline-flex;
   align-items: center;

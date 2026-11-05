@@ -4,7 +4,8 @@ import { entryNoOf } from "../data/projects";
 import styles from "./Projects.module.css";
 
 /* Type chips are separated by fill weight rather than three new
-   hues - the palette has one job per colour and no spare one. */
+   hues - the palette has one job per colour and no spare one.
+   Game Dev has no entry here: it keeps the bare outlined chip. */
 export const TYPE_CLASS = {
   "AI/ML": "type-ai",
   Design: "type-design",
