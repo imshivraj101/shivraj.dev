@@ -17,7 +17,7 @@ import Radio from "./Radio";
 import { DeskScene, NashikScene, DataCentreScene, BeltScene, PlanesScene } from "./Scenery";
 import { site } from "../../data/site";
 import { work, college, academics, rangeOf, spanOf } from "../../data/experience";
-import { stackNames, gameSkills } from "../../data/stack";
+import { stackNames, agentSkills, gameSkills } from "../../data/stack";
 import { projects } from "../../data/projects";
 import { blogs } from "../../data/blogs";
 import { toolkit } from "../../data/toolkit";
@@ -1482,6 +1482,9 @@ export default function Story({ fonts, avatar }) {
             </p>
             <ul className={s.chips}>
               {stackNames.map((n) => (
+                <li key={n} className={s.chip}>{n}</li>
+              ))}
+              {agentSkills.map((n) => (
                 <li key={n} className={s.chip}>{n}</li>
               ))}
               {gameSkills.map((n) => (

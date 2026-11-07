@@ -64,6 +64,17 @@ export const stack = [
 
 export const stackNames = stack.map((s) => s.name);
 
+/* Agentic AI, drawn from TacticOS. Shown as their own chips in the
+   finale and mirrored by site.agentSkills for llms.txt and the JSON-LD. */
+export const agentSkills = [
+  "LangGraph",
+  "Multi-Agent Systems",
+  "Human-in-the-Loop AI",
+  "DuckDB",
+  "Gemini API",
+  "Sports Analytics",
+];
+
 /* Game development, drawn from TRILOK. Shown as their own chips in the
    finale and mirrored by site.gameSkills for llms.txt and the JSON-LD. */
 export const gameSkills = [

@@ -46,6 +46,8 @@ export const metadata = {
     "ReactJS",
     "Figma",
     "Game Developer",
+    "Multi-Agent Systems",
+    "LangGraph",
     "Portfolio",
     "KKWIEER",
     "DeSoc",

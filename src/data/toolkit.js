@@ -7,10 +7,10 @@ import {
   siNotion, siJira, siMiro,
   siGoogleanalytics, siJupyter, siPandas, siPostgresql,
   siFigma, siCanva,
-  siNextdotjs, siReact, siFastapi, siPython, siNeo4j, siHtml5, siWebrtc,
-  siPytorch, siTensorflow, siHuggingface, siLangchain, siScikitlearn,
+  siNextdotjs, siReact, siFastapi, siPython, siNeo4j, siDuckdb, siHtml5, siWebrtc,
+  siPytorch, siTensorflow, siHuggingface, siLangchain, siGooglegemini, siScikitlearn,
   siPytest, siJest, siPostman,
-  siDocker, siGithubactions, siVercel, siNginx,
+  siDocker, siGithubactions, siVercel, siRender, siNginx,
   siGithub, siGrafana, siSentry, siPrometheus,
 } from "simple-icons";
 
@@ -20,9 +20,9 @@ export const toolkit = {
   Plan: [tool(siNotion), tool(siJira), tool(siMiro)],
   Analysis: [tool(siGoogleanalytics, "Analytics"), tool(siJupyter), tool(siPandas), tool(siPostgresql)],
   Design: [tool(siFigma), tool(siCanva)],
-  Development: [tool(siNextdotjs), tool(siReact), tool(siFastapi), tool(siPython), tool(siNeo4j), tool(siHtml5, "HTML5 Canvas"), tool(siWebrtc)],
-  "AI/ML": [tool(siPytorch), tool(siTensorflow), tool(siHuggingface), tool(siLangchain), tool(siScikitlearn)],
+  Development: [tool(siNextdotjs), tool(siReact), tool(siFastapi), tool(siPython), tool(siNeo4j), tool(siDuckdb), tool(siHtml5, "HTML5 Canvas"), tool(siWebrtc)],
+  "AI/ML": [tool(siPytorch), tool(siTensorflow), tool(siHuggingface), tool(siLangchain), tool(siGooglegemini, "Gemini"), tool(siScikitlearn)],
   Testing: [tool(siPytest), tool(siJest), tool(siPostman)],
-  Deployment: [tool(siDocker), tool(siGithubactions), tool(siVercel), tool(siNginx)],
+  Deployment: [tool(siDocker), tool(siGithubactions), tool(siVercel), tool(siRender), tool(siNginx)],
   Maintenance: [tool(siGithub), tool(siGrafana), tool(siSentry), tool(siPrometheus)],
 };

@@ -45,7 +45,7 @@ export function person() {
           "@type": "City",
           name: "Nashik",
         },
-        skills: [...site.stack, ...site.gameSkills].join(", "),
+        skills: [...site.stack, ...site.agentSkills, ...site.gameSkills].join(", "),
       },
     }),
     knowsAbout: [
@@ -59,6 +59,7 @@ export function person() {
       "FastAPI",
       "Cloud and DevOps",
       "UI/UX Design",
+      ...site.agentSkills,
       ...site.gameSkills,
     ],
     knowsLanguage: ["en", "hi", "mr"],

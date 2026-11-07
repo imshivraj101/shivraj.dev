@@ -5,8 +5,38 @@ import radiusImg from "../assets/radius.webp";
 import stoicImg from "../assets/stoic.webp";
 import pulseImg from "../assets/pulse.webp";
 import trilokImg from "../assets/trilok.webp";
+import tacticosImg from "../assets/tacticos.webp";
 
 export const projects = [
+  {
+    slug: "tacticos",
+    updated: "2026-11-07",
+    title: "TacticOS",
+    role: "Product & AI Engineering",
+    year: "2026",
+    discipline: "AI/ML",
+    summary:
+      "A multi-agent football recruitment platform: describe a player in plain English, approve a shortlist and get a fact-checked report.",
+    tags: ["LangGraph", "Python", "FastAPI", "DuckDB", "Gemini", "JavaScript", "Render"],
+    image: tacticosImg,
+    live: "https://ai-scout-lb7e.onrender.com",
+    github: null,
+    problem:
+      "Recruitment is a filtering problem where mistakes are expensive. A club needs a specific profile at a specific price, the evidence is spread across market, match and event data, and a chatbot will happily invent a stat that sounds right. TacticOS had to let a scout ask in plain English while every figure stayed traceable to the data and a person kept the final call.",
+    approach: [
+      "Built each scouting run as a LangGraph state graph. A Brief Interpreter turns the request into filters, code searches the database, a Chief Scout picks a shortlist, analysts fan out in parallel with one per player, a Head of Recruitment writes the report, and a Fact-Checker tests its claims and sends weak ones back for a rewrite.",
+      "Put a person in the loop. The graph pauses at the shortlist with a LangGraph interrupt, and nothing moves on until the user approves it or redirects the search.",
+      "Kept the facts in code. Shortlist IDs are checked against the search results so invented players can't get through, budget sums never go through the model, and a follow-up like \"why was this player left out?\" is tested against the run's real filters before the AI answers.",
+      "Built the data layer on DuckDB from Transfermarkt open datasets and StatsBomb open event data. xA is derived from the shots a pass set up and xT is calculated from the same events. Players link across the two sources only when the match is unambiguous, and charts say so when data is missing.",
+      "Added boards that need no model call: league table, form, last XI and squad depth come straight from results and line-ups. The transfer planner takes one total budget and returns packages that fit it, from one statement signing to cover across several spots.",
+      "Shipped it as an open demo on a free tier. FastAPI streams every agent step to a plain JavaScript and SVG front end, a daily limit protects the shared Gemini key, and visitors can add their own key, which stays in their browser tab.",
+    ],
+    outcome: [
+      "Live public demo covering 22,000+ active players across 32 leagues, with full agent runs open to explore without using any AI.",
+      "32 chart types in the Lab, from radars to xG shot maps and passing networks, plus club and team performance boards.",
+      "Data limits are shown openly: season data runs to June 2026, and xG comes from 383 StatsBomb open matches ending in July 2024, so it reads as a past sample rather than current form.",
+    ],
+  },
   {
     slug: "trilok",
     updated: "2026-11-01",
